@@ -1,8 +1,10 @@
-const Layout = () => {
+
+const AuthPage = () => {
     return (
         <div>
+
         </div>
     );
 };
 
-export default Layout;
+export default AuthPage;

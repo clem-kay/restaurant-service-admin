@@ -1,8 +1,10 @@
-const Layout = () => {
+
+const Admin = () => {
     return (
         <div>
+
         </div>
     );
 };
 
-export default Layout;
+export default Admin;

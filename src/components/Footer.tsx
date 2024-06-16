@@ -1,8 +1,10 @@
-const Layout = () => {
+
+const Footer = () => {
     return (
         <div>
+
         </div>
     );
 };
 
-export default Layout;
+export default Footer;
