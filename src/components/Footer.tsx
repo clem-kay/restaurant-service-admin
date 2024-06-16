@@ -2,7 +2,7 @@
 const Footer = () => {
     return (
         <div>
-            Footer
+            <h2 className='text-2xl'>Footer</h2>
         </div>
     );
 };
