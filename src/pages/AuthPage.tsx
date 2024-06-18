@@ -2,7 +2,7 @@ import {Auth} from "@/components/Auth";
 
 const AuthPage = () => {
     return (
-        <div style={{backgroundColor: '#E0E3F6'}} className=''>
+        <div className='flex flex-col bg-background min-h-dvh justify-center item-center'>
             <Auth/>
         </div>
     );

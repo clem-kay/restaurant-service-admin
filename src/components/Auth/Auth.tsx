@@ -11,11 +11,11 @@ export function Auth() {
     };
     return (
         <div
-            className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 mb-8 shadow-input border-[0.1rem] border-[#50AE9C] bg-white dark:bg-black">
-            <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
+            className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 mb-8 shadow-input border-[0.1rem] border-border bg-border">
+            <h2 className="font-bold text-xl">
                 Welcome
             </h2>
-            <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
+            <p className="text-sm max-w-sm mt-2">
                 Login
             </p>
 
@@ -30,15 +30,15 @@ export function Auth() {
                 </LabelInputContainer>
 
                 <button
-                    className="bg-gradient-to-br relative group/btn  bg-[#50AE9C] block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+                    className="bg-gradient-to-br relative group/btn  bg-primary block  :bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
                     type="submit"
                 >
-                    Sign up &rarr;
+                    Login &rarr;
                     <BottomGradient/>
                 </button>
 
                 <div
-                    className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full"/>
+                    className="bg-gradient-to-r from-transparent via-neutral-300  :via-neutral-700 to-transparent my-8 h-[1px] w-full"/>
 
                 <div className="flex flex-col space-y-4">
                     <BottomGradient/>
