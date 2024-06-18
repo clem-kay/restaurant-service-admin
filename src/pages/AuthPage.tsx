@@ -1,7 +1,9 @@
+import {Auth} from "@/components/Auth";
+
 const AuthPage = () => {
     return (
-        <div>
-            <h2 className='text-2xl'> Signin/Signup</h2>
+        <div style={{backgroundColor: '#E0E3F6'}} className=''>
+            <Auth/>
         </div>
     );
 };
