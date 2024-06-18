@@ -1,6 +1,8 @@
 import tailwindcss_animate from "tailwindcss-animate";
 import flattenColorPalette from "tailwindcss/lib/util/flattenColorPalette";
 
+import flowbite from "flowbite/plugin";
+
 /** @type {import('tailwindcss').Config} */
 export default {
     darkMode: ["class"],
@@ -90,6 +92,7 @@ export default {
             addBase({
                 ":root": newVars,
             });
-        }
+        },
+        flowbite
     ],
 };

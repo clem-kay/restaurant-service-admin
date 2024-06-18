@@ -1,9 +1,9 @@
-import {Auth} from "@/components/Auth";
+import { Auth } from "@/components/Auth";
 
 const AuthPage = () => {
     return (
-        <div className='flex flex-col bg-background min-h-dvh justify-center item-center'>
-            <Auth/>
+        <div className="flex flex-col bg-background lg:mt-40">
+            <Auth />
         </div>
     );
 };
