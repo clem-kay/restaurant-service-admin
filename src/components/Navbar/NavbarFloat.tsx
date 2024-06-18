@@ -1,5 +1,4 @@
 "use client";
-import {ModeToggle} from "../mode-toggle.tsx";
 import {useState} from "react";
 import {HoveredLink, Menu, MenuItem, ProductItem} from "./navbar-menu.tsx";
 import {cn} from "@/lib/utils";
@@ -9,7 +8,6 @@ export default function NavbarFloat() {
     return (
         <div className="relative w-full flex items-center justify-center">
             <Navbar className="top-2"/>
-            <ModeToggle className='absolute top-7 right-20' />
         </div>
     );
 }
