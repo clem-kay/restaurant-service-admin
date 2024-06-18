@@ -1,10 +1,12 @@
 import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
+import {Outlet} from "react-router-dom";
+import NavbarFloat from "@/components/Navbar/NavbarFloat";
 
 const Layout = () => {
     return (
         <div>
-            <Navbar/>
+            <NavbarFloat/>
+            <Outlet/>
             <Footer/>
         </div>
     );
