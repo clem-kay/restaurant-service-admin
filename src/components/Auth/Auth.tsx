@@ -31,7 +31,7 @@ export const Auth = () => {
 
 
     const onSubmit = (values: z.infer<typeof formSchema>) => {
-        console.log("values to be submitted:", values);
+        // console.log("values to be submitted:", values);
         mutate(values)
     };
     return (

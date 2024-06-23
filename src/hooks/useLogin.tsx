@@ -48,7 +48,7 @@ const useLogin = () => {
         mutationFn: loginReqFn,
         mutationKey: ['login'],
         onSuccess: (data: LoginResponse) => {
-            console.log("Data returned:", data)
+            // console.log("Data returned:", data)
             const {token, refresh_token, username, id} = data;
             // Checks if response -> ( credentials )  is not empty
             if (!token && !username && !id) {
