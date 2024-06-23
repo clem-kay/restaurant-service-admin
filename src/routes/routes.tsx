@@ -2,15 +2,16 @@ import {createBrowserRouter} from "react-router-dom";
 import AdminPage from "@/pages/AdminPage.tsx";
 import AuthPage from "@/pages/AuthPage.tsx";
 import App from "../App.tsx";
+import ProtectedRoute from "@/routes/ProtectedRoute.tsx";
 
 
 const router = createBrowserRouter([
+    {index: true, path: 'auth', element: <AuthPage/>},
     {
         path: '/',
-        element: <App/>,
+        element: <ProtectedRoute element={<App/>}/>,
         children: [
-            {path: 'auth', element: <AuthPage/>},
-            {path: 'admin', element: <AdminPage/>},
+            {path: 'admin', element: <ProtectedRoute element={<AdminPage/>}/>},
         ],
     },
 ]);

@@ -2,8 +2,9 @@ import Layout from "./pages/Layout";
 
 const App = () => {
     return (
-        <Layout/>
+        <>
+            <Layout/>
+        </>
     );
 };
-
 export default App;
