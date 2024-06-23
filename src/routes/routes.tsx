@@ -6,7 +6,7 @@ import ProtectedRoute from "@/routes/ProtectedRoute.tsx";
 
 
 const router = createBrowserRouter([
-    {index: true, path: 'auth', element: <AuthPage/>},
+    {index: true, path: 'auth/login', element: <AuthPage/>},
     {
         path: '/',
         element: <ProtectedRoute element={<App/>}/>,

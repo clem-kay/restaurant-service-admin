@@ -37,7 +37,7 @@ const useLogin = () => {
         if (isLoggedIn) {
             navigate('/admin');
         } else {
-            navigate('/auth');
+            navigate('/auth/login');
         }
     }, [isLoggedIn, navigate]);
 
