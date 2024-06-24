@@ -1,5 +1,5 @@
 import { Auth } from "@/components/Auth";
-import {ModeToggle} from "@/components/mode-toggle.tsx";
+import {ModeToggle} from "@/components/Theme/mode-toggle.tsx";
 
 const AuthPage = () => {
     return (

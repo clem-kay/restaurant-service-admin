@@ -1,4 +1,4 @@
-import Admin from "@/components/Admin";
+import Admin from "@/components/Dashboard/Admin.tsx";
 
 const AdminPage = () => {
     return (

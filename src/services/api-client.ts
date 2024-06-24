@@ -1,9 +1,10 @@
 import axios from "axios";
 import { AxiosRequestConfig } from "axios";
 import {LoginResponse} from "@/hooks/useLogin.tsx";
+import configEnv from "@/config";
 
 const axiosInstance = axios.create({
-    baseURL: 'https://restaurant-service-9ee4.onrender.com/api/v1/',
+    baseURL: configEnv.BASE_URL,
 })
 
 class APIClient<T> {

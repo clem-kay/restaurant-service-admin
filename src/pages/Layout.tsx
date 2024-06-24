@@ -1,5 +1,5 @@
 import {Outlet} from "react-router-dom";
-import {ModeToggle} from "@/components/mode-toggle.tsx";
+import {ModeToggle} from "@/components/Theme/mode-toggle.tsx";
 
 const Layout = () => {
     return (
