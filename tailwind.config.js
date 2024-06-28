@@ -83,7 +83,7 @@ export default {
     },
     plugins: [
         tailwindcss_animate,
-        function ({ addBase, theme }) {
+        function ({addBase, theme}) {
             const allColors = flattenColorPalette(theme("colors"));
             const newVars = Object.fromEntries(
                 Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
