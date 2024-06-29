@@ -1,13 +1,12 @@
-import axios from "axios";
-import { AxiosRequestConfig } from "axios";
-import {LoginResponse} from "@/hooks/useLogin.tsx";
+// APIClient.ts
+import axios, { AxiosRequestConfig } from "axios";
 import configEnv from "@/config";
 
 const axiosInstance = axios.create({
     baseURL: configEnv.BASE_URL,
-})
+});
 
-class APIClient<T> {
+class APIClient<T, R> {
     endpoint: string;
 
     constructor(endpoint: string) {
@@ -20,9 +19,15 @@ class APIClient<T> {
             .then(res => res.data);
     }
 
-    post = async (data: T, config?: AxiosRequestConfig): Promise<LoginResponse> => {
+    post = async (data: T, config?: AxiosRequestConfig): Promise<R> => {
         return axiosInstance
-            .post<LoginResponse>(this.endpoint, data, config)
+            .post<R>(this.endpoint, data, config)
+            .then(res => res.data);
+    }
+
+    delete = async (id: number, config?: AxiosRequestConfig): Promise<R> => {
+        return axiosInstance
+            .delete<R>(`${this.endpoint}/${id}`, config)
             .then(res => res.data);
     }
 }
