@@ -25,7 +25,7 @@ class APIClient<T, R> {
             .then(res => res.data);
     }
 
-    delete = async (id: number, config?: AxiosRequestConfig): Promise<R> => {
+    delete = async (id: number | null, config?: AxiosRequestConfig): Promise<R> => {
         return axiosInstance
             .delete<R>(`${this.endpoint}/${id}`, config)
             .then(res => res.data);

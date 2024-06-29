@@ -7,7 +7,7 @@ import useInventoryStore from "@/store/useInventoryStore";
 
 const apiClient = new APIClient<null, CategoryResponse>(endpoints.CATEGORY);
 
-const deleteCategoryFn = (id: number) => {
+const deleteCategoryFn = (id: number | null) => {
     return apiClient.delete(id);
 };
 
@@ -18,7 +18,7 @@ const useDeleteCategory = () => {
 
     return useMutation({
         mutationFn: deleteCategoryFn,
-        onMutate: async (deletedCategoryId: number) => {
+        onMutate: async (deletedCategoryId: number | null) => {
             await queryClient.cancelQueries({queryKey: ['categories']});
 
             const previousCategories = queryClient.getQueryData<CategoryResponse[]>(['categories']);

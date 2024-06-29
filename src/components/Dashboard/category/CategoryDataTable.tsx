@@ -19,6 +19,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {toast} from "react-hot-toast";
 import useAddCategory from "@/hooks/category/useAddCategory.tsx";
+import useDeleteCategory from "@/hooks/category/useDeleteCategory.tsx";
 import UseCategory from "@/hooks/category/useCategory.tsx";
 import useInventoryStore from "@/store/useInventoryStore.tsx";
 import {Table, TableBody, TableCell, TableRow} from "@/components/ui/table.tsx";
@@ -44,7 +45,8 @@ type CreateCategorySchema = z.infer<typeof createCategorySchema>;
 export default function TableBodyContainer() {
     const {data: categoryData} = UseCategory();
     const categories = useInventoryStore((state) => state.categories);
-    const {mutate} = useAddCategory();
+    const {mutate: addCategory} = useAddCategory();
+    const {mutate: deleteCategory} = useDeleteCategory();
     const setCategories = useInventoryStore((state) => state.setCategories);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const {register, handleSubmit, formState: {errors}} = useForm<CreateCategorySchema>({
@@ -58,9 +60,8 @@ export default function TableBodyContainer() {
     }, [categoryData, setCategories]);
 
     const onSubmit = (data: CreateCategorySchema) => {
-        
         setIsDialogOpen(false);
-        mutate(data, {
+        addCategory(data, {
             onSuccess: () => {
                 toast.success("Category created successfully");
             },
@@ -70,8 +71,19 @@ export default function TableBodyContainer() {
         });
     };
 
+    const handleDelete = (id: number | null) => {
+        deleteCategory(id, {
+            onSuccess: () => {
+                toast.success("Category deleted successfully");
+            },
+            onError: () => {
+                toast.error("Failed to delete category");
+            }
+        });
+    };
+
     return (
-        <Card className=''>
+        <Card>
             <TableHeaderButtons setIsDialogOpen={setIsDialogOpen}/>
             <CardHeader>
                 <CardTitle>Categories</CardTitle>
@@ -83,12 +95,13 @@ export default function TableBodyContainer() {
                 <Table>
                     <TableHeaderContainer/>
                     <TableBody>
-                        {categories?.map(({name, createdAt, updatedAt}) => (
-                            <TableRow key={name}>
+                        {categories?.map(({id, name, createdAt, updatedAt}) => (
+                            <TableRow key={id}>
                                 <TableCell className="font-medium">{name}</TableCell>
                                 <TableCell><Badge variant="outline">Draft</Badge></TableCell>
                                 <TableCell className="hidden md:table-cell">$499.99</TableCell>
                                 <TableCell className="hidden md:table-cell">25</TableCell>
+                                <TableCell className="hidden md:table-cell">10</TableCell>
                                 <TableCell
                                     className="hidden md:table-cell">{updatedAt ? updatedAt : createdAt}</TableCell>
                                 <TableCell>
@@ -101,8 +114,9 @@ export default function TableBodyContainer() {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                            <DropdownMenuItem>Add Menu</DropdownMenuItem>
                                             <DropdownMenuItem>Edit</DropdownMenuItem>
-                                            <DropdownMenuItem>Delete</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleDelete(id)}>Delete</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>
@@ -112,9 +126,9 @@ export default function TableBodyContainer() {
                 </Table>
             </CardContent>
             <CardFooter>
-                <div className="text-xs text-muted-foreground">
-                    Showing <strong>1-10</strong> of <strong>32</strong> Categories
-                </div>
+                {/*<div className="text-xs text-muted-foreground">*/}
+                {/*    Showing <strong>1-10</strong> of <strong>32</strong> Categories*/}
+                {/*</div>*/}
             </CardFooter>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -152,7 +166,6 @@ export default function TableBodyContainer() {
 }
 
 const TableHeaderButtons = ({setIsDialogOpen}: { setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
-
     return (
         <div className="flex justify-end gap-2 p-4">
             <DropdownMenu>

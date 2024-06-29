@@ -8,10 +8,9 @@ export const TableHeaderContainer = () => {
                 <TableHead>Name</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="hidden md:table-cell">Price</TableHead>
-                <TableHead className="hidden md:table-cell">
-                    Total Sales
-                </TableHead>
-                <TableHead className="hidden md:table-cell">{}</TableHead>
+                <TableHead className="hidden md:table-cell">Total sales</TableHead>
+                <TableHead className="hidden md:table-cell">Menu count</TableHead>
+                <TableHead className="hidden md:table-cell">Created At</TableHead>
                 <TableHead>
                     <span className="sr-only">Actions</span>
                 </TableHead>
