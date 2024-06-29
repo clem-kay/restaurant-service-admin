@@ -1,10 +1,8 @@
-import Admin from "@/components/Dashboard/Admin.tsx";
+import { DashboardPage } from "./DashboardPage.tsx";
 
 const AdminPage = () => {
     return (
-        <div>
-            <Admin/>
-        </div>
+            <DashboardPage/>
     );
 };
 

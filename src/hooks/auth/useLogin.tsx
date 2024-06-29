@@ -1,10 +1,11 @@
 import {useMutation} from '@tanstack/react-query';
-import APIClient from '../services/api-client';
+import APIClient from '../../services/api-client.ts';
 import useAuthStore from "@/store/useAuthStore.ts";
 import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
-import axios from "axios";
+import {handleError} from '@/utils/utils.ts';
+import {endpoints} from "@/constants/constants.ts";
 
 interface LoginData {
     username: string;
@@ -19,7 +20,7 @@ export interface LoginResponse {
     username: string;
 }
 
-const apiClient = new APIClient<LoginData>('/auth/login');
+const apiClient = new APIClient<LoginData, LoginResponse>(endpoints.LOGIN);
 
 const loginReqFn = (loginData: LoginData) => {
     return apiClient.post(loginData);
@@ -53,17 +54,7 @@ const useLogin = () => {
             setIsLoggedIn(true);
         },
         onError: (error) => {
-            if (axios.isAxiosError(error)) {
-                if (error.response?.status === 401) {
-                    toast.error('Username or password incorrect');
-                } else if (error.response?.status === 500) {
-                    toast.error('Internal server error. Please try again later.');
-                } else {
-                    toast.error(`Error: ${error.response?.statusText || 'Unknown error'}`);
-                }
-            } else {
-                toast.error('An unexpected error occurred');
-            }
+            handleError(error)
         },
     });
 };

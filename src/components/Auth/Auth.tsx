@@ -6,7 +6,7 @@ import {cn} from "@/lib/utils";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import useLogin from "@/hooks/useLogin.tsx";
+import useLogin from "@/hooks/auth/useLogin.tsx";
 import {Triangle} from "react-loader-spinner";
 
 const formSchema = z.object({
@@ -66,7 +66,7 @@ export const Auth = () => {
                             {...form.register("username")}
                         />
                         {form.formState.errors.username && (
-                            <p className="text-red-500">{form.formState.errors.username.message}</p>
+                            <p className="text-destructive">{form.formState.errors.username.message}</p>
                         )}
                     </LabelInputContainer>
                     <LabelInputContainer className="mb-4">
@@ -78,7 +78,7 @@ export const Auth = () => {
                             {...form.register("password")}
                         />
                         {form.formState.errors.password && (
-                            <p className="text-red-500">{form.formState.errors.password.message}</p>
+                            <p className="text-destructive">{form.formState.errors.password.message}</p>
                         )}
                     </LabelInputContainer>
 
