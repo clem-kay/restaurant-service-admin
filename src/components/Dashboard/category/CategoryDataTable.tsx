@@ -19,8 +19,10 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
-import CreateCategoryDialog from "@/components/Dashboard/category/CreateCategory";
-import DeleteCategoryDialog from "@/components/Dashboard/category/DeleteCategoryDialog"; // Import the custom dialog component
+import CreateMenuDialog, {CreateMenuFormData} from "@/components/Dashboard/category/CreateMenuDialog"; // Import the create menu dialog component
+import DeleteCategoryDialog from "@/components/Dashboard/category/DeleteCategoryDialog";
+import CreateCategoryDialog from "@/components/Dashboard/category/CreateCategoryDialog.tsx";
+import {MenuData} from "@/hooks/menu/useAddMenu.tsx"; // Import the custom delete category dialog component
 
 export default function TableBodyContainer() {
     const {data: categoryData} = UseCategory();
@@ -31,6 +33,7 @@ export default function TableBodyContainer() {
     const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isCreateMenuDialogOpen, setIsCreateMenuDialogOpen] = useState(false);
 
     useEffect(() => {
         if (categoryData) {
@@ -38,7 +41,7 @@ export default function TableBodyContainer() {
         }
     }, [categoryData, setCategories]);
 
-    const handleAddCategory = (data: CategoryData) => {
+    const handleAddCategory = (data: CategoryData) => { // Adjust the type as necessary
         setIsDialogOpen(false);
         addCategory(data, {
             onSuccess: () => {
@@ -72,9 +75,16 @@ export default function TableBodyContainer() {
         }
     };
 
+    const handleCreateMenu = (data: MenuData | CreateMenuFormData) => { // Adjust the type as necessary
+        setIsCreateMenuDialogOpen(false);
+        // Add your create menu logic here
+        console.log("Create menu data: ", data);
+    };
+
     return (
         <Card>
-            <TableHeaderButtons setIsDialogOpen={setIsDialogOpen}/>
+            <TableHeaderButtons setIsDialogOpen={setIsDialogOpen}
+                                setIsCreateMenuDialogOpen={setIsCreateMenuDialogOpen}/>
             <CardHeader>
                 <CardTitle>Categories</CardTitle>
                 <CardDescription>
@@ -85,13 +95,11 @@ export default function TableBodyContainer() {
                 <Table>
                     <TableHeaderContainer/>
                     <TableBody>
-                        {categories?.map(({id, name, createdAt, updatedAt}) => (
+                        {categories?.map(({id, name, menuCount ,createdAt, updatedAt}) => (
                             <TableRow key={id}>
                                 <TableCell className="font-medium">{name}</TableCell>
                                 <TableCell><Badge variant="outline">Draft</Badge></TableCell>
-                                <TableCell className="hidden md:table-cell">$499.99</TableCell>
-                                <TableCell className="hidden md:table-cell">25</TableCell>
-                                <TableCell className="hidden md:table-cell">10</TableCell>
+                                <TableCell className="hidden md:table-cell">{menuCount}</TableCell>
                                 <TableCell
                                     className="hidden md:table-cell">{updatedAt ? updatedAt : createdAt}</TableCell>
                                 <TableCell>
@@ -104,7 +112,9 @@ export default function TableBodyContainer() {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem className='focus:bg-accent'>Add Menu</DropdownMenuItem>
+                                            <DropdownMenuItem className='focus:bg-accent'
+                                                              onClick={() => setIsCreateMenuDialogOpen(true)}>Add
+                                                Menu</DropdownMenuItem>
                                             <DropdownMenuItem className='focus:bg-accent'>Edit</DropdownMenuItem>
                                             <DropdownMenuItem className='hover:bg-destructive'
                                                               onClick={() => handleDelete(id)}>
@@ -135,11 +145,20 @@ export default function TableBodyContainer() {
                 onClose={() => setIsDeleteDialogOpen(false)}
                 onConfirm={confirmDelete}
             />
+
+            <CreateMenuDialog
+                isOpen={isCreateMenuDialogOpen}
+                onClose={() => setIsCreateMenuDialogOpen(false)}
+                onSubmit={handleCreateMenu}
+            />
         </Card>
     );
 }
 
-const TableHeaderButtons = ({setIsDialogOpen}: { setIsDialogOpen: (isOpen: boolean) => void }) => {
+const TableHeaderButtons = ({setIsDialogOpen}: {
+    setIsDialogOpen: (isOpen: boolean) => void,
+    setIsCreateMenuDialogOpen: (isOpen: boolean) => void
+}) => {
     return (
         <div className="flex justify-end gap-2 p-4">
             <DropdownMenu>
@@ -165,6 +184,10 @@ const TableHeaderButtons = ({setIsDialogOpen}: { setIsDialogOpen: (isOpen: boole
                 <PlusCircle className="h-3.5 w-3.5"/>
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Add Category</span>
             </Button>
+            {/*<Button size="sm" className="h-8 gap-1" onClick={() => setIsCreateMenuDialogOpen(true)}>*/}
+            {/*    <PlusCircle className="h-3.5 w-3.5" />*/}
+            {/*    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Create Menu</span>*/}
+            {/*</Button>*/}
         </div>
     );
 }
