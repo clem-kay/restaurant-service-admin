@@ -1,7 +1,7 @@
 import {useMutation} from '@tanstack/react-query';
 import APIClient from '../../services/api-client.ts';
 import {CategoryResponse} from "@/hooks/category/useCategory.tsx";
-import {endpoints} from "@/constants/constants.ts";
+import {EndPoints} from "@/constants/constants.ts";
 import useInventoryStore from "@/store/useInventoryStore.tsx";
 import toast from "react-hot-toast";
 
@@ -10,7 +10,7 @@ export interface CategoryData {
     description: string;
 }
 
-const apiClient = new APIClient<CategoryData, CategoryResponse>(endpoints.CATEGORY);
+const apiClient = new APIClient<CategoryData, CategoryResponse>(EndPoints.CATEGORY);
 
 const addCategoryFn = (categoryData: CategoryData) => {
     return apiClient.post(categoryData);
@@ -23,7 +23,6 @@ const UseAddCategory = () => {
         mutationFn: addCategoryFn,
         mutationKey: ['add-category'],
         onSuccess: (data: CategoryResponse) => {
-            console.log(data)
             setCategories([...categories, data])
         },
         onError: () => {

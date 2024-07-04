@@ -2,7 +2,7 @@ import {useMutation} from '@tanstack/react-query';
 import APIClient from '../../services/api-client.ts';
 import {MenuResponse} from "@/hooks/menu/useMenu.tsx";
 import {handleError} from "@/utils/utils.ts";
-import {endpoints} from "@/constants/constants.ts";
+import {EndPoints} from "@/constants/constants.ts";
 
 export interface MenuData {
     name: string;
@@ -13,13 +13,13 @@ export interface MenuData {
     categoryId: number;
 }
 
-const apiClient = new APIClient<MenuData, MenuResponse>(endpoints.MENU);
+const apiClient = new APIClient<MenuData, MenuResponse>(EndPoints.MENU);
 
 const addMenuFn = (menuData: MenuData) => {
     return apiClient.post(menuData);
 };
 
-const UseMenu = () => {
+const UseAddMenu = () => {
     return useMutation({
         mutationFn: addMenuFn,
         mutationKey: ['add-menu'],
@@ -33,4 +33,4 @@ const UseMenu = () => {
 };
 
 
-export default UseMenu;
+export default UseAddMenu;

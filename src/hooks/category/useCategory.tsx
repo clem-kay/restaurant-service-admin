@@ -1,17 +1,18 @@
 import {useQuery} from "@tanstack/react-query";
 import APIClient from "@/services/api-client.ts";
-import {endpoints} from "@/constants/constants";
+import {EndPoints} from "@/constants/constants";
 
 
 export interface CategoryResponse {
     id: number | null;
     name: string;
     description: string;
+    menuCount: string;
     createdAt?: string;
     updatedAt?: string;
 }
 
-const apiClient = new APIClient<CategoryResponse[], null>(endpoints.CATEGORY);
+const apiClient = new APIClient<CategoryResponse[], null>(EndPoints.CATEGORY);
 const UseCategory = () => {
     return useQuery<CategoryResponse[]>({
         queryKey: ['categories'],

@@ -1,7 +1,7 @@
-export const endpoints = {
-    CATEGORY: 'category',
-    MENU: 'foodmenu',
-    LOGIN: 'auth/login',
-    LOGOUT: 'auth/logout',
-    REFRESH: 'auth/refresh'
+export enum EndPoints {
+    CATEGORY = 'category',
+    MENU = 'foodmenu',
+    LOGIN = 'auth/login',
+    LOGOUT = 'auth/logout',
+    REFRESH = 'auth/refresh'
 }

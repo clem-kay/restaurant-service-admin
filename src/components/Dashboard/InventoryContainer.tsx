@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Button } from "../ui/button";
+import {useEffect, useState} from 'react';
+import {Button} from "../ui/button";
 import {
     Dialog,
     DialogContent,
@@ -9,13 +9,13 @@ import {
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import {Label} from "@/components/ui/label";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { toast } from "react-hot-toast";
+import {toast} from "react-hot-toast";
 import useAddCategory from "@/hooks/category/useAddCategory.tsx";
 import useCategory from "@/hooks/category/useCategory.tsx";
 import useInventoryStore from "@/store/useInventoryStore.tsx";
@@ -30,12 +30,12 @@ const createCategorySchema = z.object({
 type CreateCategorySchema = z.infer<typeof createCategorySchema>;
 
 const InventoryContainer = () => {
-    const { mutate } = useAddCategory();
-    const { data: categoryData } = useCategory();
+    const {mutate} = useAddCategory();
+    const {data: categoryData} = useCategory();
     const setCategories = useInventoryStore((state) => state.setCategories);
     const categories = useInventoryStore((state) => state.categories);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const { register, handleSubmit, formState: { errors } } = useForm<CreateCategorySchema>({
+    const {register, handleSubmit, formState: {errors}} = useForm<CreateCategorySchema>({
         resolver: zodResolver(createCategorySchema)
     });
 
@@ -43,7 +43,7 @@ const InventoryContainer = () => {
         if (categoryData) {
             setCategories(categoryData);
         }
-    }, [categoryData, setCategories]);
+    }, [categoryData]);
 
     const onSubmit = (data: CreateCategorySchema) => {
         setIsDialogOpen(false);
@@ -94,7 +94,8 @@ const InventoryContainer = () => {
                                                 className="col-span-3"
                                                 {...register("name")}
                                             />
-                                            {errors.name && <p className="col-span-4 text-xs text-destructive">{errors.name.message}</p>}
+                                            {errors.name &&
+                                                <p className="col-span-4 text-xs text-destructive">{errors.name.message}</p>}
                                         </div>
                                         <div className="grid grid-cols-4 items-center gap-4">
                                             <Label htmlFor="description" className="text-right">Description</Label>
@@ -104,7 +105,8 @@ const InventoryContainer = () => {
                                                 placeholder="Category description"
                                                 {...register("description")}
                                             />
-                                            {errors.description && <p className="col-span-4 text-xs text-destructive">{errors.description.message}</p>}
+                                            {errors.description &&
+                                                <p className="col-span-4 text-xs text-destructive">{errors.description.message}</p>}
                                         </div>
                                     </div>
                                     <DialogFooter>
@@ -115,7 +117,7 @@ const InventoryContainer = () => {
                         </Dialog>
                     </div>
                 ) : (
-                    <CategoryDataTable />
+                    <CategoryDataTable/>
                 )}
             </div>
         </main>

@@ -1,4 +1,4 @@
-import {Button} from "@/components/ui/button"
+import React from 'react';
 import {
     Dialog,
     DialogContent,
@@ -6,51 +6,66 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import {Input} from "@/components/ui/input"
-import {Label} from "@/components/ui/label"
+} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {Label} from "@/components/ui/label";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import * as z from "zod";
 
+// Define the schema using zod
+const createCategorySchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    description: z.string().min(1, "Description is required")
+});
 
-export function DialogDemo() {
+type CreateCategorySchema = z.infer<typeof createCategorySchema>;
+
+interface CreateCategoryDialogProps {
+    isOpen: boolean;
+    onOpenChange: (isOpen: boolean) => void;
+    onSubmit: (data: CreateCategorySchema) => void;
+}
+
+const CreateCategoryDialog: React.FC<CreateCategoryDialogProps> = ({isOpen, onOpenChange, onSubmit}) => {
+    const {register, handleSubmit, formState: {errors}} = useForm<CreateCategorySchema>({
+        resolver: zodResolver(createCategorySchema)
+    });
+
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button variant="outline">Edit Profile</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-[450px]">
                 <DialogHeader>
-                    <DialogTitle>Edit profile</DialogTitle>
+                    <DialogTitle>Add Category</DialogTitle>
                     <DialogDescription>
-                        Make changes to your profile here. Click save when you're done.
+                        Add a new category to organize your menu.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="name" className="text-right">
-                            Name
-                        </Label>
-                        <Input
-                            id="name"
-                            defaultValue="Pedro Duarte"
-                            className="col-span-3"
-                        />
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="name" className="text-right">Name</Label>
+                            <Input id="name" placeholder="Category" className="col-span-3" {...register("name")} />
+                            {errors.name &&
+                                <p className="col-span-4 text-xs text-destructive">{errors.name.message}</p>}
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="description" className="text-right">Description</Label>
+                            <Textarea id="description" className="col-span-3"
+                                      placeholder="Category description" {...register("description")} />
+                            {errors.description &&
+                                <p className="col-span-4 text-xs text-destructive">{errors.description.message}</p>}
+                        </div>
                     </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="username" className="text-right">
-                            Username
-                        </Label>
-                        <Input
-                            id="username"
-                            defaultValue="@peduarte"
-                            className="col-span-3"
-                        />
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button type="submit">Save changes</Button>
-                </DialogFooter>
+                    <DialogFooter>
+                        <Button type="submit">Create</Button>
+                    </DialogFooter>
+                </form>
             </DialogContent>
         </Dialog>
-    )
-}
+    );
+};
+
+export default CreateCategoryDialog;

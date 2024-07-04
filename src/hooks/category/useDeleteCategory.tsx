@@ -2,10 +2,10 @@ import {useMutation, useQueryClient} from '@tanstack/react-query';
 import APIClient from '../../services/api-client';
 import {CategoryResponse} from "@/hooks/category/useCategory";
 import {handleError} from '@/utils/utils';
-import {endpoints} from "@/constants/constants";
+import {EndPoints} from "@/constants/constants";
 import useInventoryStore from "@/store/useInventoryStore";
 
-const apiClient = new APIClient<null, CategoryResponse>(endpoints.CATEGORY);
+const apiClient = new APIClient<null, CategoryResponse>(EndPoints.CATEGORY);
 
 const deleteCategoryFn = (id: number | null) => {
     return apiClient.delete(id);

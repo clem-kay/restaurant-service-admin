@@ -1,24 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {File, ListFilter, MoreHorizontal, PlusCircle} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import {Label} from "@/components/ui/label";
-import {Input} from "@/components/ui/input";
-import {Textarea} from "@/components/ui/textarea";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {toast} from "react-hot-toast";
-import useAddCategory from "@/hooks/category/useAddCategory.tsx";
+import useAddCategory, {CategoryData} from "@/hooks/category/useAddCategory.tsx";
 import useDeleteCategory from "@/hooks/category/useDeleteCategory.tsx";
 import UseCategory from "@/hooks/category/useCategory.tsx";
 import useInventoryStore from "@/store/useInventoryStore.tsx";
@@ -33,14 +19,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
-
-// Define the schema using zod
-const createCategorySchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    description: z.string().min(1, "Description is required")
-});
-
-type CreateCategorySchema = z.infer<typeof createCategorySchema>;
+import CreateCategoryDialog from "@/components/Dashboard/category/CreateCategory";
+import DeleteCategoryDialog from "@/components/Dashboard/category/DeleteCategoryDialog"; // Import the custom dialog component
 
 export default function TableBodyContainer() {
     const {data: categoryData} = UseCategory();
@@ -48,10 +28,9 @@ export default function TableBodyContainer() {
     const {mutate: addCategory} = useAddCategory();
     const {mutate: deleteCategory} = useDeleteCategory();
     const setCategories = useInventoryStore((state) => state.setCategories);
+    const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const {register, handleSubmit, formState: {errors}} = useForm<CreateCategorySchema>({
-        resolver: zodResolver(createCategorySchema)
-    });
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
     useEffect(() => {
         if (categoryData) {
@@ -59,7 +38,7 @@ export default function TableBodyContainer() {
         }
     }, [categoryData, setCategories]);
 
-    const onSubmit = (data: CreateCategorySchema) => {
+    const handleAddCategory = (data: CategoryData) => {
         setIsDialogOpen(false);
         addCategory(data, {
             onSuccess: () => {
@@ -72,14 +51,25 @@ export default function TableBodyContainer() {
     };
 
     const handleDelete = (id: number | null) => {
-        deleteCategory(id, {
-            onSuccess: () => {
-                toast.success("Category deleted successfully");
-            },
-            onError: () => {
-                toast.error("Failed to delete category");
-            }
-        });
+        setSelectedCategory(id);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const confirmDelete = () => {
+        if (selectedCategory !== null) {
+            deleteCategory(selectedCategory, {
+                onSuccess: () => {
+                    toast.success("Category deleted successfully");
+                    setIsDeleteDialogOpen(false);
+                    setSelectedCategory(null);
+                },
+                onError: () => {
+                    toast.error("Failed to delete category");
+                    setIsDeleteDialogOpen(false);
+                    setSelectedCategory(null);
+                }
+            });
+        }
     };
 
     return (
@@ -114,9 +104,12 @@ export default function TableBodyContainer() {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem>Add Menu</DropdownMenuItem>
-                                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleDelete(id)}>Delete</DropdownMenuItem>
+                                            <DropdownMenuItem className='focus:bg-accent'>Add Menu</DropdownMenuItem>
+                                            <DropdownMenuItem className='focus:bg-accent'>Edit</DropdownMenuItem>
+                                            <DropdownMenuItem className='hover:bg-destructive'
+                                                              onClick={() => handleDelete(id)}>
+                                                Delete
+                                            </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>
@@ -131,41 +124,22 @@ export default function TableBodyContainer() {
                 {/*</div>*/}
             </CardFooter>
 
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="sm:max-w-[450px]">
-                    <DialogHeader>
-                        <DialogTitle>Add Category</DialogTitle>
-                        <DialogDescription>
-                            Add a new category to organize your menu.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <div className="grid gap-4 py-4">
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="name" className="text-right">name</Label>
-                                <Input id="name" placeholder="Category" className="col-span-3" {...register("name")} />
-                                {errors.name &&
-                                    <p className="col-span-4 text-xs text-destructive">{errors.name.message}</p>}
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="description" className="text-right">description</Label>
-                                <Textarea id="description" className="col-span-3"
-                                          placeholder="Category description" {...register("description")} />
-                                {errors.description &&
-                                    <p className="col-span-4 text-xs text-destructive">{errors.description.message}</p>}
-                            </div>
-                        </div>
-                        <DialogFooter>
-                            <Button type="submit">Create</Button>
-                        </DialogFooter>
-                    </form>
-                </DialogContent>
-            </Dialog>
+            <CreateCategoryDialog
+                isOpen={isDialogOpen}
+                onOpenChange={() => setIsDialogOpen(false)}
+                onSubmit={handleAddCategory}
+            />
+
+            <DeleteCategoryDialog
+                isOpen={isDeleteDialogOpen}
+                onClose={() => setIsDeleteDialogOpen(false)}
+                onConfirm={confirmDelete}
+            />
         </Card>
     );
 }
 
-const TableHeaderButtons = ({setIsDialogOpen}: { setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
+const TableHeaderButtons = ({setIsDialogOpen}: { setIsDialogOpen: (isOpen: boolean) => void }) => {
     return (
         <div className="flex justify-end gap-2 p-4">
             <DropdownMenu>

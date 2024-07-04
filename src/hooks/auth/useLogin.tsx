@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 import {handleError} from '@/utils/utils.ts';
-import {endpoints} from "@/constants/constants.ts";
+import {EndPoints} from "@/constants/constants.ts";
 
 interface LoginData {
     username: string;
@@ -20,7 +20,7 @@ export interface LoginResponse {
     username: string;
 }
 
-const apiClient = new APIClient<LoginData, LoginResponse>(endpoints.LOGIN);
+const apiClient = new APIClient<LoginData, LoginResponse>(EndPoints.LOGIN);
 
 const loginReqFn = (loginData: LoginData) => {
     return apiClient.post(loginData);
@@ -36,7 +36,7 @@ const useLogin = () => {
 
     useEffect(() => {
         if (isLoggedIn) {
-            navigate('/admin');
+            navigate('/admin/dashboard');
         } else {
             navigate('/auth/login');
         }

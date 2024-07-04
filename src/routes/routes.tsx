@@ -11,7 +11,7 @@ const router = createBrowserRouter([
         path: '/',
         element: <ProtectedRoute element={<App/>}/>,
         children: [
-            {path: 'admin', element: <ProtectedRoute element={<AdminPage/>}/>},
+            {path: 'admin/dashboard', element: <ProtectedRoute element={<AdminPage/>}/>},
         ],
     },
 ]);

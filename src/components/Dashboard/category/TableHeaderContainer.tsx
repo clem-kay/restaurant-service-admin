@@ -7,8 +7,6 @@ export const TableHeaderContainer = () => {
             <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="hidden md:table-cell">Price</TableHead>
-                <TableHead className="hidden md:table-cell">Total sales</TableHead>
                 <TableHead className="hidden md:table-cell">Menu count</TableHead>
                 <TableHead className="hidden md:table-cell">Created At</TableHead>
                 <TableHead>
