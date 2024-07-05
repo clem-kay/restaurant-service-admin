@@ -4,6 +4,7 @@ import {CategoryResponse} from "@/hooks/category/useCategory";
 import {handleError} from '@/utils/utils';
 import {EndPoints} from "@/constants/constants";
 import useInventoryStore from "@/store/useInventoryStore";
+import toast from "react-hot-toast";
 
 const apiClient = new APIClient<null, CategoryResponse>(EndPoints.CATEGORY);
 
@@ -18,6 +19,9 @@ const useDeleteCategory = () => {
 
     return useMutation({
         mutationFn: deleteCategoryFn,
+        onSuccess: () => {
+            toast.success("Category deleted successfully");
+        },
         onMutate: async (deletedCategoryId: number | null) => {
             await queryClient.cancelQueries({queryKey: ['categories']});
 

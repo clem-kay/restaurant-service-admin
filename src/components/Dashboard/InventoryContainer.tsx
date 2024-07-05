@@ -75,7 +75,7 @@ const InventoryContainer = () => {
 
                         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                             <DialogTrigger asChild>
-                                <Button className="mt-4">Add Category</Button>
+                                <Button className="mt-4"  >Add Category</Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[450px]">
                                 <DialogHeader>

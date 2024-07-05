@@ -47,7 +47,8 @@ const CreateCategoryDialog: React.FC<CreateCategoryDialogProps> = ({isOpen, onOp
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="name" className="text-right">Name</Label>
-                            <Input id="name" placeholder="Category" className="col-span-3 bg-input" {...register("name")} />
+                            <Input id="name" placeholder="Category"
+                                   className="col-span-3 bg-input" {...register("name")} />
                             {errors.name &&
                                 <p className="col-span-4 text-xs text-destructive">{errors.name.message}</p>}
                         </div>
