@@ -20,7 +20,7 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
 import CreateMenuDialog, {CreateMenuFormData} from "@/components/Dashboard/category/CreateMenuDialog"; // Import the create menu dialog component
-import DeleteCategoryDialog from "@/components/Dashboard/category/DeleteCategoryDialog";
+import CustomDialog from "@/components/Dashboard/category/CustomDialog.tsx";
 import CreateCategoryDialog from "@/components/Dashboard/category/CreateCategoryDialog.tsx";
 import {MenuData} from "@/hooks/menu/useAddMenu.tsx"; // Import the custom delete category dialog component
 
@@ -95,7 +95,7 @@ export default function TableBodyContainer() {
                 <Table>
                     <TableHeaderContainer/>
                     <TableBody>
-                        {categories?.map(({id, name, menuCount ,createdAt, updatedAt}) => (
+                        {categories?.map(({id, name, menuCount, createdAt, updatedAt}) => (
                             <TableRow key={id}>
                                 <TableCell className="font-medium">{name}</TableCell>
                                 <TableCell><Badge variant="outline">Draft</Badge></TableCell>
@@ -140,10 +140,13 @@ export default function TableBodyContainer() {
                 onSubmit={handleAddCategory}
             />
 
-            <DeleteCategoryDialog
+            <CustomDialog
                 isOpen={isDeleteDialogOpen}
                 onClose={() => setIsDeleteDialogOpen(false)}
                 onConfirm={confirmDelete}
+                title={'Are you absolutely sure?'}
+                message={'This action cannot be undone. This will permanently delete your category and remove its data from our servers.'}
+                triggerBtnLabel='Delete'
             />
 
             <CreateMenuDialog

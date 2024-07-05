@@ -1,6 +1,6 @@
-import {create} from 'zustand';
-import {CategoryResponse} from "@/hooks/category/useCategory.tsx";
-import {MenuResponse} from "@/hooks/menu/useMenu.tsx";
+import { create } from 'zustand';
+import { CategoryResponse } from "@/hooks/category/useCategory.tsx";
+import { MenuResponse } from "@/hooks/menu/useMenu.tsx";
 
 interface User {
     userId: number | null;
@@ -23,26 +23,41 @@ interface AuthStore {
     clearAuth: () => void;
 }
 
-
 const useAuthStore = create<AuthStore>((set) => ({
-    token: '',
-    refresh_token: '',
-    isLoggedIn: false,
-    user: {userId: null, username: ''},
+    token: localStorage.getItem('token') || '',
+    refresh_token: localStorage.getItem('refresh_token') || '',
+    isLoggedIn: !!localStorage.getItem('token'),
+    user: JSON.parse(localStorage.getItem('user') || '{"userId": null, "username": ""}'),
     categories: [],
     menu: [],
-    setToken: (token: string) => set((store) => ({...store, token})),
-    setRefreshToken: (refresh_token: string) => set((store) => ({...store, refresh_token})),
-    setUser: (user: User) => set((store) => ({...store, user})),
-    setCategories: (category: CategoryResponse[]) => set((store) => ({...store, category})),
-    setMenu: (menu: MenuResponse[]) => set((store) => ({...store, menu})),
-    setIsLoggedIn: (isLoggedIn: boolean) => set((store) => ({...store, isLoggedIn})),
-    clearAuth: () => set(() => ({
-        token: '',
-        refresh_token: '',
-        isLoggedIn: false,
-        user: {userId: null, username: ''},
-    })),
+    setToken: (token: string) => {
+        localStorage.setItem('token', token);
+        set((store) => ({ ...store, token }));
+    },
+    setRefreshToken: (refresh_token: string) => {
+        localStorage.setItem('refresh_token', refresh_token);
+        set((store) => ({ ...store, refresh_token }));
+    },
+    setUser: (user: User) => {
+        localStorage.setItem('user', JSON.stringify(user));
+        set((store) => ({ ...store, user }));
+    },
+    setCategories: (categories: CategoryResponse[]) => set((store) => ({ ...store, categories })),
+    setMenu: (menu: MenuResponse[]) => set((store) => ({ ...store, menu })),
+    setIsLoggedIn: (isLoggedIn: boolean) => set((store) => ({ ...store, isLoggedIn })),
+    clearAuth: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
+        set(() => ({
+            token: '',
+            refresh_token: '',
+            isLoggedIn: false,
+            user: { userId: null, username: '' },
+            categories: [],
+            menu: [],
+        }));
+    },
 }));
 
 export default useAuthStore;
