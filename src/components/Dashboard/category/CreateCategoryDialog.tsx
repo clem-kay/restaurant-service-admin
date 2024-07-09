@@ -70,3 +70,4 @@ const CreateCategoryDialog: React.FC<CreateCategoryDialogProps> = ({isOpen, onOp
 };
 
 export default CreateCategoryDialog;
+

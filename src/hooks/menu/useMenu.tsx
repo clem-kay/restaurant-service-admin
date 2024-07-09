@@ -5,10 +5,13 @@ export interface MenuResponse {
     id: number;
     name: string;
     price: number,
+    menuCount: number;
     imageUrl?: string | null,
     description?: string;
     userAccountId: number,
     categoryId: number,
+    createdAt: string;
+    updatedAt: string;
 }
 
 const apiClient = new APIClient<MenuResponse[], null>('foodmenu');

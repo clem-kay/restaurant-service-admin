@@ -7,7 +7,7 @@ export interface CategoryResponse {
     id: number | null;
     name: string;
     description: string;
-    menuCount: string;
+    menuCount: number;
     createdAt?: string;
     updatedAt?: string;
 }

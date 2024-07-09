@@ -43,7 +43,7 @@ const InventoryContainer = () => {
         if (categoryData) {
             setCategories(categoryData);
         }
-    }, [categoryData]);
+    }, [categoryData, setCategories]);
 
     const onSubmit = (data: CreateCategorySchema) => {
         setIsDialogOpen(false);
