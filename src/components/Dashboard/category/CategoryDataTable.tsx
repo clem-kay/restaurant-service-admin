@@ -40,7 +40,6 @@ export default function TableBodyContainer() {
     const { data: categoryData } = UseCategory();
     const categories = useInventoryStore((state) => state.categories);
     const { data: menuData } = UseMenu();
-    console.log(menuData)
     const userAccountId = useAuthStore(s => s.user.userId);
     const setMenu = useInventoryStore(s => s.setMenu);
     const menu = useInventoryStore(s => s.menu);
@@ -67,6 +66,14 @@ export default function TableBodyContainer() {
             setMenu(menuData);
         }
     }, [menuData, setMenu, menu]);
+
+
+    useEffect(() => {
+
+        if (selectedCategory !== null) {
+            setMenu(menu)
+        }
+    }, [selectedCategory, setMenu, menu]);
 
     useEffect(() => {
         if (selectedCategory !== null) {
@@ -133,11 +140,14 @@ export default function TableBodyContainer() {
                     addMenu({ ...menuData, imageUrl: uploadedImageUrl.url }, {
                         onSuccess: (newMenu) => {
                             toast.success("Menu created successfully");
-                            setMenu([...menu, newMenu]);
+                            const updatedMenu = [...menu, newMenu];
+                            setMenu(updatedMenu);
                             setCategories(categories.map(category =>
                                 category.id === selectedCategory ? { ...category, menuCount: category.menuCount + 1 } : category
                             ));
                             setIsCreateMenuDialogOpen(false); // Close the dialog
+                            // Update the selected menu list
+                            setSelectedMenu(updatedMenu.filter(menu => menu.categoryId === selectedCategory));
                         },
                         onError: (e) => {
                             handleError(e);
@@ -152,11 +162,14 @@ export default function TableBodyContainer() {
             addMenu(menuData, {
                 onSuccess: (newMenu) => {
                     toast.success("Menu created successfully");
-                    setMenu([...menu, newMenu]);
+                    const updatedMenu = [...menu, newMenu];
+                    setMenu(updatedMenu);
                     setCategories(categories.map(category =>
                         category.id === selectedCategory ? { ...category, menuCount: category.menuCount + 1 } : category
                     ));
                     setIsCreateMenuDialogOpen(false); // Close the dialog
+                    // Update the selected menu list
+                    setSelectedMenu(updatedMenu.filter(menu => menu.categoryId === selectedCategory));
                 },
                 onError: (e) => {
                     handleError(e);
@@ -185,10 +198,10 @@ export default function TableBodyContainer() {
                     <TableHeaderContainer />
                     <TableBody>
                         {categories?.map(({ id, name, menuCount, createdAt, updatedAt }) => (
-                            <TableRow key={id} onClick={() => handleRowClick(id)}>
+                            <TableRow key={id} onClick={() => handleRowClick(id)} className='cursor-pointer'>
                                 <TableCell className="font-medium">{name}</TableCell>
                                 <TableCell><Badge variant="outline">Draft</Badge></TableCell>
-                                <TableCell className="hidden md:table-cell">{menuCount}</TableCell>
+                                <TableCell className="hidden md:table-cell">{menuCount || 0}</TableCell>
                                 <TableCell className="hidden md:table-cell">{updatedAt ? updatedAt : createdAt}</TableCell>
                                 <TableCell onClick={(e) => e.stopPropagation()}>
                                     <DropdownMenu>
@@ -203,7 +216,6 @@ export default function TableBodyContainer() {
                                             <DropdownMenuItem className='focus:bg-accent'
                                                               onClick={() => {
                                                                   setSelectedCategory(id)
-                                                                  console.log(id)
                                                                   setIsCreateMenuDialogOpen(true)
 
                                                               }}>Add
@@ -222,7 +234,8 @@ export default function TableBodyContainer() {
 
             <CreateCategoryDialog
                 isOpen={isDialogOpen}
-                onOpenChange={() => setIsDialogOpen(false)}
+                onOpenChange={() =>
+                    setIsDialogOpen(false)}
                 onSubmit={handleAddCategory}
             />
 
@@ -244,7 +257,7 @@ export default function TableBodyContainer() {
             <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                 <DrawerContent>
                     <DrawerHeader>
-                        <DrawerTitle>Menu for Category {( categories && categories?.find(c => c.id  === selectedCategory)?.name )}</DrawerTitle>
+                        <DrawerTitle>Menu for Category {(categories && categories?.find(c => c.id === selectedCategory)?.name)}</DrawerTitle>
                         <DrawerDescription>Details of the selected category's menu items.</DrawerDescription>
                     </DrawerHeader>
                     <div className="flex flex-col overflow-auto max-h-[65vh] p-4 pb-0">
@@ -256,6 +269,7 @@ export default function TableBodyContainer() {
                                         <TableHead>Name</TableHead>
                                         <TableHead>Price</TableHead>
                                         <TableHead>Description</TableHead>
+                                        <TableHead>Created At</TableHead>
                                         <TableHead className="hidden md:table-cell">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -274,6 +288,7 @@ export default function TableBodyContainer() {
                                             <TableCell className="font-medium">{menu.name}</TableCell>
                                             <TableCell>{menu.price}</TableCell>
                                             <TableCell>{menu.description}</TableCell>
+                                            <TableCell>{menu.createdAt}</TableCell>
                                             <TableCell className="hidden md:table-cell">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
@@ -284,8 +299,8 @@ export default function TableBodyContainer() {
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                                                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                                                        <DropdownMenuItem className='hover:bg-accent' >Edit</DropdownMenuItem>
+                                                        <DropdownMenuItem  className='hover:bg-destructive/90 '>Delete</DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </TableCell>
@@ -306,9 +321,8 @@ export default function TableBodyContainer() {
     );
 }
 
-const TableHeaderButtons = ({ setIsDialogOpen, setIsCreateMenuDialogOpen }: {
-    setIsDialogOpen: (isOpen: boolean) => void,
-    setIsCreateMenuDialogOpen: (isOpen: boolean) => void
+const TableHeaderButtons = ({ setIsDialogOpen  }: {
+    setIsDialogOpen: (isOpen: boolean) => void
 }) => {
     return (
         <div className="flex justify-end gap-2 p-4">

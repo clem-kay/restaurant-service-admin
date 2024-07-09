@@ -9,6 +9,7 @@ export const TableHeaderContainer = () => {
                 <TableHead>Status</TableHead>
                 <TableHead className="hidden md:table-cell">Menu count</TableHead>
                 <TableHead className="hidden md:table-cell">Created At</TableHead>
+                <TableHead className="hidden md:table-cell">Actions</TableHead>
                 <TableHead>
                     <span className="sr-only">Actions</span>
                 </TableHead>
