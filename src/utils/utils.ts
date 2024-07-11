@@ -1,4 +1,5 @@
 import axios, {AxiosError} from "axios";
+import {format} from 'date-fns';
 import toast from "react-hot-toast";
 
 export const handleError = (error: AxiosError | Error) => {
@@ -14,3 +15,7 @@ export const handleError = (error: AxiosError | Error) => {
         toast.error('An unexpected error occurred');
     }
 }
+
+export const formatDate = (dateString: string | Date) => {
+    return format(new Date(dateString), 'MMMM dd, yyyy HH:mm:ss');
+};

@@ -1,4 +1,3 @@
-import {format} from 'date-fns';
 import {useEffect, useState} from 'react';
 import {File, ListFilter, MoreHorizontal, PlusCircle} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
@@ -33,7 +32,7 @@ import {
 } from "@/components/ui/drawer";
 import useAddMenuImage, {ImageResponse} from "@/hooks/menu/useAddMenuImage.tsx";
 import useAuthStore from "@/store/useAuthStore.ts";
-import {handleError} from "@/utils/utils.ts";
+import {formatDate, handleError} from "@/utils/utils.ts";
 import UseMenu, {MenuResponse} from "@/hooks/menu/useMenu.tsx";
 import UseCategory from "@/hooks/category/useCategory.tsx";
 
@@ -211,7 +210,7 @@ export default function TableBodyContainer() {
                                 <TableCell><Badge variant="outline">Draft</Badge></TableCell>
                                 <TableCell className="hidden md:table-cell">{menuCount || 0}</TableCell>
                                 <TableCell
-                                    className="hidden md:table-cell">{updatedAt ? format(new Date(updatedAt), 'MMMM dd, yyyy HH:mm:ss') : format(new Date(createdAt as string), 'MMMM dd, yyyy HH:mm:ss')}</TableCell>
+                                    className="hidden md:table-cell">{updatedAt ? formatDate(updatedAt) : formatDate(createdAt as string)}</TableCell>
                                 <TableCell onClick={(e) => e.stopPropagation()}>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -305,7 +304,7 @@ export default function TableBodyContainer() {
                                             <TableCell className="font-medium">{menu.name}</TableCell>
                                             <TableCell>{menu.price}</TableCell>
                                             <TableCell>{menu.description}</TableCell>
-                                            <TableCell>{format(new Date(menu.createdAt), 'MMMM dd, yyyy HH:mm:ss')}</TableCell>
+                                            <TableCell>{formatDate(menu.createdAt)}</TableCell>
                                             <TableCell className="hidden md:table-cell">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
