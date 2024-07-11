@@ -1,3 +1,4 @@
+import {format} from 'date-fns';
 import {useEffect, useState} from 'react';
 import {File, ListFilter, MoreHorizontal, PlusCircle} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
@@ -193,7 +194,7 @@ export default function TableBodyContainer() {
     return (
         <Card>
             <TableHeaderButtons setIsDialogOpen={setIsDialogOpen}
-                                />
+            />
             <CardHeader>
                 <CardTitle>Categories</CardTitle>
                 <CardDescription>
@@ -210,7 +211,7 @@ export default function TableBodyContainer() {
                                 <TableCell><Badge variant="outline">Draft</Badge></TableCell>
                                 <TableCell className="hidden md:table-cell">{menuCount || 0}</TableCell>
                                 <TableCell
-                                    className="hidden md:table-cell">{updatedAt ? updatedAt : createdAt}</TableCell>
+                                    className="hidden md:table-cell">{updatedAt ? format(new Date(updatedAt), 'MMMM dd, yyyy HH:mm:ss') : format(new Date(createdAt as string), 'MMMM dd, yyyy HH:mm:ss')}</TableCell>
                                 <TableCell onClick={(e) => e.stopPropagation()}>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -304,7 +305,7 @@ export default function TableBodyContainer() {
                                             <TableCell className="font-medium">{menu.name}</TableCell>
                                             <TableCell>{menu.price}</TableCell>
                                             <TableCell>{menu.description}</TableCell>
-                                            <TableCell>{menu.createdAt}</TableCell>
+                                            <TableCell>{format(new Date(menu.createdAt), 'MMMM dd, yyyy HH:mm:ss')}</TableCell>
                                             <TableCell className="hidden md:table-cell">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
