@@ -6,9 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "react-hot-toast";
 import useAddCategory, { CategoryData } from "@/hooks/category/useAddCategory.tsx";
 import useDeleteCategory from "@/hooks/category/useDeleteCategory.tsx";
-import UseCategory from "@/hooks/category/useCategory.tsx";
 import useInventoryStore from "@/store/useInventoryStore.tsx";
-import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader } from "@/components/ui/table.tsx";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx";
 import { TableHeaderContainer } from "@/components/Dashboard/category/TableHeaderContainer.tsx";
 import {
     DropdownMenu,
@@ -34,7 +33,8 @@ import {
 import useAddMenuImage, { ImageResponse } from "@/hooks/menu/useAddMenuImage.tsx";
 import useAuthStore from "@/store/useAuthStore.ts";
 import { handleError } from "@/utils/utils.ts";
-import UseMenu, { MenuResponse } from "@/hooks/menu/useMenu.tsx";
+import UseMenu, {MenuResponse} from "@/hooks/menu/useMenu.tsx";
+import UseCategory from "@/hooks/category/useCategory.tsx";
 
 export default function TableBodyContainer() {
     const { data: categoryData } = UseCategory();
@@ -67,9 +67,7 @@ export default function TableBodyContainer() {
         }
     }, [menuData, setMenu, menu]);
 
-
     useEffect(() => {
-
         if (selectedCategory !== null) {
             setMenu(menu)
         }
@@ -143,7 +141,10 @@ export default function TableBodyContainer() {
                             const updatedMenu = [...menu, newMenu];
                             setMenu(updatedMenu);
                             setCategories(categories.map(category =>
-                                category.id === selectedCategory ? { ...category, menuCount: category.menuCount + 1 } : category
+                                category.id === selectedCategory ? {
+                                    ...category,
+                                    menuCount: category.menuCount + 1
+                                } : category
                             ));
                             setIsCreateMenuDialogOpen(false); // Close the dialog
                             // Update the selected menu list
@@ -183,6 +184,12 @@ export default function TableBodyContainer() {
         setIsDrawerOpen(true);
     };
 
+    const handleDrawerClose = () => {
+        setIsDrawerOpen(false);
+        setSelectedCategory(null);
+        setSelectedMenu([]);
+    };
+
     return (
         <Card>
             <TableHeaderButtons setIsDialogOpen={setIsDialogOpen}
@@ -202,7 +209,8 @@ export default function TableBodyContainer() {
                                 <TableCell className="font-medium">{name}</TableCell>
                                 <TableCell><Badge variant="outline">Draft</Badge></TableCell>
                                 <TableCell className="hidden md:table-cell">{menuCount || 0}</TableCell>
-                                <TableCell className="hidden md:table-cell">{updatedAt ? updatedAt : createdAt}</TableCell>
+                                <TableCell
+                                    className="hidden md:table-cell">{updatedAt ? updatedAt : createdAt}</TableCell>
                                 <TableCell onClick={(e) => e.stopPropagation()}>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -214,12 +222,15 @@ export default function TableBodyContainer() {
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                             <DropdownMenuItem className='focus:bg-accent'
+                                                              onClick={() => handleRowClick(id)}
+                                            >
+                                                View menu</DropdownMenuItem>
+                                            <DropdownMenuItem className='focus:bg-accent'
                                                               onClick={() => {
                                                                   setSelectedCategory(id)
                                                                   setIsCreateMenuDialogOpen(true)
-
                                                               }}>Add
-                                                Menu</DropdownMenuItem>
+                                                menu</DropdownMenuItem>
                                             <DropdownMenuItem className='focus:bg-accent'>Edit</DropdownMenuItem>
                                             <DropdownMenuItem className='hover:bg-destructive'
                                                               onClick={() => handleDelete(id)}>Delete</DropdownMenuItem>
@@ -256,9 +267,15 @@ export default function TableBodyContainer() {
 
             <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                 <DrawerContent>
-                    <DrawerHeader>
-                        <DrawerTitle>Menu for Category {(categories && categories?.find(c => c.id === selectedCategory)?.name)}</DrawerTitle>
-                        <DrawerDescription>Details of the selected category's menu items.</DrawerDescription>
+                    <DrawerHeader className='flex flex-row justify-between'>
+                        <div>
+                            <DrawerTitle>Menu for
+                                Category {(categories && categories?.find(c => c.id === selectedCategory)?.name)}</DrawerTitle>
+                            <DrawerDescription>Details of the selected category's menu items.</DrawerDescription>
+                        </div>
+                        <div className='pr-[6rem]'>
+                            <Button onClick={handleDrawerClose}>Close</Button>
+                        </div>
                     </DrawerHeader>
                     <div className="flex flex-col overflow-auto max-h-[65vh] p-4 pb-0">
                         {selectedMenu && selectedMenu.length > 0 ? (
@@ -299,8 +316,8 @@ export default function TableBodyContainer() {
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                        <DropdownMenuItem className='hover:bg-accent' >Edit</DropdownMenuItem>
-                                                        <DropdownMenuItem  className='hover:bg-destructive/90 '>Delete</DropdownMenuItem>
+                                                        <DropdownMenuItem className='hover:bg-accent'>Edit</DropdownMenuItem>
+                                                        <DropdownMenuItem className='hover:bg-destructive/90'>Delete</DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </TableCell>
@@ -312,17 +329,16 @@ export default function TableBodyContainer() {
                             <p>No menu items found for this category.</p>
                         )}
                     </div>
-                    <DrawerFooter>
-                        <Button onClick={() => setIsDrawerOpen(false)}>Close</Button>
-                    </DrawerFooter>
+                    <DrawerFooter></DrawerFooter>
                 </DrawerContent>
             </Drawer>
         </Card>
     );
 }
 
-const TableHeaderButtons = ({ setIsDialogOpen  }: {
-    setIsDialogOpen: (isOpen: boolean) => void
+const TableHeaderButtons = ({ setIsDialogOpen, setIsCreateMenuDialogOpen }: {
+    setIsDialogOpen: (isOpen: boolean) => void,
+    setIsCreateMenuDialogOpen: (isOpen: boolean) => void
 }) => {
     return (
         <div className="flex justify-end gap-2 p-4">
