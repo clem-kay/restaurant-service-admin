@@ -54,6 +54,7 @@ export default function TableBodyContainer() {
     const [isCreateMenuDialogOpen, setIsCreateMenuDialogOpen] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [selectedMenu, setSelectedMenu] = useState<MenuResponse[]>([]);
+    console.log(selectedMenu)
 
     useEffect(() => {
         if (categoryData) {
