@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
-import { File, ListFilter, MoreHorizontal, PlusCircle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "react-hot-toast";
-import useAddCategory, { CategoryData } from "@/hooks/category/useAddCategory.tsx";
+import {useEffect, useState} from 'react';
+import {File, ListFilter, MoreHorizontal, PlusCircle} from "lucide-react";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {toast} from "react-hot-toast";
+import useAddCategory, {CategoryData} from "@/hooks/category/useAddCategory.tsx";
 import useDeleteCategory from "@/hooks/category/useDeleteCategory.tsx";
 import useInventoryStore from "@/store/useInventoryStore.tsx";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx";
-import { TableHeaderContainer } from "@/components/Dashboard/category/TableHeaderContainer.tsx";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
+import {TableHeaderContainer} from "@/components/Dashboard/category/TableHeaderContainer.tsx";
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -18,10 +18,10 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
-import CreateMenuDialog, { CreateMenuFormData } from "@/components/Dashboard/category/CreateMenuDialog";
+import CreateMenuDialog, {CreateMenuFormData} from "@/components/Dashboard/category/CreateMenuDialog";
 import CustomDialog from "@/components/Dashboard/category/CustomDialog.tsx";
 import CreateCategoryDialog from "@/components/Dashboard/category/CreateCategoryDialog.tsx";
-import useAddMenu, { MenuData } from "@/hooks/menu/useAddMenu.tsx";
+import useAddMenu, {MenuData} from "@/hooks/menu/useAddMenu.tsx";
 import {
     Drawer,
     DrawerContent,
@@ -30,23 +30,23 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from "@/components/ui/drawer";
-import useAddMenuImage, { ImageResponse } from "@/hooks/menu/useAddMenuImage.tsx";
+import useAddMenuImage, {ImageResponse} from "@/hooks/menu/useAddMenuImage.tsx";
 import useAuthStore from "@/store/useAuthStore.ts";
-import { handleError } from "@/utils/utils.ts";
+import {handleError} from "@/utils/utils.ts";
 import UseMenu, {MenuResponse} from "@/hooks/menu/useMenu.tsx";
 import UseCategory from "@/hooks/category/useCategory.tsx";
 
 export default function TableBodyContainer() {
-    const { data: categoryData } = UseCategory();
+    const {data: categoryData} = UseCategory();
     const categories = useInventoryStore((state) => state.categories);
-    const { data: menuData } = UseMenu();
+    const {data: menuData} = UseMenu();
     const userAccountId = useAuthStore(s => s.user.userId);
     const setMenu = useInventoryStore(s => s.setMenu);
     const menu = useInventoryStore(s => s.menu);
-    const { mutate: addCategory } = useAddCategory();
-    const { mutate: deleteCategory } = useDeleteCategory();
-    const { mutate: addMenuUrl } = useAddMenuImage();
-    const { mutate: addMenu } = useAddMenu();
+    const {mutate: addCategory} = useAddCategory();
+    const {mutate: deleteCategory} = useDeleteCategory();
+    const {mutate: addMenuUrl} = useAddMenuImage();
+    const {mutate: addMenu} = useAddMenu();
     const setCategories = useInventoryStore((state) => state.setCategories);
     const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -115,7 +115,7 @@ export default function TableBodyContainer() {
     };
 
     const handleCreateMenu = (data: CreateMenuFormData) => {
-        const { name, price, imageUrl, description } = data;
+        const {name, price, imageUrl, description} = data;
         const menuData: MenuData = {
             name,
             price,
@@ -135,7 +135,7 @@ export default function TableBodyContainer() {
 
             addMenuUrl(formData, {
                 onSuccess: (uploadedImageUrl: ImageResponse) => {
-                    addMenu({ ...menuData, imageUrl: uploadedImageUrl.url }, {
+                    addMenu({...menuData, imageUrl: uploadedImageUrl.url}, {
                         onSuccess: (newMenu) => {
                             toast.success("Menu created successfully");
                             const updatedMenu = [...menu, newMenu];
@@ -166,7 +166,7 @@ export default function TableBodyContainer() {
                     const updatedMenu = [...menu, newMenu];
                     setMenu(updatedMenu);
                     setCategories(categories.map(category =>
-                        category.id === selectedCategory ? { ...category, menuCount: category.menuCount + 1 } : category
+                        category.id === selectedCategory ? {...category, menuCount: category.menuCount + 1} : category
                     ));
                     setIsCreateMenuDialogOpen(false); // Close the dialog
                     // Update the selected menu list
@@ -193,7 +193,7 @@ export default function TableBodyContainer() {
     return (
         <Card>
             <TableHeaderButtons setIsDialogOpen={setIsDialogOpen}
-                                setIsCreateMenuDialogOpen={setIsCreateMenuDialogOpen} />
+                                />
             <CardHeader>
                 <CardTitle>Categories</CardTitle>
                 <CardDescription>
@@ -202,9 +202,9 @@ export default function TableBodyContainer() {
             </CardHeader>
             <CardContent>
                 <Table>
-                    <TableHeaderContainer />
+                    <TableHeaderContainer/>
                     <TableBody>
-                        {categories?.map(({ id, name, menuCount, createdAt, updatedAt }) => (
+                        {categories?.map(({id, name, menuCount, createdAt, updatedAt}) => (
                             <TableRow key={id} onClick={() => handleRowClick(id)} className='cursor-pointer'>
                                 <TableCell className="font-medium">{name}</TableCell>
                                 <TableCell><Badge variant="outline">Draft</Badge></TableCell>
@@ -215,14 +215,13 @@ export default function TableBodyContainer() {
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                <MoreHorizontal className="h-4 w-4" />
+                                                <MoreHorizontal className="h-4 w-4"/>
                                                 <span className="sr-only">Toggle menu</span>
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                             <DropdownMenuItem className='focus:bg-accent'
-                                                              onClick={() => handleRowClick(id)}
                                             >
                                                 View menu</DropdownMenuItem>
                                             <DropdownMenuItem className='focus:bg-accent'
@@ -310,14 +309,16 @@ export default function TableBodyContainer() {
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
                                                         <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                            <MoreHorizontal className="h-4 w-4" />
+                                                            <MoreHorizontal className="h-4 w-4"/>
                                                             <span className="sr-only">Toggle menu</span>
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                        <DropdownMenuItem className='hover:bg-accent'>Edit</DropdownMenuItem>
-                                                        <DropdownMenuItem className='hover:bg-destructive/90'>Delete</DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            className='hover:bg-accent'>Edit</DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            className='hover:bg-destructive/90'>Delete</DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </TableCell>
@@ -336,33 +337,32 @@ export default function TableBodyContainer() {
     );
 }
 
-const TableHeaderButtons = ({ setIsDialogOpen, setIsCreateMenuDialogOpen }: {
+const TableHeaderButtons = ({setIsDialogOpen,}: {
     setIsDialogOpen: (isOpen: boolean) => void,
-    setIsCreateMenuDialogOpen: (isOpen: boolean) => void
 }) => {
     return (
         <div className="flex justify-end gap-2 p-4">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="h-8 gap-1">
-                        <ListFilter className="h-3.5 w-3.5" />
+                        <ListFilter className="h-3.5 w-3.5"/>
                         <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Filter</span>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
+                    <DropdownMenuSeparator/>
                     <DropdownMenuCheckboxItem checked>name</DropdownMenuCheckboxItem>
                     <DropdownMenuCheckboxItem>latest</DropdownMenuCheckboxItem>
                     <DropdownMenuCheckboxItem>oldest</DropdownMenuCheckboxItem>
                 </DropdownMenuContent>
             </DropdownMenu>
             <Button variant="outline" size="sm" className="h-8 gap-1">
-                <File className="h-3.5 w-3.5" />
+                <File className="h-3.5 w-3.5"/>
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Export</span>
             </Button>
             <Button size="sm" className="h-8 gap-1" onClick={() => setIsDialogOpen(true)}>
-                <PlusCircle className="h-3.5 w-3.5" />
+                <PlusCircle className="h-3.5 w-3.5"/>
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Add Category</span>
             </Button>
         </div>
