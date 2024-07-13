@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { CategoryResponse } from "@/hooks/category/useCategory.tsx";
-import { MenuResponse } from "@/hooks/menu/useMenu.tsx";
+import {create} from 'zustand';
+import {CategoryResponse} from "@/hooks/category/useCategory.ts";
+import {MenuResponse} from "@/hooks/menu/useMenu.ts";
 
 interface InventoryStore {
     categories: CategoryResponse[];
@@ -13,8 +13,8 @@ interface InventoryStore {
 const useInventoryStore = create<InventoryStore>((set) => ({
     categories: [],
     menu: [],
-    setCategories: (categories: CategoryResponse[]) => set((store) => ({ ...store, categories })),
-    setMenu: (menu: MenuResponse[]) => set((store) => ({ ...store, menu })),
+    setCategories: (categories: CategoryResponse[]) => set((store) => ({...store, categories})),
+    setMenu: (menu: MenuResponse[]) => set((store) => ({...store, menu})),
     clearInventory: () => set(() => ({
         categories: [],
         menu: [],

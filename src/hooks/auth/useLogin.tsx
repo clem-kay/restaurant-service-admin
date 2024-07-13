@@ -2,7 +2,7 @@ import {useMutation} from '@tanstack/react-query';
 import APIClient from '../../services/api-client.ts';
 import useAuthStore from "@/store/useAuthStore.ts";
 import toast from "react-hot-toast";
-import {useLocation, useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 import {handleError} from '@/utils/utils.ts';
 import {EndPoints} from "@/constants/constants.ts";
@@ -27,8 +27,6 @@ const loginReqFn = (loginData: LoginData) => {
 };
 
 const useLogin = () => {
-    const path = useLocation().pathname.replace('/' ,'')
-    console.log(path);
     const navigate = useNavigate();
     const setUser = useAuthStore((store) => store.setUser);
     const setToken = useAuthStore((store) => store.setToken);
@@ -44,7 +42,7 @@ const useLogin = () => {
         }
     }, [isLoggedIn, navigate]);
 
-    useEffect(()=> {
+    useEffect(() => {
 
 
     }, [])

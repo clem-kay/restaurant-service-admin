@@ -16,8 +16,8 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {toast} from "react-hot-toast";
-import useAddCategory from "@/hooks/category/useAddCategory.tsx";
-import useCategory from "@/hooks/category/useCategory.tsx";
+import useAddCategory from "@/hooks/category/useAddCategory.ts";
+import useCategory from "@/hooks/category/useCategory.ts";
 import useInventoryStore from "@/store/useInventoryStore.tsx";
 import CategoryDataTable from './category/CategoryDataTable';
 
@@ -60,7 +60,7 @@ const InventoryContainer = () => {
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
             <div className="flex items-center">
-                <h1 className="text-lg font-semibold md:text-2xl">Inventory</h1>
+                <h1 className="text-lg font-semibold md:text-3xl">Inventory</h1>
             </div>
             <div
                 className={`flex flex-1 items-center justify-center rounded-lg ${categories && categories.length > 0 ? '' : 'border border-dashed shadow-sm'}`}

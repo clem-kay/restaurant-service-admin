@@ -6,6 +6,7 @@ export interface MenuResponse {
     name: string;
     price: number,
     menuCount: number;
+    quantity: number;
     imageUrl?: string | null,
     description?: string;
     userAccountId: number,

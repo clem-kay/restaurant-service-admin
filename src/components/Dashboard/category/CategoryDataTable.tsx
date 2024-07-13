@@ -1,40 +1,33 @@
-import {useEffect, useState} from 'react';
-import {File, ListFilter, MoreHorizontal, PlusCircle} from "lucide-react";
+import {ReactNode, useCallback, useEffect, useState} from 'react';
+import {MoreHorizontal} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {toast} from "react-hot-toast";
-import useAddCategory, {CategoryData} from "@/hooks/category/useAddCategory.tsx";
-import useDeleteCategory from "@/hooks/category/useDeleteCategory.tsx";
-import useInventoryStore from "@/store/useInventoryStore.tsx";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
-import {TableHeaderContainer} from "@/components/Dashboard/category/TableHeaderContainer.tsx";
+import useAddCategory, {CategoryData} from "@/hooks/category/useAddCategory.ts";
+import useDeleteCategory from "@/hooks/category/useDeleteCategory.ts";
+import useInventoryStore from "@/store/useInventoryStore";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {TableHeaderContainer} from "@/components/Dashboard/category/TableHeaderContainer";
 import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu.tsx";
+} from "@/components/ui/dropdown-menu";
 import CreateMenuDialog, {CreateMenuFormData} from "@/components/Dashboard/category/CreateMenuDialog";
-import CustomDialog from "@/components/Dashboard/category/CustomDialog.tsx";
-import CreateCategoryDialog from "@/components/Dashboard/category/CreateCategoryDialog.tsx";
-import useAddMenu, {MenuData} from "@/hooks/menu/useAddMenu.tsx";
-import {
-    Drawer,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-} from "@/components/ui/drawer";
-import useAddMenuImage, {ImageResponse} from "@/hooks/menu/useAddMenuImage.tsx";
-import useAuthStore from "@/store/useAuthStore.ts";
-import {formatDate, handleError} from "@/utils/utils.ts";
-import UseMenu, {MenuResponse} from "@/hooks/menu/useMenu.tsx";
-import UseCategory from "@/hooks/category/useCategory.tsx";
+import CustomDialog from "@/components/Dashboard/category/CustomDialog";
+import CreateOrEditCategoryDialog from "@/components/Dashboard/category/CreateOrEditCategoryDialog.tsx";
+import useAddMenu, {MenuData} from "@/hooks/menu/useAddMenu.ts";
+import useAddMenuImage, {ImageResponse} from "@/hooks/menu/useAddMenuImage.ts";
+import useAuthStore from "@/store/useAuthStore";
+import {formatDate, handleError} from "@/utils/utils";
+import UseMenu, {MenuResponse} from "@/hooks/menu/useMenu.ts";
+import UseCategory from "@/hooks/category/useCategory.ts";
+import CustomDrawer from '@/components/Dashboard/CustomDrawer';
+import useDeleteMenu from '@/hooks/menu/useDeleteMenu.ts';
+import TableHeaderButtons from "@/components/Dashboard/TableHeaderButtons.tsx";
 
 export default function TableBodyContainer() {
     const {data: categoryData} = UseCategory();
@@ -42,11 +35,12 @@ export default function TableBodyContainer() {
     const {data: menuData} = UseMenu();
     const userAccountId = useAuthStore(s => s.user.userId);
     const setMenu = useInventoryStore(s => s.setMenu);
-    const menu = useInventoryStore(s => s.menu);
+    const menu = useInventoryStore((state) => state.menu);
     const {mutate: addCategory} = useAddCategory();
     const {mutate: deleteCategory} = useDeleteCategory();
     const {mutate: addMenuUrl} = useAddMenuImage();
     const {mutate: addMenu} = useAddMenu();
+    const {mutate: deleteMenu} = useDeleteMenu();
     const setCategories = useInventoryStore((state) => state.setCategories);
     const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -54,7 +48,8 @@ export default function TableBodyContainer() {
     const [isCreateMenuDialogOpen, setIsCreateMenuDialogOpen] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [selectedMenu, setSelectedMenu] = useState<MenuResponse[]>([]);
-    console.log(selectedMenu)
+    const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null);
+    const [isDeleteMenuDialogOpen, setIsDeleteMenuDialogOpen] = useState(false);
 
     useEffect(() => {
         if (categoryData) {
@@ -66,13 +61,7 @@ export default function TableBodyContainer() {
         if (menuData) {
             setMenu(menuData);
         }
-    }, [menuData, setMenu, menu]);
-
-    useEffect(() => {
-        if (selectedCategory !== null) {
-            setMenu(menu)
-        }
-    }, [selectedCategory, setMenu, menu]);
+    }, [menuData, setMenu]);
 
     useEffect(() => {
         if (selectedCategory !== null) {
@@ -81,7 +70,7 @@ export default function TableBodyContainer() {
         }
     }, [selectedCategory, menu]);
 
-    const handleAddCategory = (data: CategoryData) => {
+    const handleAddCategory = useCallback((data: CategoryData) => {
         setIsDialogOpen(false);
         addCategory(data, {
             onSuccess: () => {
@@ -91,14 +80,14 @@ export default function TableBodyContainer() {
                 toast.error("Failed to create category");
             }
         });
-    };
+    }, [addCategory]);
 
-    const handleDelete = (id: number | null) => {
+    const handleDelete = useCallback((id: number | null) => {
         setSelectedCategory(id);
         setIsDeleteDialogOpen(true);
-    };
+    }, []);
 
-    const confirmDelete = () => {
+    const confirmDelete = useCallback(() => {
         if (selectedCategory !== null) {
             deleteCategory(selectedCategory, {
                 onSuccess: () => {
@@ -113,14 +102,49 @@ export default function TableBodyContainer() {
                 }
             });
         }
-    };
+    }, [selectedCategory, deleteCategory]);
 
-    const handleCreateMenu = (data: CreateMenuFormData) => {
-        const {name, price, imageUrl, description} = data;
+    const handleDeleteMenu = useCallback((id: number | null) => {
+        setSelectedMenuId(id);
+        setIsDeleteMenuDialogOpen(true);
+    }, []);
+
+    const confirmDeleteMenu = useCallback(() => {
+        setIsDeleteMenuDialogOpen(false); // Close the dialog immediately
+
+        if (selectedMenuId !== null) {
+            deleteMenu(selectedMenuId, {
+                onSuccess: () => {
+                    toast.success("Menu deleted successfully");
+                    setSelectedMenuId(null);
+
+                    // Update the selected menu list
+                    const updatedMenu = selectedMenu.filter(menu => menu.id !== selectedMenuId);
+                    setSelectedMenu(updatedMenu);
+
+                    // Update the menu count in the categories
+                    setCategories(categories.map(category =>
+                        category.id === selectedCategory ? {
+                            ...category,
+                            menuCount: category.menuCount - 1
+                        } : category
+                    ));
+                },
+                onError: () => {
+                    toast.error("Failed to delete menu");
+                    setSelectedMenuId(null);
+                }
+            });
+        }
+    }, [selectedMenuId, deleteMenu, selectedMenu, categories, selectedCategory, setCategories]);
+
+    const handleCreateMenu = useCallback((data: CreateMenuFormData) => {
+        const {name, price, imageUrl, description, quantity} = data;
         const menuData: MenuData = {
             name,
             price,
             description,
+            quantity,
             userAccountId,
             categoryId: selectedCategory // Ensure selectedCategory is used
         };
@@ -128,11 +152,6 @@ export default function TableBodyContainer() {
         if (imageUrl && imageUrl[0]) {
             const formData = new FormData();
             formData.append('file', imageUrl[0]); // Assuming imageUrl is a FileList
-
-            // Debugging log to check FormData contents
-            for (const [key, value] of formData.entries()) {
-                console.log(`${key}: ${value}`);
-            }
 
             addMenuUrl(formData, {
                 onSuccess: (uploadedImageUrl: ImageResponse) => {
@@ -178,23 +197,99 @@ export default function TableBodyContainer() {
                 }
             });
         }
-    };
+    }, [addMenu, addMenuUrl, categories, menu, selectedCategory, setCategories, setMenu, userAccountId]);
 
-    const handleRowClick = (id: number | null) => {
+    const handleRowClick = useCallback((id: number | null) => {
         setSelectedCategory(id);
         setIsDrawerOpen(true);
-    };
+    }, []);
 
-    const handleDrawerClose = () => {
+    const handleDrawerClose = useCallback(() => {
         setIsDrawerOpen(false);
         setSelectedCategory(null);
         setSelectedMenu([]);
-    };
+    }, []);
+
+    const renderDrawerContent = (): ReactNode => (
+        <>
+            <div className='flex flex-row justify-between p-5 text-foreground'>
+                <div>
+                    <h2 className='text-2xl font-semibold'>Menu for
+                        Category {(categories && categories?.find(c => c.id === selectedCategory)?.name)}</h2>
+                    <p className='text-sm text-muted-foreground  '>Details of the selected category's menu items.</p>
+                </div>
+                <div className='pr-[6rem]'>
+                    <Button onClick={handleDrawerClose}>Close</Button>
+                </div>
+            </div>
+            <div className='h-[1px] w-full bg-input'></div>
+            <div className="flex flex-col overflow-auto max-h-[65vh] p-4 pb-0 text-foreground">
+                {selectedMenu && selectedMenu.length > 0 ? (
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="hidden w-[100px] sm:table-cell">Image</TableHead>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Price</TableHead>
+                                <TableHead>Description</TableHead>
+                                <TableHead>Quantity</TableHead>
+                                <TableHead>Created At</TableHead>
+                                <TableHead className="hidden md:table-cell">Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody className='font-karla'>
+                            {selectedMenu.map((menu) => (
+                                <TableRow key={menu.id}>
+                                    <TableCell className="hidden sm:table-cell">
+                                        <img
+                                            alt="Menu image"
+                                            className="aspect-square rounded-md object-cover"
+                                            height="64"
+                                            src={menu.imageUrl as string}
+                                            width="64"
+                                        />
+                                    </TableCell>
+                                    <TableCell className="font-medium">{menu.name}</TableCell>
+                                    <TableCell>{menu.price}</TableCell>
+                                    <TableCell>{menu.description}</TableCell>
+                                    <TableCell>{menu.quantity}</TableCell>
+                                    <TableCell>{formatDate(menu.createdAt)}</TableCell>
+                                    <TableCell className="hidden md:table-cell">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button aria-haspopup="true" size="icon" variant="ghost">
+                                                    <MoreHorizontal className="h-4 w-4"/>
+                                                    <span className="sr-only">Toggle menu</span>
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className='z-[10000000]'>
+                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                <DropdownMenuItem className='hover:bg-accent'>Edit</DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    className='hover:bg-destructive/90'
+                                                    onClick={() => handleDeleteMenu(menu.id)}
+                                                >
+                                                    Delete
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                ) : (
+                    <div className='flex flex-col justify-center items-center '>
+                        <p className='py-8 opacity-60'>No menu items found for this category.</p>
+                    </div>
+                )}
+            </div>
+        </>
+    );
 
     return (
-        <Card>
-            <TableHeaderButtons setIsDialogOpen={setIsDialogOpen}
-            />
+        <Card className='w-full'>
+            <TableHeaderButtons setIsDialogOpen={setIsDialogOpen}/>
             <CardHeader>
                 <CardTitle>Categories</CardTitle>
                 <CardDescription>
@@ -210,8 +305,9 @@ export default function TableBodyContainer() {
                                 <TableCell className="font-medium">{name}</TableCell>
                                 <TableCell><Badge variant="outline">Draft</Badge></TableCell>
                                 <TableCell className="hidden md:table-cell">{menuCount || 0}</TableCell>
-                                <TableCell
-                                    className="hidden md:table-cell">{updatedAt ? formatDate(updatedAt) : formatDate(createdAt as string)}</TableCell>
+                                <TableCell className="hidden md:table-cell">
+                                    {updatedAt ? formatDate(updatedAt) : formatDate(createdAt as string)}
+                                </TableCell>
                                 <TableCell onClick={(e) => e.stopPropagation()}>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -222,15 +318,20 @@ export default function TableBodyContainer() {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem className='focus:bg-accent'
+                                            <DropdownMenuItem
+                                                className='focus:bg-accent'
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setIsDrawerOpen(true);
+                                                }}
                                             >
-                                                View menu</DropdownMenuItem>
-                                            <DropdownMenuItem className='focus:bg-accent'
-                                                              onClick={() => {
-                                                                  setSelectedCategory(id)
-                                                                  setIsCreateMenuDialogOpen(true)
-                                                              }}>Add
-                                                menu</DropdownMenuItem>
+                                                View menu
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className='focus:bg-accent' onClick={() => {
+                                                setSelectedCategory(id);
+                                                setIsCreateMenuDialogOpen(true);
+                                            }}>Add menu
+                                            </DropdownMenuItem>
                                             <DropdownMenuItem className='focus:bg-accent'>Edit</DropdownMenuItem>
                                             <DropdownMenuItem className='hover:bg-destructive'
                                                               onClick={() => handleDelete(id)}>Delete</DropdownMenuItem>
@@ -243,12 +344,13 @@ export default function TableBodyContainer() {
                 </Table>
             </CardContent>
 
-            <CreateCategoryDialog
+            <CreateOrEditCategoryDialog
                 isOpen={isDialogOpen}
-                onOpenChange={() =>
-                    setIsDialogOpen(false)}
+                onOpenChange={() => setIsDialogOpen(false)}
                 onSubmit={handleAddCategory}
+                BtnLabel='Create'
             />
+
 
             <CustomDialog
                 isOpen={isDeleteDialogOpen}
@@ -259,113 +361,29 @@ export default function TableBodyContainer() {
                 triggerBtnLabel='Delete'
             />
 
+            <CustomDialog
+                isOpen={isDeleteMenuDialogOpen}
+                onClose={() => setIsDeleteMenuDialogOpen(false)}
+                onConfirm={confirmDeleteMenu}
+                title={'Are you absolutely sure?'}
+                message={'This action cannot be undone. This will permanently delete your menu and remove its data from our servers.'}
+                triggerBtnLabel='Delete'
+            />
+
+            <CustomDrawer
+                anchor="bottom"
+                open={isDrawerOpen}
+                onOpenChange={setIsDrawerOpen}
+            >
+                {renderDrawerContent()}
+            </CustomDrawer>
+
             <CreateMenuDialog
                 isOpen={isCreateMenuDialogOpen}
                 onClose={() => setIsCreateMenuDialogOpen(false)}
                 onSubmit={handleCreateMenu}
             />
-
-            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-                <DrawerContent>
-                    <DrawerHeader className='flex flex-row justify-between'>
-                        <div>
-                            <DrawerTitle>Menu for
-                                Category {(categories && categories?.find(c => c.id === selectedCategory)?.name)}</DrawerTitle>
-                            <DrawerDescription>Details of the selected category's menu items.</DrawerDescription>
-                        </div>
-                        <div className='pr-[6rem]'>
-                            <Button onClick={handleDrawerClose}>Close</Button>
-                        </div>
-                    </DrawerHeader>
-                    <div className="flex flex-col overflow-auto max-h-[65vh] p-4 pb-0">
-                        {selectedMenu && selectedMenu.length > 0 ? (
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="hidden w-[100px] sm:table-cell">Image</TableHead>
-                                        <TableHead>Name</TableHead>
-                                        <TableHead>Price</TableHead>
-                                        <TableHead>Description</TableHead>
-                                        <TableHead>Created At</TableHead>
-                                        <TableHead className="hidden md:table-cell">Actions</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {selectedMenu.map((menu) => (
-                                        <TableRow key={menu.id}>
-                                            <TableCell className="hidden sm:table-cell">
-                                                <img
-                                                    alt="Menu image"
-                                                    className="aspect-square rounded-md object-cover"
-                                                    height="64"
-                                                    src={menu.imageUrl as string}
-                                                    width="64"
-                                                />
-                                            </TableCell>
-                                            <TableCell className="font-medium">{menu.name}</TableCell>
-                                            <TableCell>{menu.price}</TableCell>
-                                            <TableCell>{menu.description}</TableCell>
-                                            <TableCell>{formatDate(menu.createdAt)}</TableCell>
-                                            <TableCell className="hidden md:table-cell">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                            <MoreHorizontal className="h-4 w-4"/>
-                                                            <span className="sr-only">Toggle menu</span>
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                        <DropdownMenuItem
-                                                            className='hover:bg-accent'>Edit</DropdownMenuItem>
-                                                        <DropdownMenuItem
-                                                            className='hover:bg-destructive/90'>Delete</DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        ) : (
-                            <p>No menu items found for this category.</p>
-                        )}
-                    </div>
-                    <DrawerFooter></DrawerFooter>
-                </DrawerContent>
-            </Drawer>
         </Card>
     );
 }
 
-const TableHeaderButtons = ({setIsDialogOpen,}: {
-    setIsDialogOpen: (isOpen: boolean) => void,
-}) => {
-    return (
-        <div className="flex justify-end gap-2 p-4">
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-8 gap-1">
-                        <ListFilter className="h-3.5 w-3.5"/>
-                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Filter</span>
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                    <DropdownMenuSeparator/>
-                    <DropdownMenuCheckboxItem checked>name</DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem>latest</DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem>oldest</DropdownMenuCheckboxItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-            <Button variant="outline" size="sm" className="h-8 gap-1">
-                <File className="h-3.5 w-3.5"/>
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Export</span>
-            </Button>
-            <Button size="sm" className="h-8 gap-1" onClick={() => setIsDialogOpen(true)}>
-                <PlusCircle className="h-3.5 w-3.5"/>
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Add Category</span>
-            </Button>
-        </div>
-    );
-}

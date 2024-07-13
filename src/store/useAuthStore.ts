@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { CategoryResponse } from "@/hooks/category/useCategory.tsx";
-import { MenuResponse } from "@/hooks/menu/useMenu.tsx";
+import { CategoryResponse } from "@/hooks/category/useCategory.ts";
+import { MenuResponse } from "@/hooks/menu/useMenu.ts";
 
 interface User {
     userId: number | null;

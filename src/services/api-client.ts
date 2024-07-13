@@ -30,6 +30,12 @@ class APIClient<T, R> {
             .delete<R>(`${this.endpoint}/${id}`, config)
             .then(res => res.data);
     }
+
+    patch = async (id: number | null, data: Partial<T>, config?: AxiosRequestConfig): Promise<R> => {
+        return axiosInstance
+            .patch<R>(`${this.endpoint}/${id}`, data, config)
+            .then(res => res.data);
+    }
 }
 
 export default APIClient;

@@ -7,12 +7,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
-import {Label} from "@/components/ui/label";
-import {Input} from "@/components/ui/input";
-import {Textarea} from "@/components/ui/textarea";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
 // Define the schema using zod
@@ -27,23 +27,29 @@ interface CreateCategoryDialogProps {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
     onSubmit: (data: CreateCategorySchema) => void;
+    BtnLabel: "Create" | "Edit";
 }
 
-const CreateCategoryDialog: React.FC<CreateCategoryDialogProps> = ({isOpen, onOpenChange, onSubmit}) => {
-    const {register, handleSubmit, formState: {errors}} = useForm<CreateCategorySchema>({
+const CreateOrEditCategoryDialog: React.FC<CreateCategoryDialogProps> = ({ isOpen, onOpenChange, onSubmit, BtnLabel }) => {
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateCategorySchema>({
         resolver: zodResolver(createCategorySchema)
     });
+
+    const handleFormSubmit = (data: CreateCategorySchema) => {
+        onSubmit(data);
+        reset();
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[450px]">
                 <DialogHeader>
-                    <DialogTitle>Add Category</DialogTitle>
+                    <DialogTitle>{BtnLabel} Category</DialogTitle>
                     <DialogDescription>
-                        Add a new category to organize your menu.
+                        {BtnLabel} a category to organize your menu.
                     </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(handleFormSubmit)}>
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="name" className="text-right">Name</Label>
@@ -61,7 +67,7 @@ const CreateCategoryDialog: React.FC<CreateCategoryDialogProps> = ({isOpen, onOp
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button type="submit">Create</Button>
+                        <Button type="submit">{BtnLabel}</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>
@@ -69,5 +75,4 @@ const CreateCategoryDialog: React.FC<CreateCategoryDialogProps> = ({isOpen, onOp
     );
 };
 
-export default CreateCategoryDialog;
-
+export default CreateOrEditCategoryDialog;

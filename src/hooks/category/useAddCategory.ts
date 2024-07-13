@@ -1,6 +1,6 @@
 import {useMutation} from '@tanstack/react-query';
 import APIClient from '../../services/api-client.ts';
-import {CategoryResponse} from "@/hooks/category/useCategory.tsx";
+import {CategoryResponse} from "@/hooks/category/useCategory.ts";
 import {EndPoints} from "@/constants/constants.ts";
 import useInventoryStore from "@/store/useInventoryStore.tsx";
 import toast from "react-hot-toast";

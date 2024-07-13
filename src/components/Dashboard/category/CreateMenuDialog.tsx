@@ -1,6 +1,6 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
-import { Button } from "@/components/ui/button";
+import {useForm} from 'react-hook-form';
+import {Button} from "@/components/ui/button";
 
 interface CreateMenuDialogProps {
     isOpen: boolean;
@@ -11,19 +11,21 @@ interface CreateMenuDialogProps {
 export interface CreateMenuFormData {
     name: string;
     price: number;
+    quantity: number;
     imageUrl?: FileList; // Ensure this is File type
     description?: string;
     userAccountId: number;
     categoryId: number;
 }
 
-const CreateMenuDialog: React.FC<CreateMenuDialogProps> = ({ isOpen, onClose, onSubmit }) => {
-    const { register, handleSubmit, formState: { errors } } = useForm<CreateMenuFormData>();
+const CreateMenuDialog: React.FC<CreateMenuDialogProps> = ({isOpen, onClose, onSubmit}) => {
+    const {register, handleSubmit, formState: {errors}, reset} = useForm<CreateMenuFormData>();
 
     if (!isOpen) return null;
 
     const onSubmitForm = (data: CreateMenuFormData) => {
         onSubmit(data);
+        reset();
         onClose();
     };
 
@@ -37,7 +39,7 @@ const CreateMenuDialog: React.FC<CreateMenuDialogProps> = ({ isOpen, onClose, on
                         <label className="block text-sm font-medium mb-1">Name</label>
                         <input
                             type="text"
-                            {...register('name', { required: 'Name is required' })}
+                            {...register('name', {required: 'Name is required'})}
                             className="w-full p-2 border bg-input rounded"
                         />
                         {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
@@ -46,11 +48,23 @@ const CreateMenuDialog: React.FC<CreateMenuDialogProps> = ({ isOpen, onClose, on
                         <label className="block text-sm font-medium mb-1">Price</label>
                         <input
                             type="number"
-                            {...register('price', { required: 'Price is required', valueAsNumber: true })}
+                            {...register('price', {required: 'Price is required', valueAsNumber: true})}
                             className="w-full p-2 border rounded bg-input"
                         />
                         {errors.price && <p className="text-destructive-foreground text-sm">{errors.price.message}</p>}
                     </div>
+
+
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium mb-1">Quantity</label>
+                        <input
+                            type="number"
+                            {...register('quantity', {required: 'Quantity is required', valueAsNumber: true})}
+                            className="w-full p-2 border rounded bg-input"
+                        />
+                        {errors.quantity && <p className="text-destructive-foreground text-sm">{errors.quantity.message}</p>}
+                    </div>
+
                     <div className="mb-4">
                         <label className="block text-sm font-medium mb-1">Image (optional)</label>
                         <input
