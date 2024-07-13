@@ -1,7 +1,7 @@
-import {useMutation} from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import APIClient from '../../services/api-client';
-import {CategoryResponse} from "@/hooks/category/useCategory";
-import {EndPoints} from "@/constants/constants";
+import { CategoryResponse } from "@/hooks/category/useCategory";
+import { EndPoints } from "@/constants/constants";
 import useInventoryStore from "@/store/useInventoryStore";
 import toast from "react-hot-toast";
 
@@ -16,15 +16,12 @@ const editCategoryFn = (id: number | null, categoryData: Partial<CategoryData>) 
     return apiClient.patch(id, categoryData);
 };
 
-const useEditCategory = () => {
+const UseEditCategory = () => {
     const setCategories = useInventoryStore((state) => state.setCategories);
     const categories = useInventoryStore((state) => state.categories);
 
     return useMutation({
-        mutationFn: ({id, categoryData}: {
-            id: number | null;
-            categoryData: Partial<CategoryData>
-        }) => editCategoryFn(id, categoryData),
+        mutationFn: ({ id, categoryData }: { id: number | null; categoryData: Partial<CategoryData> }) => editCategoryFn(id, categoryData),
         mutationKey: ['edit-category'],
         onSuccess: (data: CategoryResponse) => {
             const updatedCategories = categories.map((category) =>
@@ -39,4 +36,4 @@ const useEditCategory = () => {
     });
 };
 
-export default useEditCategory;
+export default UseEditCategory;

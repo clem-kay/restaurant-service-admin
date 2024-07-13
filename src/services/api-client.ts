@@ -31,6 +31,13 @@ class APIClient<T, R> {
             .then(res => res.data);
     }
 
+    put = async (id: number | null, data: Partial<T>, config?: AxiosRequestConfig): Promise<R> => {
+        return axiosInstance
+            .put<R>(`${this.endpoint}/${id}`, data, config)
+            .then(res => res.data);
+    }
+
+
     patch = async (id: number | null, data: Partial<T>, config?: AxiosRequestConfig): Promise<R> => {
         return axiosInstance
             .patch<R>(`${this.endpoint}/${id}`, data, config)

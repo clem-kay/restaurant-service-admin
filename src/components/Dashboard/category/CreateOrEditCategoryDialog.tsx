@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -28,12 +28,26 @@ interface CreateCategoryDialogProps {
     onOpenChange: (isOpen: boolean) => void;
     onSubmit: (data: CreateCategorySchema) => void;
     BtnLabel: "Create" | "Edit";
+    initialData?: Partial<CreateCategorySchema>;
 }
 
-const CreateOrEditCategoryDialog: React.FC<CreateCategoryDialogProps> = ({ isOpen, onOpenChange, onSubmit, BtnLabel }) => {
+const CreateOrEditCategoryDialog: React.FC<CreateCategoryDialogProps> = ({
+                                                                             isOpen,
+                                                                             onOpenChange,
+                                                                             onSubmit,
+                                                                             BtnLabel,
+                                                                             initialData,
+                                                                         }) => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateCategorySchema>({
-        resolver: zodResolver(createCategorySchema)
+        resolver: zodResolver(createCategorySchema),
+        defaultValues: initialData || { name: '', description: '' }
     });
+
+    useEffect(() => {
+        if (initialData) {
+            reset(initialData);
+        }
+    }, [initialData, reset]);
 
     const handleFormSubmit = (data: CreateCategorySchema) => {
         onSubmit(data);
