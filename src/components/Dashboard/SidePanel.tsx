@@ -60,10 +60,10 @@ const SidePanel = () => {
                                 link.label === 'Dashboard' ? 'text-primary' : ''} transition-all ${isActive ? 'text-primary' : 'text-muted-foreground'} hover:text-primary`}
                             >
                                 <Icon className="h-4 w-4"/>
-                                {link.label}
+                                {link.label} {" "}
                                 {link.badge && (
                                     <Badge
-                                        className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                                        className="ml-auto flex h-6 w-6 shrink-0 i transition-all tems-center justify-center rounded-full">
                                         {link.badge}
                                     </Badge>
                                 )}

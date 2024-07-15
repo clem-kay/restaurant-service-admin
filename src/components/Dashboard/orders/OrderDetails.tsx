@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
-import { Copy, CreditCard, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { OrderResponseMany } from "@/hooks/order/useOrders";
-import { formatDate } from "@/utils/utils";
+import {useEffect, useState} from "react";
+import {Copy, X} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {Separator} from "@/components/ui/separator";
+import {OrderResponseMany} from "@/hooks/order/useOrders";
+import {formatDate} from "@/utils/utils";
 import useOrder from "@/hooks/order/useOrder";
 
 interface OrderDetailsProps {
@@ -12,8 +12,8 @@ interface OrderDetailsProps {
     onClose: () => void;
 }
 
-const OrderDetails = ({ selectedOrder, onClose }: OrderDetailsProps) => {
-    const { data: orderItem } = useOrder(selectedOrder?.id);
+const OrderDetails = ({selectedOrder, onClose}: OrderDetailsProps) => {
+    const {data: orderItem} = useOrder(selectedOrder?.id);
     const [subtotal, setSubtotal] = useState(0);
 
     useEffect(() => {
@@ -36,7 +36,7 @@ const OrderDetails = ({ selectedOrder, onClose }: OrderDetailsProps) => {
                             variant="outline"
                             className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
                         >
-                            <Copy className="h-3 w-3" />
+                            <Copy className="h-3 w-3"/>
                             <span className="sr-only">Copy Order ID</span>
                         </Button>
                     </CardTitle>
@@ -48,13 +48,14 @@ const OrderDetails = ({ selectedOrder, onClose }: OrderDetailsProps) => {
                     className="ml-auto h-8 w-8"
                     onClick={onClose}
                 >
-                    <X className="h-4 w-4" />
+                    <X className="h-4 w-4"/>
                     <span className="sr-only">Close</span>
                 </Button>
             </CardHeader>
             <CardContent className="p-6 text-sm">
                 <div className="grid gap-3">
                     <div className="font-semibold">Order Details</div>
+                    {orderItem?.orderItems.length === 0 && (<p>No Food ordered</p>)}
                     {orderItem?.orderItems.map((item) => (
                         <div key={item.id} className="border p-4 rounded mb-4">
                             <div className="flex justify-between">
@@ -71,7 +72,7 @@ const OrderDetails = ({ selectedOrder, onClose }: OrderDetailsProps) => {
                             </div>
                         </div>
                     ))}
-                    <Separator className="my-2" />
+                    <Separator className="my-2"/>
                     <ul className="grid gap-3">
                         <li className="flex items-center justify-between">
                             <span className="text-muted-foreground">Subtotal</span>
@@ -84,12 +85,11 @@ const OrderDetails = ({ selectedOrder, onClose }: OrderDetailsProps) => {
                         <li className="flex items-center justify-between font-semibold">
                             <span className="text-muted-foreground">Total</span>
                             <span>₵{subtotal}</span>
-                            {/*<span>₵{selectedOrder.totalAmount}</span>*/}
                         </li>
                     </ul>
                 </div>
-                <Separator className="my-4" />
-                <div className="grid grid-cols-2 gap-4">
+                <Separator className="my-4"/>
+                <div className="grid grid-cols-2 gap-[12rem]">
                     <div className="grid gap-3">
                         <div className="font-semibold">Order Address</div>
                         <address className="grid gap-0.5 not-italic text-muted-foreground">
@@ -104,7 +104,7 @@ const OrderDetails = ({ selectedOrder, onClose }: OrderDetailsProps) => {
                         </div>
                     </div>
                 </div>
-                <Separator className="my-4" />
+                <Separator className="my-4"/>
                 <div className="grid gap-3">
                     <div className="font-semibold">Customer Information</div>
                     <dl className="grid gap-3">
@@ -126,19 +126,19 @@ const OrderDetails = ({ selectedOrder, onClose }: OrderDetailsProps) => {
                         </div>
                     </dl>
                 </div>
-                <Separator className="my-4" />
-                <div className="grid gap-3">
-                    <div className="font-semibold">Payment Information</div>
-                    <dl className="grid gap-3">
-                        <div className="flex items-center justify-between">
-                            <dt className="flex items-center gap-1 text-muted-foreground">
-                                <CreditCard className="h-4 w-4" />
-                                Visa
-                            </dt>
-                            <dd>**** **** **** 4532</dd>
-                        </div>
-                    </dl>
-                </div>
+                <Separator className="my-4"/>
+                {/*<div className="grid gap-3">*/}
+                {/*    <div className="font-semibold">Payment Information</div>*/}
+                {/*    <dl className="grid gap-3">*/}
+                {/*        <div className="flex items-center justify-between">*/}
+                {/*            <dt className="flex items-center gap-1 text-muted-foreground">*/}
+                {/*                <CreditCard className="h-4 w-4" />*/}
+                {/*                Visa*/}
+                {/*            </dt>*/}
+                {/*            <dd>**** **** **** 4532</dd>*/}
+                {/*        </div>*/}
+                {/*    </dl>*/}
+                {/*</div>*/}
             </CardContent>
             <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
                 <div className="text-xs text-muted-foreground">
