@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
     Dialog,
     DialogContent,
@@ -7,12 +7,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import {Button} from "@/components/ui/button";
+import {Label} from "@/components/ui/label";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
 import * as z from "zod";
 
 // Define the schema using zod
@@ -27,27 +27,17 @@ interface CreateCategoryDialogProps {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
     onSubmit: (data: CreateCategorySchema) => void;
-    BtnLabel: "Create" | "Edit";
-    initialData?: Partial<CreateCategorySchema>;
 }
 
-const CreateOrEditCategoryDialog: React.FC<CreateCategoryDialogProps> = ({
-                                                                             isOpen,
-                                                                             onOpenChange,
-                                                                             onSubmit,
-                                                                             BtnLabel,
-                                                                             initialData,
-                                                                         }) => {
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateCategorySchema>({
+const CreateCategoryDialog: React.FC<CreateCategoryDialogProps> = ({
+                                                                       isOpen,
+                                                                       onOpenChange,
+                                                                       onSubmit,
+                                                                   }) => {
+    const {register, handleSubmit, formState: {errors}, reset} = useForm<CreateCategorySchema>({
         resolver: zodResolver(createCategorySchema),
-        defaultValues: initialData || { name: '', description: '' }
+        defaultValues: {name: '', description: ''}
     });
-
-    useEffect(() => {
-        if (initialData) {
-            reset(initialData);
-        }
-    }, [initialData, reset]);
 
     const handleFormSubmit = (data: CreateCategorySchema) => {
         onSubmit(data);
@@ -58,9 +48,9 @@ const CreateOrEditCategoryDialog: React.FC<CreateCategoryDialogProps> = ({
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[450px]">
                 <DialogHeader>
-                    <DialogTitle>{BtnLabel} Category</DialogTitle>
+                    <DialogTitle>Create Category</DialogTitle>
                     <DialogDescription>
-                        {BtnLabel} a category to organize your menu.
+                        Create a category to organize your menu.
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
@@ -81,7 +71,7 @@ const CreateOrEditCategoryDialog: React.FC<CreateCategoryDialogProps> = ({
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button type="submit">{BtnLabel}</Button>
+                        <Button type="submit">Create</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>
@@ -89,4 +79,4 @@ const CreateOrEditCategoryDialog: React.FC<CreateCategoryDialogProps> = ({
     );
 };
 
-export default CreateOrEditCategoryDialog;
+export default CreateCategoryDialog;

@@ -22,7 +22,7 @@ const CustomDialog: React.FC<DeleteCategoryDialogProps> = ({
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="fixed inset-0 bg-black opacity-60"></div>
-            <div className="bg-background border-[1.5px] p-6 rounded-xl shadow-lg z-50 w-full max-w-md mx-auto">
+            <div className="bg-background p-6 rounded-xl shadow-lg z-50 w-full max-w-md mx-auto border-muted border-[1px]">
                 <h2 className="text-xl font-semibold mb-4">
                     {/*Are you absolutely sure?*/}
                     {title}

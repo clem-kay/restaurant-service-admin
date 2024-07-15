@@ -76,10 +76,15 @@ export default {
                     from: {height: "var(--radix-accordion-content-height)"},
                     to: {height: "0"},
                 },
+                fadeIn: {
+                    '0%': { opacity: 0, transform: 'scale(0.95)' },
+                    '100%': { opacity: 1, transform: 'scale(1)' },
+                }
             },
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
+                fadeIn: 'fadeIn 0.5s ease-in-out 0.5s forwards', // 0.5s delay and 0.5s duration
             },
             boxShadow: {
                 input: `0px 2px 3px -1px rgba(0,0,0,0.1), 0px 1px 0px 0px rgba(25,28,33,0.02), 0px 0px 0px 1px rgba(25,28,33,0.08)`,

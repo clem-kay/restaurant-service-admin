@@ -1,14 +1,14 @@
-import  { ReactNode, useCallback, useEffect, useState } from 'react';
-import { MoreHorizontal } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "react-hot-toast";
-import useAddCategory, { CategoryData } from "@/hooks/category/useAddCategory";
+import {ReactNode, useCallback, useEffect, useState} from 'react';
+import {MoreHorizontal} from "lucide-react";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {toast} from "react-hot-toast";
+import useAddCategory, {CategoryData} from "@/hooks/category/useAddCategory";
 import useDeleteCategory from "@/hooks/category/useDeleteCategory";
 import useInventoryStore from "@/store/useInventoryStore";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TableHeaderContainer } from "@/components/Dashboard/category/TableHeaderContainer";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {TableHeaderContainer} from "@/components/Dashboard/category/TableHeaderContainer";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,43 +16,50 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import CreateMenuDialog, { CreateMenuFormData } from "@/components/Dashboard/category/CreateMenuDialog";
+import CreateMenuDialog, {CreateMenuFormData} from "@/components/Dashboard/category/CreateMenuDialog";
 import CustomDialog from "@/components/Dashboard/category/CustomDialog";
-import CreateOrEditCategoryDialog from "@/components/Dashboard/category/CreateOrEditCategoryDialog";
-import useAddMenu, { MenuData } from "@/hooks/menu/useAddMenu";
-import useAddMenuImage, { ImageResponse } from "@/hooks/menu/useAddMenuImage";
+import CreateCategoryDialog from "@/components/Dashboard/category/CreateCategoryDialog";
+import useAddMenu, {MenuData} from "@/hooks/menu/useAddMenu";
+import useAddMenuImage, {ImageResponse} from "@/hooks/menu/useAddMenuImage";
 import useAuthStore from "@/store/useAuthStore";
-import { formatDate, handleError } from "@/utils/utils";
-import UseMenu, { MenuResponse } from "@/hooks/menu/useMenu";
+import {formatDate, handleError} from "@/utils/utils";
+import UseMenu, {MenuResponse} from "@/hooks/menu/useMenu";
 import UseCategory from "@/hooks/category/useCategory";
-import CustomDrawer from '@/components/Dashboard/CustomDrawer';
 import useDeleteMenu from '@/hooks/menu/useDeleteMenu';
 import TableHeaderButtons from "@/components/Dashboard/TableHeaderButtons";
-import UseEditCategory from "@/hooks/category/useEditCategory.ts";
+import UseEditCategory from "@/hooks/category/useEditCategory";
+import UseEditMenu from "@/hooks/menu/useEditMenu";
+import CustomDrawer from '../Drawer/CustomDrawer';
+import CustomEditMenuDialog from "@/components/Dashboard/category/EditMenuDialog.tsx";
+import CustomEditCategoryDialog from "@/components/Dashboard/category/EditCategoryDialog.tsx";
+
 
 export default function TableBodyContainer() {
-    const { data: categoryData } = UseCategory();
+    const {data: categoryData} = UseCategory();
     const categories = useInventoryStore((state) => state.categories);
-    const { data: menuData } = UseMenu();
+    const {data: menuData} = UseMenu();
     const userAccountId = useAuthStore(s => s.user.userId);
     const setMenu = useInventoryStore(s => s.setMenu);
     const menu = useInventoryStore((state) => state.menu);
-    const { mutate: addCategory } = useAddCategory();
-    const { mutate: deleteCategory } = useDeleteCategory();
-    const { mutate: addMenuUrl } = useAddMenuImage();
-    const { mutate: addMenu } = useAddMenu();
-    const { mutate: deleteMenu } = useDeleteMenu();
-    const { mutate: editCategory } = UseEditCategory();
+    const {mutate: addCategory} = useAddCategory();
+    const {mutate: deleteCategory} = useDeleteCategory();
+    const {mutate: addMenuUrl} = useAddMenuImage();
+    const {mutate: addMenu} = useAddMenu();
+    const {mutate: deleteMenu} = useDeleteMenu();
+    const {mutate: editCategory} = UseEditCategory();
+    const {mutate: editMenu} = UseEditMenu();
     const setCategories = useInventoryStore((state) => state.setCategories);
     const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [isEditMenuDialogOpen, setIsEditMenuDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isCreateMenuDialogOpen, setIsCreateMenuDialogOpen] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [selectedMenu, setSelectedMenu] = useState<MenuResponse[]>([]);
     const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null);
     const [isDeleteMenuDialogOpen, setIsDeleteMenuDialogOpen] = useState(false);
+    const [selectedMenuData, setSelectedMenuData] = useState<Partial<MenuData> | null>(null);
 
     useEffect(() => {
         if (categoryData) {
@@ -86,16 +93,80 @@ export default function TableBodyContainer() {
     }, [addCategory]);
 
     const handleEditCategory = useCallback((data: Partial<CategoryData>) => {
-        setIsEditDialogOpen(false);
-        editCategory({ id: selectedCategory, categoryData: data }, {
-            onSuccess: () => {
-                toast.success("Category updated successfully");
-            },
-            onError: () => {
-                toast.error("Failed to update category");
-            }
-        });
+        if (selectedCategory !== null) {
+            editCategory({id: selectedCategory, categoryData: data}, {
+                onSuccess: () => {
+                    toast.success("Category updated successfully");
+                    setIsEditDialogOpen(false);
+                },
+                onError: () => {
+                    toast.error("Failed to update category");
+                    setIsEditDialogOpen(false);
+                }
+            });
+        }
     }, [editCategory, selectedCategory]);
+
+    const handleEditMenu = useCallback((data: Partial<MenuData>, file?: File) => {
+        if (selectedMenuId !== null) {
+            const menuData = {
+                ...data,
+                userAccountId,
+                categoryId: selectedCategory,
+            };
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                addMenuUrl(formData, {
+                    onSuccess: (uploadedImageUrl: ImageResponse) => {
+                        editMenu({
+                            id: selectedMenuId,
+                            menuData: {...menuData, imageUrl: uploadedImageUrl.url}
+                        }, {
+                            onSuccess: (updatedMenu, previousMenu) => {
+                                toast.success("Menu updated successfully");
+                                const updatedStoreMenu = menu.filter((menu) => menu.id !== previousMenu.id)
+                                setMenu([...updatedStoreMenu, updatedMenu]);
+                                setSelectedMenu(updatedStoreMenu.filter((menu: {
+                                    categoryId: number | null;
+                                }) => menu.categoryId === selectedCategory));
+                                setIsEditMenuDialogOpen(false);
+                            },
+                            onError: () => {
+                                toast.error("Failed to update menu");
+                                setIsEditMenuDialogOpen(false);
+                            }
+                        });
+                    },
+                    onError: () => {
+                        toast.error("Failed to upload new image");
+                        setIsEditMenuDialogOpen(false);
+                    }
+                });
+            } else {
+                editMenu({
+                    id: selectedMenuId,
+                    menuData
+                }, {
+                    onSuccess: (updatedMenu, previousMenu) => {
+                        toast.success("Menu updated successfully");
+                        const updatedStoreMenu = menu.filter((menu) => menu.id !== previousMenu.id)
+                        setMenu([...updatedStoreMenu, updatedMenu]);
+                        setSelectedMenu(updatedStoreMenu.filter((menu: {
+                            categoryId: number | null;
+                        }) => menu.categoryId === selectedCategory));
+                        setIsEditMenuDialogOpen(false);
+                    },
+                    onError: () => {
+                        toast.error("Failed to update menu");
+                        setIsEditMenuDialogOpen(false);
+                    }
+                });
+            }
+        }
+    }, [editMenu, selectedMenuId, userAccountId, selectedCategory, addMenuUrl]);
 
     const handleDelete = useCallback((id: number | null) => {
         setSelectedCategory(id);
@@ -103,11 +174,11 @@ export default function TableBodyContainer() {
     }, []);
 
     const confirmDelete = useCallback(() => {
+        setIsDeleteDialogOpen(false);
         if (selectedCategory !== null) {
             deleteCategory(selectedCategory, {
                 onSuccess: () => {
                     toast.success("Category deleted successfully");
-                    setIsDeleteDialogOpen(false);
                     setSelectedCategory(null);
                 },
                 onError: () => {
@@ -154,7 +225,7 @@ export default function TableBodyContainer() {
     }, [selectedMenuId, deleteMenu, selectedMenu, categories, selectedCategory, setCategories]);
 
     const handleCreateMenu = useCallback((data: CreateMenuFormData) => {
-        const { name, price, imageUrl, description, quantity } = data;
+        const {name, price, imageUrl, description, quantity} = data;
         const menuData: MenuData = {
             name,
             price,
@@ -170,11 +241,10 @@ export default function TableBodyContainer() {
 
             addMenuUrl(formData, {
                 onSuccess: (uploadedImageUrl: ImageResponse) => {
-                    addMenu({ ...menuData, imageUrl: uploadedImageUrl.url }, {
+                    addMenu({...menuData, imageUrl: uploadedImageUrl.url}, {
                         onSuccess: (newMenu) => {
                             toast.success("Menu created successfully");
                             const updatedMenu = [...menu, newMenu];
-                            setMenu(updatedMenu);
                             setCategories(categories.map(category =>
                                 category.id === selectedCategory ? {
                                     ...category,
@@ -201,7 +271,7 @@ export default function TableBodyContainer() {
                     const updatedMenu = [...menu, newMenu];
                     setMenu(updatedMenu);
                     setCategories(categories.map(category =>
-                        category.id === selectedCategory ? { ...category, menuCount: category.menuCount + 1 } : category
+                        category.id === selectedCategory ? {...category, menuCount: category.menuCount + 1} : category
                     ));
                     setIsCreateMenuDialogOpen(false); // Close the dialog
                     // Update the selected menu list
@@ -273,13 +343,23 @@ export default function TableBodyContainer() {
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                    <MoreHorizontal className="h-4 w-4" />
+                                                    <MoreHorizontal className="h-4 w-4"/>
                                                     <span className="sr-only">Toggle menu</span>
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className='z-[10000000]'>
                                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                <DropdownMenuItem className='hover:bg-accent'>Edit</DropdownMenuItem>
+                                                <DropdownMenuItem className='hover:bg-accent' onClick={() => {
+                                                    setSelectedMenuId(menu.id);
+                                                    setSelectedMenuData({
+                                                        name: menu.name,
+                                                        price: menu.price,
+                                                        quantity: menu.quantity,
+                                                        description: menu.description,
+                                                        imageUrl: menu.imageUrl as string | undefined,
+                                                    });
+                                                    setIsEditMenuDialogOpen(true);
+                                                }}>Edit</DropdownMenuItem>
                                                 <DropdownMenuItem
                                                     className='hover:bg-destructive/90'
                                                     onClick={() => handleDeleteMenu(menu.id)}
@@ -304,7 +384,7 @@ export default function TableBodyContainer() {
 
     return (
         <Card className='w-full'>
-            <TableHeaderButtons setIsDialogOpen={setIsDialogOpen} />
+            <TableHeaderButtons setIsDialogOpen={setIsDialogOpen}/>
             <CardHeader>
                 <CardTitle>Categories</CardTitle>
                 <CardDescription>
@@ -313,9 +393,9 @@ export default function TableBodyContainer() {
             </CardHeader>
             <CardContent>
                 <Table>
-                    <TableHeaderContainer />
+                    <TableHeaderContainer/>
                     <TableBody>
-                        {categories?.map(({ id, name, menuCount, createdAt, updatedAt }) => (
+                        {categories?.map(({id, name, menuCount, createdAt, updatedAt}) => (
                             <TableRow key={id} onClick={() => handleRowClick(id)} className='cursor-pointer'>
                                 <TableCell className="font-medium">{name}</TableCell>
                                 <TableCell><Badge variant="outline">Draft</Badge></TableCell>
@@ -327,7 +407,7 @@ export default function TableBodyContainer() {
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                <MoreHorizontal className="h-4 w-4" />
+                                                <MoreHorizontal className="h-4 w-4"/>
                                                 <span className="sr-only">Toggle menu</span>
                                             </Button>
                                         </DropdownMenuTrigger>
@@ -363,23 +443,28 @@ export default function TableBodyContainer() {
                 </Table>
             </CardContent>
 
-            <CreateOrEditCategoryDialog
+            <CreateCategoryDialog
                 isOpen={isDialogOpen}
                 onOpenChange={() => setIsDialogOpen(false)}
                 onSubmit={handleAddCategory}
-                BtnLabel='Create'
             />
 
-            <CreateOrEditCategoryDialog
+            <CustomEditCategoryDialog
                 isOpen={isEditDialogOpen}
-                onOpenChange={() => setIsEditDialogOpen(false)}
+                onClose={() => setIsEditDialogOpen(false)}
                 onSubmit={handleEditCategory}
-                BtnLabel='Edit'
                 initialData={
                     selectedCategory !== null
                         ? categories.find((category) => category.id === selectedCategory)
                         : undefined
                 }
+            />
+
+            <CustomEditMenuDialog
+                isOpen={isEditMenuDialogOpen}
+                onClose={() => setIsEditMenuDialogOpen(false)}
+                onSubmit={handleEditMenu}
+                initialData={selectedMenuData as Partial<MenuData>}
             />
 
             <CustomDialog
@@ -411,7 +496,7 @@ export default function TableBodyContainer() {
             <CreateMenuDialog
                 isOpen={isCreateMenuDialogOpen}
                 onClose={() => setIsCreateMenuDialogOpen(false)}
-                onSubmit={handleCreateMenu} BtnLabel={'Create'}            />
+                onSubmit={handleCreateMenu} BtnLabel={'Create'}/>
         </Card>
     );
 }
