@@ -39,7 +39,7 @@ export interface OrderResponse {
 
 const orderApiClient = new APIClient<OrderResponse, null>(EndPoints.ORDER);
 
-const useOrder = (orderId: number) => {
+const useOrder = (orderId?: number ) => {
     return useQuery<OrderResponse>({
         queryKey: ['order', orderId],
         queryFn: () => orderApiClient.get(orderId),

@@ -1,86 +1,100 @@
-import {Copy, CreditCard, X} from "lucide-react"
-
-import {Button} from "@/components/ui/button"
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from "@/components/ui/card"
-import {Separator} from "@/components/ui/separator"
-import {OrderResponseMany} from "@/hooks/order/useOrders.ts";
-import {formatDate} from "@/utils/utils.ts";
-
+import { useState, useEffect } from "react";
+import { Copy, CreditCard, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { OrderResponseMany } from "@/hooks/order/useOrders";
+import { formatDate } from "@/utils/utils";
+import useOrder from "@/hooks/order/useOrder";
 
 interface OrderDetailsProps {
     selectedOrder: OrderResponseMany | null;
     onClose: () => void;
 }
 
-const OrderDetails = ({selectedOrder, onClose}: OrderDetailsProps) => {
-    if (!selectedOrder)
-        return null
+const OrderDetails = ({ selectedOrder, onClose }: OrderDetailsProps) => {
+    const { data: orderItem } = useOrder(selectedOrder?.id);
+    const [subtotal, setSubtotal] = useState(0);
+
+    useEffect(() => {
+        if (orderItem) {
+            const total = orderItem.orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+            setSubtotal(total);
+        }
+    }, [orderItem]);
+
+    if (!selectedOrder) return null;
+
     return (
         <Card className="overflow-hidden">
             <CardHeader className="flex flex-row items-start bg-muted/50">
                 <div className="grid gap-0.5">
                     <CardTitle className="group flex items-center gap-2 text-lg">
-                        Order {selectedOrder?.id}
+                        Order {selectedOrder.id}
                         <Button
                             size="icon"
                             variant="outline"
                             className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
                         >
-                            <Copy className="h-3 w-3"/>
+                            <Copy className="h-3 w-3" />
                             <span className="sr-only">Copy Order ID</span>
                         </Button>
                     </CardTitle>
-                    <CardDescription>Date: {formatDate(selectedOrder?.createdAt as string)}</CardDescription>
+                    <CardDescription>Date: {formatDate(selectedOrder.createdAt)}</CardDescription>
                 </div>
                 <Button
                     size="icon"
                     variant="outline"
                     className="ml-auto h-8 w-8"
-                    onClick={onClose} // Add onClick handler to close button
+                    onClick={onClose}
                 >
-                    <X className="h-4 w-4"/>
+                    <X className="h-4 w-4" />
                     <span className="sr-only">Close</span>
                 </Button>
             </CardHeader>
             <CardContent className="p-6 text-sm">
                 <div className="grid gap-3">
                     <div className="font-semibold">Order Details</div>
-                    <ul className="grid gap-3">
-                        <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">
-                {selectedOrder.comment || 'Food ordered'} <span>2</span>
-              </span>
-                            <span>${selectedOrder.totalAmount}</span>
-                        </li>
-                    </ul>
-                    <Separator className="my-2"/>
+                    {orderItem?.orderItems.map((item) => (
+                        <div key={item.id} className="border p-4 rounded mb-4">
+                            <div className="flex justify-between">
+                                <p className="text-muted-foreground">Food ordered</p>
+                                <p className="">{item.foodMenu.name}</p>
+                            </div>
+                            <div className="flex justify-between">
+                                <p className="text-muted-foreground">Price</p>
+                                <p>₵{item.price}</p>
+                            </div>
+                            <div className="flex justify-between">
+                                <p className="text-muted-foreground">Quantity</p>
+                                <p>{item.quantity}</p>
+                            </div>
+                        </div>
+                    ))}
+                    <Separator className="my-2" />
                     <ul className="grid gap-3">
                         <li className="flex items-center justify-between">
                             <span className="text-muted-foreground">Subtotal</span>
-                            <span>$299.00</span>
-                        </li>
-                        <li className="flex items-center justify-between">
-                            <span className="text-muted-foreground">Shipping</span>
-                            <span>$5.00</span>
+                            <span>₵{subtotal}</span>
                         </li>
                         <li className="flex items-center justify-between">
                             <span className="text-muted-foreground">Tax</span>
-                            <span>$25.00</span>
+                            <span>₵0.00</span>
                         </li>
                         <li className="flex items-center justify-between font-semibold">
                             <span className="text-muted-foreground">Total</span>
-                            <span>$329.00</span>
+                            <span>₵{subtotal}</span>
+                            {/*<span>₵{selectedOrder.totalAmount}</span>*/}
                         </li>
                     </ul>
                 </div>
-                <Separator className="my-4"/>
+                <Separator className="my-4" />
                 <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-3">
                         <div className="font-semibold">Order Address</div>
                         <address className="grid gap-0.5 not-italic text-muted-foreground">
                             <span>{selectedOrder.name}</span>
                             <span>{selectedOrder.location}</span>
-                            <span></span>
                         </address>
                     </div>
                     <div className="grid auto-rows-max gap-3">
@@ -90,7 +104,7 @@ const OrderDetails = ({selectedOrder, onClose}: OrderDetailsProps) => {
                         </div>
                     </div>
                 </div>
-                <Separator className="my-4"/>
+                <Separator className="my-4" />
                 <div className="grid gap-3">
                     <div className="font-semibold">Customer Information</div>
                     <dl className="grid gap-3">
@@ -112,13 +126,13 @@ const OrderDetails = ({selectedOrder, onClose}: OrderDetailsProps) => {
                         </div>
                     </dl>
                 </div>
-                <Separator className="my-4"/>
+                <Separator className="my-4" />
                 <div className="grid gap-3">
                     <div className="font-semibold">Payment Information</div>
                     <dl className="grid gap-3">
                         <div className="flex items-center justify-between">
                             <dt className="flex items-center gap-1 text-muted-foreground">
-                                <CreditCard className="h-4 w-4"/>
+                                <CreditCard className="h-4 w-4" />
                                 Visa
                             </dt>
                             <dd>**** **** **** 4532</dd>
@@ -132,7 +146,7 @@ const OrderDetails = ({selectedOrder, onClose}: OrderDetailsProps) => {
                 </div>
             </CardFooter>
         </Card>
-    )
+    );
 }
 
 export default OrderDetails;

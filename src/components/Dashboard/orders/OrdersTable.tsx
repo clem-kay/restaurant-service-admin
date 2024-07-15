@@ -44,7 +44,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({orders, onClickRow}) => {
                 {orders && orders.length > 0 ? (
                     <Table>
                         <TableHeader>
-                            <TableRow>
+                            <TableRow  >
                                 <TableHead>Customer</TableHead>
                                 <TableHead className="hidden sm:table-cell">Paid</TableHead>
                                 <TableHead className="hidden sm:table-cell">Status</TableHead>
@@ -54,7 +54,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({orders, onClickRow}) => {
                         </TableHeader>
                         <TableBody>
                             {orders.map((order, index) => (
-                                <TableRow key={index} onClick={() => onClickRow(order)}>
+                                <TableRow className='cursor-pointer' key={index} onClick={() => onClickRow(order)}>
                                     <TableCell>
                                         <div className="font-medium">{order.name}</div>
                                         <div className="hidden text-sm text-muted-foreground md:inline">

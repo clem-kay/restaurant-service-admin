@@ -19,7 +19,7 @@ class APIClient<T, R> {
             .then(res => res.data);
     }
 
-    get = async (id: number, config?: AxiosRequestConfig): Promise<T> => { // Add this method
+    get = async (id?: number, config?: AxiosRequestConfig): Promise<T> => { // Add this method
         return axiosInstance
             .get<T>(`${this.endpoint}/${id}`, config)
             .then(res => res.data);
