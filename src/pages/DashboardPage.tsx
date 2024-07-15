@@ -31,7 +31,6 @@ export function DashboardPage() {
                     <SearchBar/>
                     <AccountAvatar/>
                 </header>
-                {/*<InventoryContainer/>*/}
                 <MainArea/>
             </div>
         </div>

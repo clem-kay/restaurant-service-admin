@@ -5,6 +5,7 @@ import App from "../App.tsx";
 import ProtectedRoute from "@/routes/ProtectedRoute.tsx";
 import InventoryContainer from "@/components/Dashboard/InventoryContainer.tsx";
 import OrderView from "@/components/Dashboard/orders/OrderView.tsx";
+import Overview from "@/components/Dashboard/overview/Overview.tsx";
 
 
 const router = createBrowserRouter([
@@ -15,7 +16,8 @@ const router = createBrowserRouter([
         element: <ProtectedRoute element={<AdminPage/>}/>,
         children: [
             {path: 'categories', element: <InventoryContainer/>},
-            {path: 'orders', element: <OrderView/>}
+            {path: 'orders', element: <OrderView/>},
+            { index: true, element: <Overview/>},
         ]
 
     }

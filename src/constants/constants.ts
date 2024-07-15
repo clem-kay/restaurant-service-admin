@@ -4,6 +4,7 @@ export enum EndPoints {
     LOGIN = 'auth/login',
     UPLOAD = 'upload',
     ORDER = 'orders',
+    DASHBOARD = 'dashboard',
     LOGOUT = 'auth/logout',
     REFRESH = 'auth/refresh'
 }

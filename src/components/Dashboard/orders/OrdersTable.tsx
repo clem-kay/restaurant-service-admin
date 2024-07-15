@@ -1,10 +1,9 @@
 import React from 'react';
-import {Badge} from "@/components/ui/badge";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {formatDate} from "@/utils/utils.ts";
-import {OrderResponseMany} from "@/hooks/order/useOrders.ts";
-// import OrderTableHeaderButtons from "@/components/Dashboard/orders/OrderTableHeaderButtons.tsx";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { formatDate } from "@/utils/utils";
+import { OrderResponseMany } from "@/hooks/order/useOrders";
 
 interface OrdersTableProps {
     orders: OrderResponseMany[];
@@ -31,11 +30,9 @@ const getFoodStatusValue = (status: keyof FoodStatus): 'default' | 'success' | '
     return foodStatus[status];
 }
 
-const OrdersTable: React.FC<OrdersTableProps> = ({orders, onClickRow}) => {
-
+const OrdersTable: React.FC<OrdersTableProps> = ({ orders, onClickRow }) => {
     return (
         <Card className='flex-grow'>
-            {/*<OrderTableHeaderButtons/>*/}
             <CardHeader className="px-7">
                 <CardTitle>Orders</CardTitle>
                 <CardDescription>Check out recent orders. Click on customer records to view order Details</CardDescription>
@@ -44,12 +41,12 @@ const OrdersTable: React.FC<OrdersTableProps> = ({orders, onClickRow}) => {
                 {orders && orders.length > 0 ? (
                     <Table>
                         <TableHeader>
-                            <TableRow  >
+                            <TableRow>
                                 <TableHead>Customer</TableHead>
                                 <TableHead className="hidden sm:table-cell">Paid</TableHead>
                                 <TableHead className="hidden sm:table-cell">Status</TableHead>
                                 <TableHead className="hidden md:table-cell">Date</TableHead>
-                                <TableHead className="text-right">Amount</TableHead>
+                                <TableHead className="text-right">Amount ₵</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -62,19 +59,16 @@ const OrdersTable: React.FC<OrdersTableProps> = ({orders, onClickRow}) => {
                                         </div>
                                     </TableCell>
                                     <TableCell className="hidden sm:table-cell">
-                                        <Badge className="text-xs"
-                                               variant={order.paid ? 'success' : 'outline'}>
+                                        <Badge className="text-xs" variant={order.paid ? 'success' : 'outline'}>
                                             {order.paid ? 'Yes' : 'No'}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="hidden sm:table-cell">
-                                        <Badge className="text-xs"
-                                               variant={getFoodStatusValue(order.food_status as keyof FoodStatus)}>
+                                        <Badge className="text-xs" variant={getFoodStatusValue(order.food_status as keyof FoodStatus)}>
                                             {order.food_status}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell
-                                        className="hidden md:table-cell">{formatDate(order.createdAt)}</TableCell>
+                                    <TableCell className="hidden md:table-cell">{formatDate(order.createdAt)}</TableCell>
                                     <TableCell className="text-right">{order.totalAmount}</TableCell>
                                 </TableRow>
                             ))}

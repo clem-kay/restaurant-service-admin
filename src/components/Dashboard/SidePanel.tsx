@@ -3,20 +3,22 @@ import {NavLink, useLocation} from "react-router-dom";
 import {Bell, Home, LineChart, LucideProps, Package, Package2, ShoppingCart, Users} from "lucide-react";
 import {Button} from "@/components/ui/button.tsx";
 import {Badge} from "@/components/ui/badge.tsx";
+import useOrderStore from "@/store/useOrderStore.tsx";
 
-const links = [
-    {to: "#", icon: Home, label: "Dashboard"},
-    {to: "orders", icon: ShoppingCart, label: "Orders", badge: 6},
-    {to: "categories", icon: Package, label: "Categories"},
-    {to: "#", icon: Users, label: "Customers"},
-    {to: "#", icon: LineChart, label: "Analytics"},
-];
 
 const SidePanel = () => {
     const location = useLocation();
     const [selectedNavLink, setSelectedLink] = useState(location.pathname);
     const [shouldSetDefault, setShouldSetDefault] = useState<boolean>(true)
+    const orders = useOrderStore(s => s.orders);
 
+    const links = [
+        {to: "", icon: Home, label: "Dashboard"},
+        {to: "orders", icon: ShoppingCart, label: "Orders", badge: orders.length || 0},
+        {to: "categories", icon: Package, label: "Categories"},
+        {to: "#", icon: Users, label: "Customers"},
+        {to: "#", icon: LineChart, label: "Analytics"},
+    ];
     const handleNavLinkClick = (link: {
         to: string;
         icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
