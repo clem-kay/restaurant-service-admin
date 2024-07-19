@@ -26,6 +26,7 @@ export default {
                 inconsolata: ['Inconsolata', 'monospace'],
                 karla: ['Karla', 'sans-serif'],
                 quicksand: ['Quicksand', 'sans-serif'],
+                bai: ['Bai Jamjuree', 'sans-serif' ],
             },
             colors: {
                 border: "hsl(var(--border))",

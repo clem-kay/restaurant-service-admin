@@ -19,3 +19,7 @@ export const handleError = (error: AxiosError | Error) => {
 export const formatDate = (dateString: string | Date) => {
     return format(new Date(dateString), 'MMMM dd, yyyy HH:mm:ss');
 };
+
+export const formatCurrency = (amount: number): string => {
+    return amount.toFixed(2);
+};
