@@ -1,13 +1,13 @@
-import React, {useEffect} from 'react';
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import {createPortal} from 'react-dom';
-import {Button} from '@/components/ui/button';
-import {Label} from '@/components/ui/label';
-import {Input} from '@/components/ui/input';
-import {Textarea} from '@/components/ui/textarea';
-import {MenuData} from "@/hooks/menu/useEditMenu.ts";
+import { createPortal } from 'react-dom';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { MenuData } from "@/hooks/menu/useEditMenu.ts";
 
 const editMenuSchema = z.object({
     name: z.string().min(1, "Name is required"),
@@ -24,7 +24,6 @@ interface EditMenuDialogProps {
     onClose: () => void;
     onSubmit: (data: EditMenuSchema, file?: File) => void;
     initialData?: EditMenuSchema | MenuData | Partial<MenuData>;
-
 }
 
 const CustomEditMenuDialog: React.FC<EditMenuDialogProps> = ({
@@ -33,14 +32,22 @@ const CustomEditMenuDialog: React.FC<EditMenuDialogProps> = ({
                                                                  onSubmit,
                                                                  initialData,
                                                              }) => {
-    const {register, handleSubmit, formState: {errors}, reset} = useForm<EditMenuSchema>({
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<EditMenuSchema>({
         resolver: zodResolver(editMenuSchema),
-        defaultValues: initialData || {name: '', price: 0, quantity: 0, description: '', imageUrl: ''},
+        defaultValues: {
+            ...initialData,
+            price: initialData?.price || 0,
+            quantity: initialData?.quantity || 0,
+        },
     });
 
     useEffect(() => {
         if (initialData) {
-            reset(initialData);
+            reset({
+                ...initialData,
+                price: initialData.price || 0,
+                quantity: initialData.quantity || 0,
+            });
         }
     }, [initialData, reset]);
 
@@ -55,8 +62,8 @@ const CustomEditMenuDialog: React.FC<EditMenuDialogProps> = ({
     }
 
     return createPortal(
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50   ">
-            <div className="bg-background rounded-lg shadow-lg p-6 w-full max-w-md  border-muted border-[1px]">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-background rounded-lg shadow-lg p-6 w-full max-w-md border-muted border-[1px]">
                 <div className="mb-4">
                     <h2 className="text-xl font-bold">Edit Menu</h2>
                     <p>Edit the menu details.</p>
@@ -81,7 +88,7 @@ const CustomEditMenuDialog: React.FC<EditMenuDialogProps> = ({
                                     type="number"
                                     placeholder="Price"
                                     className="mt-1"
-                                    {...register("price")}
+                                    {...register("price", { valueAsNumber: true })}
                                 />
                                 {errors.price && <p className="text-sm text-red-600">{errors.price.message}</p>}
                             </div>
@@ -92,7 +99,7 @@ const CustomEditMenuDialog: React.FC<EditMenuDialogProps> = ({
                                     type="number"
                                     placeholder="Quantity"
                                     className="mt-1"
-                                    {...register("quantity")}
+                                    {...register("quantity", { valueAsNumber: true })}
                                 />
                                 {errors.quantity && <p className="text-sm text-red-600">{errors.quantity.message}</p>}
                             </div>

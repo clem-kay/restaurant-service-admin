@@ -2,6 +2,7 @@ import {useMutation} from '@tanstack/react-query';
 import APIClient from '../../services/api-client';
 import {EndPoints} from "@/constants/constants";
 import useOrderStore from "@/store/useOrderStore";
+// import toast from "react-hot-toast";
 
 export interface StatusData {
     status: boolean;
@@ -29,6 +30,7 @@ const useUpdatePaymentStatus = () => {
         }) => updatePaymentStatusFn(orderId, statusData),
         mutationKey: ['update-payment-status'],
         onSuccess: (data, variables) => {
+            // toast.success('payment status updated successfully!')
             updateOrder(variables.orderId, {paid: data.paid});
         }
     });

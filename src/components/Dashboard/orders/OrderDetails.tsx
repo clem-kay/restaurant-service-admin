@@ -20,20 +20,14 @@ const OrderDetails = forwardRef<HTMLDivElement, OrderDetailsProps>(({selectedOrd
     const [subtotal, setSubtotal] = useState(0);
     const componentRef = useRef<HTMLDivElement>(null);
     const setUserAccountId = useOrderStore((state) => state.setUserAccountId);
-    const userAccountId = useOrderStore((state) => state.userAccountId);
 
     useEffect(() => {
         if (orderItem) {
             const total = orderItem.orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
             setSubtotal(total);
-            setUserAccountId(orderItem.orderItems[0]?.foodMenu.userAccountId)
+            setUserAccountId(orderItem.orderItems[0]?.foodMenu.userAccountId);
         }
     }, [orderItem, setUserAccountId]);
-
-    useEffect(() => {
-        if (userAccountId)
-            console.log(userAccountId)
-    });
 
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,
@@ -56,10 +50,12 @@ const OrderDetails = forwardRef<HTMLDivElement, OrderDetailsProps>(({selectedOrd
     return (
         <>
             <div className="ml-auto flex items-center gap-2 bg-muted/50 justify-end rounded-t-lg p-2 print-hide">
-                <Button size="icon" variant="outline" onClick={handlePrint}>
-                    <Printer className="h-4 w-4"/>
-                    <span className="sr-only">Print Receipt</span>
-                </Button>
+                {selectedOrder.paid && (
+                    <Button size="icon" variant="outline" onClick={handlePrint}>
+                        <Printer className="h-4 w-4"/>
+                        <span className="sr-only">Print Receipt</span>
+                    </Button>
+                )}
                 <Button size="icon" variant="outline" className="h-10 w-10" onClick={onClose}>
                     <X className="h-4 w-4"/>
                     <span className="sr-only">Close</span>
@@ -84,7 +80,8 @@ const OrderDetails = forwardRef<HTMLDivElement, OrderDetailsProps>(({selectedOrd
                         <div className="font-semibold">Order Details</div>
                         {orderItem?.orderItems.length === 0 && (
                             <p className='bg-muted/50 p-2 text-destructive/80 font-quicksand rounded-lg'>No Food
-                                ordered</p>)}
+                                ordered</p>
+                        )}
                         {orderItem?.orderItems.map((item) => (
                             <div key={item.id} className="border p-4 rounded mb-4">
                                 <div className="flex justify-between">

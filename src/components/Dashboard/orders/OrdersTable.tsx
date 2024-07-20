@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {Badge} from "@/components/ui/badge";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {OrderResponseMany} from "@/hooks/order/useOrders";
-import {formatDate} from "@/utils/utils";
+import React, { useEffect, useState } from 'react';
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { OrderResponseMany } from "@/hooks/order/useOrders";
+import { formatDate } from "@/utils/utils";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,11 +12,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import {Button} from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import useUpdateOrderStatus from "@/hooks/order/useUpdateOrderStatus";
 import useUpdatePaymentStatus from "@/hooks/order/useUpdatePaymentStatus";
 import useOrderStore from "@/store/useOrderStore.tsx";
-import {CURRENCY} from "@/constants/constants.ts";
+import { CURRENCY } from "@/constants/constants.ts";
 
 interface OrdersTableProps {
     orders: OrderResponseMany[];
@@ -32,7 +32,7 @@ interface FoodStatus {
 }
 
 const foodStatus: FoodStatus = {
-    ACCEPTED: 'default',    
+    ACCEPTED: 'default',
     PENDING: 'outline',
     COOKING: 'orange',
     COMPLETED: 'success',
@@ -43,15 +43,16 @@ const getFoodStatusValue = (status: keyof FoodStatus): 'default' | 'success' | '
     return foodStatus[status];
 };
 
-const OrdersTable: React.FC<OrdersTableProps> = ({orders, onClickRow}) => {
+const OrdersTable: React.FC<OrdersTableProps> = ({ orders, onClickRow }) => {
     const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const userAccountId = useOrderStore(s => s.userAccountId);
+    const updateOrder = useOrderStore(s => s.updateOrder);
 
     const ordersPerPage = 10;
 
-    const {mutate: updateOrderStatus} = useUpdateOrderStatus();
-    const {mutate: updatePaymentStatus} = useUpdatePaymentStatus();
+    const { mutate: updateOrderStatus } = useUpdateOrderStatus();
+    const { mutate: updatePaymentStatus } = useUpdatePaymentStatus();
 
     useEffect(() => {
         if (orders && orders.length > 0) {
@@ -64,14 +65,51 @@ const OrdersTable: React.FC<OrdersTableProps> = ({orders, onClickRow}) => {
     const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
     const currentOrders = orders?.slice(indexOfFirstOrder, indexOfLastOrder);
 
+    const totalPages = Math.ceil(orders.length / ordersPerPage);
+
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+    const handleUpdateOrderStatus = (orderId: number, status: keyof FoodStatus) => {
+        const optimisticUpdate = { food_status: status };
+        updateOrder(orderId, optimisticUpdate);
+
+        updateOrderStatus({
+            orderId,
+            statusData: { status, userId: userAccountId as number }
+        }, {
+            onSuccess: (data) => {
+                updateOrder(orderId, { food_status: data.food_status });
+            },
+            onError: () => {
+                // Rollback in case of error
+                updateOrder(orderId, { food_status: orders.find(order => order.id === orderId)?.food_status });
+            }
+        });
+    };
+
+    const handleUpdatePaymentStatus = (orderId: number, status: boolean) => {
+        const optimisticUpdate = { paid: status };
+        updateOrder(orderId, optimisticUpdate);
+
+        updatePaymentStatus({
+            orderId,
+            statusData: { status, userId: orderId }
+        }, {
+            onSuccess: (data) => {
+                updateOrder(orderId, { paid: data.paid });
+            },
+            onError: () => {
+                // Rollback in case of error
+                updateOrder(orderId, { paid: orders.find(order => order.id === orderId)?.paid });
+            }
+        });
+    };
 
     return (
         <Card className='flex-grow'>
             <CardHeader className="px-7">
                 <CardTitle>Orders</CardTitle>
-                <CardDescription>Check out recent orders. Click on customer records to view order
-                    details</CardDescription>
+                <CardDescription>Check out recent orders. Click on customer records to view order details</CardDescription>
             </CardHeader>
             <CardContent>
                 {orders && orders.length > 0 ? (
@@ -117,16 +155,9 @@ const OrdersTable: React.FC<OrdersTableProps> = ({orders, onClickRow}) => {
                                                     <DropdownMenuLabel>Paid Status</DropdownMenuLabel>
                                                     <DropdownMenuSeparator/>
                                                     <DropdownMenuItem className='hover:bg-accent'
-                                                                      onClick={() => updatePaymentStatus({
-                                                                          orderId: order.id,
-                                                                          statusData: {status: true, userId: order.id}
-                                                                      })}>Yes</DropdownMenuItem>
+                                                                      onClick={() => handleUpdatePaymentStatus(order.id, true)}>Yes</DropdownMenuItem>
                                                     <DropdownMenuItem className='hover:bg-accent'
-                                                                      onClick={() => updatePaymentStatus({
-                                                                              orderId: order.id,
-                                                                              statusData: {status: false, userId: order.id}
-                                                                          }
-                                                                      )}>No</DropdownMenuItem>
+                                                                      onClick={() => handleUpdatePaymentStatus(order.id, false)}>No</DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </TableCell>
@@ -148,13 +179,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({orders, onClickRow}) => {
                                                         <DropdownMenuItem
                                                             key={status}
                                                             className={`hover:bg-accent ${status === 'CANCELLED' ? 'hover:bg-destructive' : ''}`}
-                                                            onClick={() => updateOrderStatus({
-                                                                orderId: order.id,
-                                                                statusData: {
-                                                                    status,
-                                                                    userId: userAccountId as number
-                                                                }
-                                                            })}
+                                                            onClick={() => handleUpdateOrderStatus(order.id, status as keyof FoodStatus)}
                                                         >
                                                             {status}
                                                         </DropdownMenuItem>
@@ -163,29 +188,34 @@ const OrdersTable: React.FC<OrdersTableProps> = ({orders, onClickRow}) => {
                                             </DropdownMenu>
                                         </TableCell>
                                         <TableCell
-                                            className="hidden md:table-cell">{formatDate(order.createdAt)}</TableCell>
+                                            className="hidden md:table-cell">{order.updatedAt ? formatDate(order.updatedAt) : formatDate(order.createdAt)}</TableCell>
                                         <TableCell className="text-right">{order.totalAmount}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
-                        <div className="flex items-center justify-end space-x-2 py-4">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => paginate(currentPage - 1)}
-                                disabled={currentPage === 1}
-                            >
-                                Previous
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => paginate(currentPage + 1)}
-                                disabled={indexOfLastOrder >= orders.length}
-                            >
-                                Next
-                            </Button>
+                        <div className="flex items-center justify-between space-x-2 py-4">
+                            <div>
+                                Page {currentPage} of {totalPages}
+                            </div>
+                            <div className="flex space-x-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => paginate(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                >
+                                    Previous
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => paginate(currentPage + 1)}
+                                    disabled={indexOfLastOrder >= orders.length}
+                                >
+                                    Next
+                                </Button>
+                            </div>
                         </div>
                     </>
                 ) : (

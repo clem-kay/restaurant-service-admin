@@ -14,7 +14,12 @@ const SidePanel = () => {
 
     const links = [
         {to: "", icon: Home, label: "Dashboard"},
-        {to: "orders", icon: ShoppingCart, label: "Orders", badge: orders.filter(o => o.food_status === "PENDING").length || 0},
+        {
+            to: "orders",
+            icon: ShoppingCart,
+            label: "Orders",
+            badge: orders.filter(o => o.food_status === "PENDING").length || 0
+        },
         {to: "categories", icon: Package, label: "Categories"},
         {to: "#", icon: Users, label: "Customers"},
         {to: "#", icon: LineChart, label: "Analytics"},

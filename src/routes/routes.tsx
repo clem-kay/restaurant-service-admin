@@ -17,7 +17,7 @@ const router = createBrowserRouter([
         children: [
             {path: 'categories', element: <InventoryContainer/>},
             {path: 'orders', element: <OrderView/>},
-            { index: true, element: <Overview/>},
+            {index: true, element: <Overview/>},
         ]
 
     }

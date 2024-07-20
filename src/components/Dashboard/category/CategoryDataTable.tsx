@@ -166,7 +166,7 @@ export default function TableBodyContainer() {
                 });
             }
         }
-    }, [editMenu, selectedMenuId, userAccountId, selectedCategory, addMenuUrl]);
+    }, [selectedMenuId, userAccountId, selectedCategory, addMenuUrl, editMenu, menu, setMenu]);
 
     const handleDelete = useCallback((id: number | null) => {
         setSelectedCategory(id);
@@ -338,7 +338,7 @@ export default function TableBodyContainer() {
                                     <TableCell>{menu.price}</TableCell>
                                     <TableCell>{menu.description}</TableCell>
                                     <TableCell>{menu.quantity}</TableCell>
-                                    <TableCell>{formatDate(menu.createdAt)}</TableCell>
+                                    <TableCell>{menu.updatedAt? formatDate(menu.updatedAt): formatDate(menu.createdAt)}</TableCell>
                                     <TableCell className="hidden md:table-cell">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
