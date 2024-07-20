@@ -1,14 +1,14 @@
-import {ReactNode, useCallback, useEffect, useState} from 'react';
-import {MoreHorizontal} from "lucide-react";
-import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {toast} from "react-hot-toast";
-import useAddCategory, {CategoryData} from "@/hooks/category/useAddCategory";
+import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { MoreHorizontal } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "react-hot-toast";
+import useAddCategory, { CategoryData } from "@/hooks/category/useAddCategory";
 import useDeleteCategory from "@/hooks/category/useDeleteCategory";
 import useInventoryStore from "@/store/useInventoryStore";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {TableHeaderContainer} from "@/components/Dashboard/category/TableHeaderContainer";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TableHeaderContainer } from "@/components/Dashboard/category/TableHeaderContainer";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,14 +16,14 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import CreateMenuDialog, {CreateMenuFormData} from "@/components/Dashboard/category/CreateMenuDialog";
+import CreateMenuDialog, { CreateMenuFormData } from "@/components/Dashboard/category/CreateMenuDialog";
 import CustomDialog from "@/components/Dashboard/category/CustomDialog";
 import CreateCategoryDialog from "@/components/Dashboard/category/CreateCategoryDialog";
-import useAddMenu, {MenuData} from "@/hooks/menu/useAddMenu";
-import useAddMenuImage, {ImageResponse} from "@/hooks/menu/useAddMenuImage";
+import useAddMenu, { MenuData } from "@/hooks/menu/useAddMenu";
+import useAddMenuImage, { ImageResponse } from "@/hooks/menu/useAddMenuImage";
 import useAuthStore from "@/store/useAuthStore";
-import {formatDate, handleError} from "@/utils/utils";
-import UseMenu, {MenuResponse} from "@/hooks/menu/useMenu";
+import { formatDate, handleError } from "@/utils/utils";
+import UseMenu, { MenuResponse } from "@/hooks/menu/useMenu";
 import UseCategory from "@/hooks/category/useCategory";
 import useDeleteMenu from '@/hooks/menu/useDeleteMenu';
 import TableHeaderButtons from "@/components/Dashboard/TableHeaderButtons";
@@ -33,21 +33,20 @@ import CustomDrawer from '../Drawer/CustomDrawer';
 import CustomEditMenuDialog from "@/components/Dashboard/category/EditMenuDialog.tsx";
 import CustomEditCategoryDialog from "@/components/Dashboard/category/EditCategoryDialog.tsx";
 
-
 export default function TableBodyContainer() {
-    const {data: categoryData} = UseCategory();
+    const { data: categoryData } = UseCategory();
     const categories = useInventoryStore((state) => state.categories);
-    const {data: menuData} = UseMenu();
+    const { data: menuData } = UseMenu();
     const userAccountId = useAuthStore(s => s.user.userId);
     const setMenu = useInventoryStore(s => s.setMenu);
     const menu = useInventoryStore((state) => state.menu);
-    const {mutate: addCategory} = useAddCategory();
-    const {mutate: deleteCategory} = useDeleteCategory();
-    const {mutate: addMenuUrl} = useAddMenuImage();
-    const {mutate: addMenu} = useAddMenu();
-    const {mutate: deleteMenu} = useDeleteMenu();
-    const {mutate: editCategory} = UseEditCategory();
-    const {mutate: editMenu} = UseEditMenu();
+    const { mutate: addCategory } = useAddCategory();
+    const { mutate: deleteCategory } = useDeleteCategory();
+    const { mutate: addMenuUrl } = useAddMenuImage();
+    const { mutate: addMenu } = useAddMenu();
+    const { mutate: deleteMenu } = useDeleteMenu();
+    const { mutate: editCategory } = UseEditCategory();
+    const { mutate: editMenu } = UseEditMenu();
     const setCategories = useInventoryStore((state) => state.setCategories);
     const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -60,6 +59,7 @@ export default function TableBodyContainer() {
     const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null);
     const [isDeleteMenuDialogOpen, setIsDeleteMenuDialogOpen] = useState(false);
     const [selectedMenuData, setSelectedMenuData] = useState<Partial<MenuData> | null>(null);
+    const [filter, setFilter] = useState<string>('latest'); // Add state for filter
 
     useEffect(() => {
         if (categoryData) {
@@ -94,7 +94,7 @@ export default function TableBodyContainer() {
 
     const handleEditCategory = useCallback((data: Partial<CategoryData>) => {
         if (selectedCategory !== null) {
-            editCategory({id: selectedCategory, categoryData: data}, {
+            editCategory({ id: selectedCategory, categoryData: data }, {
                 onSuccess: () => {
                     toast.success("Category updated successfully");
                     setIsEditDialogOpen(false);
@@ -123,7 +123,7 @@ export default function TableBodyContainer() {
                     onSuccess: (uploadedImageUrl: ImageResponse) => {
                         editMenu({
                             id: selectedMenuId,
-                            menuData: {...menuData, imageUrl: uploadedImageUrl.url}
+                            menuData: { ...menuData, imageUrl: uploadedImageUrl.url }
                         }, {
                             onSuccess: (updatedMenu, previousMenu) => {
                                 toast.success("Menu updated successfully");
@@ -225,7 +225,7 @@ export default function TableBodyContainer() {
     }, [selectedMenuId, deleteMenu, selectedMenu, categories, selectedCategory, setCategories]);
 
     const handleCreateMenu = useCallback((data: CreateMenuFormData) => {
-        const {name, price, imageUrl, description, quantity} = data;
+        const { name, price, imageUrl, description, quantity } = data;
         const menuData: MenuData = {
             name,
             price,
@@ -241,7 +241,7 @@ export default function TableBodyContainer() {
 
             addMenuUrl(formData, {
                 onSuccess: (uploadedImageUrl: ImageResponse) => {
-                    addMenu({...menuData, imageUrl: uploadedImageUrl.url}, {
+                    addMenu({ ...menuData, imageUrl: uploadedImageUrl.url }, {
                         onSuccess: (newMenu) => {
                             toast.success("Menu created successfully");
                             const updatedMenu = [...menu, newMenu];
@@ -271,7 +271,7 @@ export default function TableBodyContainer() {
                     const updatedMenu = [...menu, newMenu];
                     setMenu(updatedMenu);
                     setCategories(categories.map(category =>
-                        category.id === selectedCategory ? {...category, menuCount: category.menuCount + 1} : category
+                        category.id === selectedCategory ? { ...category, menuCount: category.menuCount + 1 } : category
                     ));
                     setIsCreateMenuDialogOpen(false); // Close the dialog
                     // Update the selected menu list
@@ -294,6 +294,42 @@ export default function TableBodyContainer() {
         setSelectedCategory(null);
         setSelectedMenu([]);
     }, []);
+
+    const handleFilterChange = (filter: string) => {
+        setFilter(filter);
+    };
+
+    const getFilteredCategories = () => {
+        if (filter === 'latest') {
+            return categories.slice().sort((a, b) => new Date(b.createdAt as string).getTime() - new Date(a.createdAt as string).getTime());
+        } else if (filter === 'oldest') {
+            return categories.slice().sort((a, b) => new Date(a.createdAt as string).getTime() - new Date(b.createdAt as string).getTime());
+        } else if (filter === 'name') {
+            return categories.slice().sort((a, b) => a.name.localeCompare(b.name));
+        } else {
+            return categories;
+        }
+    };
+
+    const exportToCSV = () => {
+        const headers = ["Name", "Menu Count", "Created At", "Updated At"];
+        const rows = categories.map(category => [
+            category.name,
+            category.menuCount,
+            formatDate(category.createdAt as string),
+            formatDate(category.updatedAt as string)
+        ]);
+
+        const csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].map(e => e.join(",")).join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "categories.csv");
+        document.body.appendChild(link);
+
+        link.click();
+    };
 
     const renderDrawerContent = (): ReactNode => (
         <>
@@ -338,12 +374,12 @@ export default function TableBodyContainer() {
                                     <TableCell>{menu.price}</TableCell>
                                     <TableCell>{menu.description}</TableCell>
                                     <TableCell>{menu.quantity}</TableCell>
-                                    <TableCell>{menu.updatedAt? formatDate(menu.updatedAt): formatDate(menu.createdAt)}</TableCell>
+                                    <TableCell>{menu.updatedAt ? formatDate(menu.updatedAt) : formatDate(menu.createdAt)}</TableCell>
                                     <TableCell className="hidden md:table-cell">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                    <MoreHorizontal className="h-4 w-4"/>
+                                                    <MoreHorizontal className="h-4 w-4" />
                                                     <span className="sr-only">Toggle menu</span>
                                                 </Button>
                                             </DropdownMenuTrigger>
@@ -384,7 +420,7 @@ export default function TableBodyContainer() {
 
     return (
         <Card className='w-full'>
-            <TableHeaderButtons setIsDialogOpen={setIsDialogOpen}/>
+            <TableHeaderButtons setIsDialogOpen={setIsDialogOpen} onFilterChange={handleFilterChange} onExport={exportToCSV} />
             <CardHeader>
                 <CardTitle>Categories</CardTitle>
                 <CardDescription>
@@ -393,9 +429,9 @@ export default function TableBodyContainer() {
             </CardHeader>
             <CardContent>
                 <Table>
-                    <TableHeaderContainer/>
+                    <TableHeaderContainer />
                     <TableBody>
-                        {categories?.map(({id, name, menuCount, createdAt, updatedAt}) => (
+                        {getFilteredCategories().map(({ id, name, menuCount, createdAt, updatedAt }) => (
                             <TableRow key={id} onClick={() => handleRowClick(id)} className='cursor-pointer'>
                                 <TableCell className="font-medium">{name}</TableCell>
                                 <TableCell><Badge variant="outline">Draft</Badge></TableCell>
@@ -407,7 +443,7 @@ export default function TableBodyContainer() {
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                <MoreHorizontal className="h-4 w-4"/>
+                                                <MoreHorizontal className="h-4 w-4" />
                                                 <span className="sr-only">Toggle menu</span>
                                             </Button>
                                         </DropdownMenuTrigger>
@@ -496,7 +532,7 @@ export default function TableBodyContainer() {
             <CreateMenuDialog
                 isOpen={isCreateMenuDialogOpen}
                 onClose={() => setIsCreateMenuDialogOpen(false)}
-                onSubmit={handleCreateMenu} BtnLabel={'Create'}/>
+                onSubmit={handleCreateMenu} BtnLabel={'Create'} />
         </Card>
     );
 }

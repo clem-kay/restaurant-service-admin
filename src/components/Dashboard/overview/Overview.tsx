@@ -63,13 +63,13 @@ const mapDashboardDataToCardData = (data: DashboardResponse) => {
             title: "Total Food Menu",
             value: `${data.totalFoodMenu}`,
             percentageChange: "+15% from last month",
-            icon: <Users className="h-4 w-4 text-muted-foreground"/>
+            icon: <ShoppingCart className="h-4 w-4 text-muted-foreground"/>
         },
         {
             title: "Total Category",
             value: `${data.totalCategory}`,
             percentageChange: "+8% from last month",
-            icon: <Users className="h-4 w-4 text-muted-foreground"/>
+            icon: <ShoppingCart className="h-4 w-4 text-muted-foreground"/>
         }
     ];
 };
