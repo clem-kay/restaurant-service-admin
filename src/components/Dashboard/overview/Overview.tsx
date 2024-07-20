@@ -1,5 +1,5 @@
 import React from 'react';
-import {CreditCard, DollarSign, Package, Package2, ShoppingCart, Users} from "lucide-react";
+import {CreditCard, DollarSign, Package, Package2, ShoppingCart } from "lucide-react";
 import DashboardCard from "@/components/Dashboard/overview/DashboardCard";
 import useDashboard, {DashboardResponse} from '@/hooks/analytics/useDashboard';
 
