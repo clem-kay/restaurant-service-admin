@@ -5,11 +5,10 @@ import {Button} from "@/components/ui/button.tsx";
 import {Badge} from "@/components/ui/badge.tsx";
 import useOrderStore from "@/store/useOrderStore.tsx";
 
-
 const SidePanel = () => {
     const location = useLocation();
     const [selectedNavLink, setSelectedLink] = useState(location.pathname);
-    const [shouldSetDefault, setShouldSetDefault] = useState<boolean>(true)
+    const [shouldSetDefault, setShouldSetDefault] = useState<boolean>(true);
     const orders = useOrderStore(s => s.orders);
 
     const links = [
@@ -24,6 +23,7 @@ const SidePanel = () => {
         {to: "#", icon: Users, label: "Customers"},
         {to: "#", icon: LineChart, label: "Analytics"},
     ];
+
     const handleNavLinkClick = (link: {
         to: string;
         icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
@@ -35,12 +35,12 @@ const SidePanel = () => {
         label: string;
         badge: number;
     }) => {
-        setShouldSetDefault(false)
+        setShouldSetDefault(false);
         setSelectedLink(link.to);
     };
 
     return (
-        <div className="flex h-full max-h-screen flex-col gap-2">
+        <div className="fixed inset-y-0 left-0 flex flex-col w-72 h-full max-h-screen bg-background shadow-lg border-muted/80 border">
             <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                 <NavLink to="/admin/dashboard" className="flex items-center gap-2 font-semibold">
                     <Package2 className="h-6 w-6"/>
@@ -51,7 +51,7 @@ const SidePanel = () => {
                     <span className="sr-only">Toggle notifications</span>
                 </Button>
             </div>
-            <div className="flex-1">
+            <div className="flex-1 overflow-y-auto">
                 <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
                     {links.map((link, index) => {
                         const Icon = link.icon;
@@ -68,7 +68,7 @@ const SidePanel = () => {
                                 {link.label} {" "}
                                 {link.badge && (
                                     <Badge
-                                        className="ml-auto flex h-6 w-6 shrink-0 i transition-all tems-center justify-center rounded-full">
+                                        className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                                         {link.badge}
                                     </Badge>
                                 )}
