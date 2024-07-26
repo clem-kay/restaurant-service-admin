@@ -1,25 +1,26 @@
-import {forwardRef, useEffect, useRef, useState} from "react";
-import {Copy, Printer, X} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {Separator} from "@/components/ui/separator";
-import {OrderResponseMany} from "@/hooks/order/useOrders";
-import {formatCurrency, formatDate} from "@/utils/utils";
+import { forwardRef, useEffect, useRef, useState } from "react";
+import { Copy, Printer, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { OrderResponseMany } from "@/hooks/order/useOrders";
+import { formatCurrency, formatDate } from "@/utils/utils";
 import useOrder from "@/hooks/order/useOrder";
-import {useReactToPrint} from "react-to-print";
+import { useReactToPrint } from "react-to-print";
 import useOrderStore from "@/store/useOrderStore.tsx";
-import {CURRENCY} from "@/constants/constants.ts";
+import { CURRENCY } from "@/constants/constants.ts";
 
 interface OrderDetailsProps {
     selectedOrder: OrderResponseMany | null;
     onClose: () => void;
 }
 
-const OrderDetails = forwardRef<HTMLDivElement, OrderDetailsProps>(({selectedOrder, onClose}) => {
-    const {data: orderItem} = useOrder(selectedOrder?.id);
+const OrderDetails = forwardRef<HTMLDivElement, OrderDetailsProps>(({ selectedOrder, onClose }) => {
+    const { data: orderItem } = useOrder(selectedOrder?.id);
     const [subtotal, setSubtotal] = useState(0);
     const componentRef = useRef<HTMLDivElement>(null);
     const setUserAccountId = useOrderStore((state) => state.setUserAccountId);
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         if (orderItem) {
@@ -28,6 +29,14 @@ const OrderDetails = forwardRef<HTMLDivElement, OrderDetailsProps>(({selectedOrd
             setUserAccountId(orderItem.orderItems[0]?.foodMenu.userAccountId);
         }
     }, [orderItem, setUserAccountId]);
+
+    useEffect(() => {
+        if (selectedOrder) {
+            setIsVisible(true);
+        } else {
+            setIsVisible(false);
+        }
+    }, [selectedOrder]);
 
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,
@@ -49,19 +58,24 @@ const OrderDetails = forwardRef<HTMLDivElement, OrderDetailsProps>(({selectedOrd
 
     return (
         <>
-            <div className="ml-auto flex items-center gap-2 bg-muted/50 justify-end rounded-t-lg p-2 print-hide">
+            <div className="ml-auto flex-1 animate-fadeIn transition-all duration-500 flex items-center gap-2 bg-muted/50 justify-end rounded-t-lg p-2 print-hide">
                 {selectedOrder.paid && (
                     <Button size="icon" variant="outline" onClick={handlePrint}>
-                        <Printer className="h-4 w-4"/>
+                        <Printer className="h-4 w-4" />
                         <span className="sr-only">Print Receipt</span>
                     </Button>
                 )}
                 <Button size="icon" variant="outline" className="h-10 w-10" onClick={onClose}>
-                    <X className="h-4 w-4"/>
+                    <X className="h-4 w-4" />
                     <span className="sr-only">Close</span>
                 </Button>
             </div>
-            <Card className="overflow-hidden rounded-t-none border-t-0" ref={componentRef}>
+            <Card
+                ref={componentRef}
+                className={`overflow-hidden rounded-t-none border-t-0 transition-transform duration-500 ease-in-out ${
+                    isVisible ? 'transform translate-x-0 opacity-100' : 'transform translate-x-full opacity-0'
+                }`}
+            >
                 <CardHeader className="flex flex-row items-start bg-muted/50">
                     <div className="grid gap-0.5">
                         <CardTitle className="group flex items-center gap-2 text-lg">
