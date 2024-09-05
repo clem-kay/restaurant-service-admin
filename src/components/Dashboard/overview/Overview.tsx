@@ -1,13 +1,14 @@
 import React from 'react';
-import {CreditCard, DollarSign, Package, Package2, ShoppingCart } from "lucide-react";
+import {CreditCard, DollarSign, Package, Package2, ShoppingCart} from "lucide-react";
 import DashboardCard from "@/components/Dashboard/overview/DashboardCard";
 import useDashboard, {DashboardResponse} from '@/hooks/analytics/useDashboard';
+import {CURRENCY} from "@/constants/constants.ts";
 
 const mapDashboardDataToCardData = (data: DashboardResponse) => {
     return [
         {
             title: "Total Revenue",
-            value: `¢${data.totalSalesthisMonth}`,
+            value: `${CURRENCY}${data.totalSalesthisMonth}`,
             percentageChange: "+19% from last month",
             icon: <DollarSign className="h-4 w-4 text-muted-foreground"/>
         },
@@ -19,7 +20,7 @@ const mapDashboardDataToCardData = (data: DashboardResponse) => {
         },
         {
             title: "Total Sales Today",
-            value: `¢${data.totalTodaySales}`,
+            value: `${CURRENCY}${data.totalTodaySales}`,
             percentageChange: "+10% from yesterday",
             icon: <CreditCard className="h-4 w-4 text-muted-foreground"/>
         },
@@ -43,13 +44,13 @@ const mapDashboardDataToCardData = (data: DashboardResponse) => {
         },
         {
             title: "Total Sales Yesterday",
-            value: `¢${data.totalSalesYesterday}`,
+            value: `${CURRENCY}${data.totalSalesYesterday}`,
             percentageChange: "-15% from today",
             icon: <CreditCard className="h-4 w-4 text-muted-foreground"/>
         },
         {
             title: "Total Sales Previous Month",
-            value: `¢${data.totalSalesPreviousMonth}`,
+            value: `${CURRENCY}${data.totalSalesPreviousMonth}`,
             percentageChange: "-20% from this month",
             icon: <DollarSign className="h-4 w-4 text-muted-foreground"/>
         },
