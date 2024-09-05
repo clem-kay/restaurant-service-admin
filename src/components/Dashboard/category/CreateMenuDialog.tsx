@@ -58,6 +58,7 @@ const CreateMenuDialog: React.FC<CreateMenuDialogProps> = ({ isOpen, onClose, on
                         <label className="block text-sm font-medium mb-1">Price</label>
                         <input
                             type="number"
+                            step="0.01"  // Allows decimal numbers
                             {...register('price', { required: 'Price is required', valueAsNumber: true })}
                             className="w-full p-2 border rounded bg-input"
                         />

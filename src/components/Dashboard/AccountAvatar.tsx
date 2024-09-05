@@ -45,6 +45,7 @@ const AccountAvatar = () => {
                     <DropdownMenuItem className='focus:bg-accent'>Settings</DropdownMenuItem>
                     <DropdownMenuItem className='focus:bg-accent'>Support</DropdownMenuItem>
                     <DropdownMenuSeparator/>
+                    <DropdownMenuItem className='focus:bg-accent'>Add Admin</DropdownMenuItem>
                     <DropdownMenuItem className='focus:bg-destructive' onClick={() => setIsDialogOpen(true)}
                     >
                         Logout
