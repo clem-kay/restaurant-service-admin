@@ -22,7 +22,7 @@ import CreateCategoryDialog from "@/components/Dashboard/category/CreateCategory
 import useAddMenu, { MenuData } from "@/hooks/menu/useAddMenu";
 import useAddMenuImage, { ImageResponse } from "@/hooks/menu/useAddMenuImage";
 import useAuthStore from "@/store/useAuthStore";
-import { formatDate, handleError } from "@/utils/utils";
+import {formatCurrency, formatDate, handleError} from "@/utils/utils";
 import UseMenu, { MenuResponse } from "@/hooks/menu/useMenu";
 import UseCategory from "@/hooks/category/useCategory";
 import useDeleteMenu from '@/hooks/menu/useDeleteMenu';
@@ -371,7 +371,7 @@ export default function TableBodyContainer() {
                                         />
                                     </TableCell>
                                     <TableCell className="font-medium">{menu.name}</TableCell>
-                                    <TableCell>{menu.price}</TableCell>
+                                    <TableCell>{formatCurrency( menu.price )}</TableCell>
                                     <TableCell>{menu.description}</TableCell>
                                     <TableCell>{menu.quantity}</TableCell>
                                     <TableCell>{menu.updatedAt ? formatDate(menu.updatedAt) : formatDate(menu.createdAt)}</TableCell>

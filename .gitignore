@@ -1,3 +1,4 @@
+vite.config.ts
 # Logs
 logs
 *.log
