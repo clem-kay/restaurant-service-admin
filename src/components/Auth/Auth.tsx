@@ -8,6 +8,8 @@ import {useForm} from "react-hook-form";
 import {z} from "zod";
 import useLogin from "@/hooks/auth/useLogin.tsx";
 import {Triangle} from "react-loader-spinner";
+import {useLocation} from "react-router-dom";
+import useRegisterUserAccount from "@/hooks/userAccount/useRegisterUserAccount.ts";
 
 const formSchema = z.object({
     username: z.string().min(2, {
@@ -19,8 +21,11 @@ const formSchema = z.object({
 });
 
 export const Auth = () => {
+    const path = useLocation().pathname.split("/")[2];
+    console.log(path)
 
-    const {mutate, isPending} = useLogin();
+    const {mutate: mutateLogin, isPending} = useLogin();
+    const {mutate: mutateUserAccount} = useRegisterUserAccount();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -32,7 +37,11 @@ export const Auth = () => {
 
     const onSubmit = (values: z.infer<typeof formSchema>) => {
         // console.log("values to be submitted:", values);
-        mutate(values)
+        if (path === "register") {
+            mutateUserAccount(values)
+        } else {
+            mutateLogin(values)
+        }
     };
     return (
 
@@ -55,7 +64,7 @@ export const Auth = () => {
             <div
                 className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 mb-8 shadow-input border-[0.1rem] border-border bg-border">
                 <h2 className="font-bold text-xl">Welcome</h2>
-                <p className="text-sm max-w-sm mt-2">Login</p>
+                <p className="text-sm max-w-sm mt-2">{path === "register" ? "Register" : "Login"}</p>
 
                 <form onSubmit={form.handleSubmit(onSubmit)} className="my-8">
                     <LabelInputContainer className="mb-4">
@@ -81,6 +90,22 @@ export const Auth = () => {
                             <p className="text-destructive">{form.formState.errors.password.message}</p>
                         )}
                     </LabelInputContainer>
+                    {/*{path === "register" ?*/}
+                    {/*    (*/}
+                    {/*        <LabelInputContainer className="mb-4">*/}
+                    {/*            <Label htmlFor="password">Confirm Password</Label>*/}
+                    {/*            <Input*/}
+                    {/*                id="password"*/}
+                    {/*                placeholder="••••••••••"*/}
+                    {/*                type="password"*/}
+                    {/*                {...form.register("password")}*/}
+                    {/*            />*/}
+                    {/*            {form.formState.errors.password && (*/}
+                    {/*                <p className="text-destructive">{form.formState.errors.password.message}</p>*/}
+                    {/*            )}*/}
+                    {/*        </LabelInputContainer>*/}
+                    {/*    ): null*/}
+                    {/*}*/}
 
                     <button
                         className="bg-gradient-to-br relative group/btn bg-primary block w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"

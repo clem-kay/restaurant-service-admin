@@ -8,7 +8,8 @@ export enum EndPoints {
     ORDER_STATUS = 'orders/update-status',
     PAYMENT_STATUS = 'orders/update-payment',
     LOGOUT = 'auth/logout',
-    REFRESH = 'auth/refresh'
+    REFRESH = 'auth/refresh',
+    USERACCOUNT = "useraccount"
 }
 
-export const CURRENCY= '£'
+export const CURRENCY = '£'

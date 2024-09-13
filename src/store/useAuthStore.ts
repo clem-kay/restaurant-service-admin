@@ -5,17 +5,20 @@ import {MenuResponse} from "@/hooks/menu/useMenu.ts";
 interface User {
     userId: number | null;
     username: string;
+    role: string;
 }
 
 interface AuthStore {
     token: string;
     refresh_token: string;
     isLoggedIn: boolean;
+    isRegisterUser: boolean,
     user: User;
     categories: CategoryResponse[];
     menu: MenuResponse[];
     setToken: (token: string) => void;
     setRefreshToken: (refresh_token: string) => void;
+    setIsRegisterUser: (state: boolean) => void;
     setUser: (user: User) => void;
     setCategories: (category: CategoryResponse[]) => void;
     setMenu: (menu: MenuResponse[]) => void;
@@ -27,9 +30,11 @@ const useAuthStore = create<AuthStore>((set) => ({
     token: localStorage.getItem('token') || '',
     refresh_token: localStorage.getItem('refresh_token') || '',
     isLoggedIn: !!localStorage.getItem('token'),
+    isRegisterUser: false,
     user: JSON.parse(localStorage.getItem('user') || '{"userId": null, "username": ""}'),
     categories: [],
     menu: [],
+    setIsRegisterUser: (state: boolean) => set((store) => ({...store, isRegisterUser: state})),
     setToken: (token: string) => {
         localStorage.setItem('token', token);
         set((store) => ({...store, token}));
@@ -53,7 +58,7 @@ const useAuthStore = create<AuthStore>((set) => ({
             token: '',
             refresh_token: '',
             isLoggedIn: false,
-            user: {userId: null, username: ''},
+            user: {userId: null, username: '', role: ''},
             categories: [],
             menu: [],
         }));

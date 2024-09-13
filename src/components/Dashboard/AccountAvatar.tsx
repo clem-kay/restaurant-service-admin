@@ -11,16 +11,20 @@ import {CircleUser} from "lucide-react";
 import CustomDialog from "@/components/Dashboard/category/CustomDialog.tsx";
 import {useState} from "react";
 import useAuthStore from "@/store/useAuthStore.ts";
+import {useNavigate} from "react-router-dom";
 
 const AccountAvatar = () => {
+    const navigate = useNavigate();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const clearAuth = useAuthStore((state) => state.clearAuth);
+    const setIsRegisterUser = useAuthStore((state) => state.setIsRegisterUser);
     const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
     const handleLogout = () => {
         clearAuth();
         setIsLoggedIn(false)
         setIsDialogOpen(false);
     }
+
 
     return (
         <div>
@@ -45,7 +49,11 @@ const AccountAvatar = () => {
                     <DropdownMenuItem className='focus:bg-accent'>Settings</DropdownMenuItem>
                     <DropdownMenuItem className='focus:bg-accent'>Support</DropdownMenuItem>
                     <DropdownMenuSeparator/>
-                    <DropdownMenuItem className='focus:bg-accent'>Add Admin</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => {
+                        setIsRegisterUser(true)
+                        navigate('/auth/register')
+                    }} className='focus:bg-accent'>Add
+                        User</DropdownMenuItem>
                     <DropdownMenuItem className='focus:bg-destructive' onClick={() => setIsDialogOpen(true)}
                     >
                         Logout

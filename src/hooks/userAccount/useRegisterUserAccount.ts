@@ -7,12 +7,12 @@ import {useEffect} from "react";
 import {handleError} from '@/utils/utils.ts';
 import {EndPoints} from "@/constants/constants.ts";
 
-interface LoginData {
+export interface RegisterUserAccountData {
     username: string;
     password: string;
 }
 
-export interface LoginResponse {
+export interface RegisterUserAccountResponse {
     access_token: string;
     refresh_token: string;
     message: string;
@@ -21,13 +21,13 @@ export interface LoginResponse {
     role: string;
 }
 
-const apiClient = new APIClient<LoginData, LoginResponse>(EndPoints.LOGIN);
+const apiClient = new APIClient<RegisterUserAccountData, RegisterUserAccountResponse>(EndPoints.USERACCOUNT);
 
-const loginReqFn = (loginData: LoginData) => {
+const registerUserAccountFn = (loginData: RegisterUserAccountData) => {
     return apiClient.post(loginData);
 };
 
-const useLogin = () => {
+const UseRegisterUserAccount = () => {
     const navigate = useNavigate();
     const setUser = useAuthStore((store) => store.setUser);
     const setToken = useAuthStore((store) => store.setToken);
@@ -35,6 +35,7 @@ const useLogin = () => {
     const setIsLoggedIn = useAuthStore((store) => store.setIsLoggedIn);
     const isLoggedIn = useAuthStore((store) => store.isLoggedIn);
     const isRegisterUser = useAuthStore((store) => store.isRegisterUser);
+    const clearAuth = useAuthStore((store) => store.clearAuth);
 
     useEffect(() => {
         if (isLoggedIn && !isRegisterUser) {
@@ -42,12 +43,15 @@ const useLogin = () => {
         }
     }, [isLoggedIn, isRegisterUser, navigate]);
 
+
     return useMutation({
-        mutationFn: loginReqFn,
-        mutationKey: ['login'],
-        onSuccess: (data: LoginResponse) => {
+        mutationFn: registerUserAccountFn,
+        mutationKey: ['register'],
+        onSuccess: (data: RegisterUserAccountResponse) => {
+            clearAuth()
+
             const {access_token, refresh_token, username, id, role} = data;
-            toast.success("Login Successful");
+            toast.success("User Account Creation Successful");
             setUser({userId: id, username, role});
             setToken(access_token);
             setRefreshToken(refresh_token);
@@ -59,4 +63,4 @@ const useLogin = () => {
     });
 };
 
-export default useLogin;
+export default UseRegisterUserAccount;

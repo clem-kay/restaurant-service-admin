@@ -10,6 +10,7 @@ import Overview from "@/components/Dashboard/overview/Overview.tsx";
 
 const router = createBrowserRouter([
     {index: true, path: 'auth/login', element: <AuthPage/>},
+    {path: 'auth/register', element: <AuthPage/>},
     {path: '/', element: <ProtectedRoute element={<App/>}/>,},
     {
         path: 'admin/dashboard',

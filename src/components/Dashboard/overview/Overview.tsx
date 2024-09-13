@@ -3,6 +3,7 @@ import {CreditCard, DollarSign, Package, Package2, ShoppingCart} from "lucide-re
 import DashboardCard from "@/components/Dashboard/overview/DashboardCard";
 import useDashboard, {DashboardResponse} from '@/hooks/analytics/useDashboard';
 import {CURRENCY} from "@/constants/constants.ts";
+import { IoFastFoodOutline } from "react-icons/io5";
 
 const mapDashboardDataToCardData = (data: DashboardResponse) => {
     return [
@@ -64,13 +65,13 @@ const mapDashboardDataToCardData = (data: DashboardResponse) => {
             title: "Total Food Menu",
             value: `${data.totalFoodMenu}`,
             percentageChange: "+15% from last month",
-            icon: <ShoppingCart className="h-4 w-4 text-muted-foreground"/>
+            icon: <IoFastFoodOutline className="h-5 w-5 text-muted-foreground"/>
         },
         {
             title: "Total Category",
             value: `${data.totalCategory}`,
             percentageChange: "+8% from last month",
-            icon: <ShoppingCart className="h-4 w-4 text-muted-foreground"/>
+            icon: <ShoppingCart className="h-4 w-4 text-muted-foreground" />
         }
     ];
 };
