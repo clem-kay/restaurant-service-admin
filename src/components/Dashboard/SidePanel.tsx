@@ -4,12 +4,21 @@ import {Bell, Home, LineChart, LucideProps, Package, Package2, ShoppingCart, Use
 import {Button} from "@/components/ui/button.tsx";
 import {Badge} from "@/components/ui/badge.tsx";
 import useOrderStore from "@/store/useOrderStore.tsx";
+import useAuthStore from "@/store/useAuthStore.ts";
 
 const SidePanel = () => {
     const location = useLocation();
+    const userRole = useAuthStore(s => s.user.role)
     const [selectedNavLink, setSelectedLink] = useState(location.pathname);
     const [shouldSetDefault, setShouldSetDefault] = useState<boolean>(true);
     const orders = useOrderStore(s => s.orders);
+
+    const roleOptions = {
+        "SUPERADMIN": "Super Admin",
+        "ADMIN": "Admin",
+        "USER": "User",
+        "SALES": "Sales"
+    };
 
     const links = [
         {to: "", icon: Home, label: "Dashboard"},
@@ -40,11 +49,12 @@ const SidePanel = () => {
     };
 
     return (
-        <div className="fixed inset-y-0 left-0 flex flex-col w-72 h-full max-h-screen bg-background shadow-lg border-muted/80 border">
+        <div
+            className="fixed inset-y-0 left-0 flex flex-col w-72 h-full max-h-screen bg-background shadow-lg border-muted/80 border">
             <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                 <NavLink to="/admin/dashboard" className="flex items-center gap-2 font-semibold">
                     <Package2 className="h-6 w-6"/>
-                    <span>Admin</span>
+                    <span>{roleOptions[userRole] || "Admin"}</span>
                 </NavLink>
                 <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
                     <Bell className="h-4 w-4"/>

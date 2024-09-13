@@ -12,6 +12,7 @@ import CustomDialog from "@/components/Dashboard/category/CustomDialog.tsx";
 import {useState} from "react";
 import useAuthStore from "@/store/useAuthStore.ts";
 import {useNavigate} from "react-router-dom";
+import {ModeToggle} from "@/components/Theme/mode-toggle.tsx";
 
 const AccountAvatar = () => {
     const navigate = useNavigate();
@@ -19,6 +20,7 @@ const AccountAvatar = () => {
     const clearAuth = useAuthStore((state) => state.clearAuth);
     const setIsRegisterUser = useAuthStore((state) => state.setIsRegisterUser);
     const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
+    const username = useAuthStore((state) => state.user.username);
     const handleLogout = () => {
         clearAuth();
         setIsLoggedIn(false)
@@ -37,12 +39,17 @@ const AccountAvatar = () => {
                 triggerBtnLabel={'Confirm'}
             />
             <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="secondary" size="icon" className="rounded-full">
-                        <CircleUser className="h-5 w-5"/>
-                        <span className="sr-only">Toggle user menu</span>
-                    </Button>
-                </DropdownMenuTrigger>
+                <div className='flex flex-row space-x-8 items-center justify-center'>
+
+                    <ModeToggle className=' z-[10000]'/>
+                    <h3>{username}</h3>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="secondary" size="icon" className="rounded-full">
+                            <CircleUser className="h-5 w-5"/>
+                            <span className="sr-only">Toggle user menu</span>
+                        </Button>
+                    </DropdownMenuTrigger>
+                </div>
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator/>

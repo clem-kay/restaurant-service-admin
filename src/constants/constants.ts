@@ -12,4 +12,6 @@ export enum EndPoints {
     USERACCOUNT = "useraccount"
 }
 
+export type ROLE =  "SUPERADMIN" | "ADMIN" | "USER" | "SALES"
+
 export const CURRENCY = '£'

@@ -5,11 +5,12 @@ import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 import {handleError} from '@/utils/utils.ts';
-import {EndPoints} from "@/constants/constants.ts";
+import {EndPoints, ROLE} from "@/constants/constants.ts";
 
 export interface RegisterUserAccountData {
     username: string;
     password: string;
+    role: ROLE;
 }
 
 export interface RegisterUserAccountResponse {
@@ -18,44 +19,41 @@ export interface RegisterUserAccountResponse {
     message: string;
     id: number;
     username: string;
-    role: string;
+    role: ROLE;
 }
 
 const apiClient = new APIClient<RegisterUserAccountData, RegisterUserAccountResponse>(EndPoints.USERACCOUNT);
 
-const registerUserAccountFn = (loginData: RegisterUserAccountData) => {
-    return apiClient.post(loginData);
+const registerUserAccountFn = (registerData: RegisterUserAccountData) => {
+    return apiClient.post(registerData);
 };
 
 const UseRegisterUserAccount = () => {
     const navigate = useNavigate();
-    const setUser = useAuthStore((store) => store.setUser);
-    const setToken = useAuthStore((store) => store.setToken);
-    const setRefreshToken = useAuthStore((store) => store.setRefreshToken);
-    const setIsLoggedIn = useAuthStore((store) => store.setIsLoggedIn);
+    // const setUser = useAuthStore((store) => store.setUser);
+    // const setToken = useAuthStore((store) => store.setToken);
+    // const setRefreshToken = useAuthStore((store) => store.setRefreshToken);
+    // const setIsLoggedIn = useAuthStore((store) => store.setIsLoggedIn);
     const isLoggedIn = useAuthStore((store) => store.isLoggedIn);
     const isRegisterUser = useAuthStore((store) => store.isRegisterUser);
+    const setIsRegisterUser = useAuthStore((store) => store.setIsRegisterUser);
     const clearAuth = useAuthStore((store) => store.clearAuth);
 
     useEffect(() => {
-        if (isLoggedIn && !isRegisterUser) {
-            navigate('/admin/dashboard');
-        }
+        // if (isLoggedIn && !isRegisterUser) {
+        //     navigate('/auth/login');
+        // }
     }, [isLoggedIn, isRegisterUser, navigate]);
 
 
     return useMutation({
         mutationFn: registerUserAccountFn,
         mutationKey: ['register'],
-        onSuccess: (data: RegisterUserAccountResponse) => {
+        onSuccess: () => {
             clearAuth()
-
-            const {access_token, refresh_token, username, id, role} = data;
+            setIsRegisterUser(false)
             toast.success("User Account Creation Successful");
-            setUser({userId: id, username, role});
-            setToken(access_token);
-            setRefreshToken(refresh_token);
-            setIsLoggedIn(true);
+            navigate('/auth/login');
         },
         onError: (error) => {
             handleError(error)

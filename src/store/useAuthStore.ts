@@ -1,11 +1,12 @@
 import {create} from 'zustand';
 import {CategoryResponse} from "@/hooks/category/useCategory.ts";
 import {MenuResponse} from "@/hooks/menu/useMenu.ts";
+import {ROLE} from "@/constants/constants.ts";
 
 interface User {
     userId: number | null;
     username: string;
-    role: string;
+    role: ROLE;
 }
 
 interface AuthStore {
@@ -58,7 +59,7 @@ const useAuthStore = create<AuthStore>((set) => ({
             token: '',
             refresh_token: '',
             isLoggedIn: false,
-            user: {userId: null, username: '', role: ''},
+            user: {userId: null, username: '', role: '' as ROLE},
             categories: [],
             menu: [],
         }));

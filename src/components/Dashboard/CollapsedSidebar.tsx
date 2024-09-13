@@ -3,8 +3,11 @@ import {Home, LineChart, Package, Package2, ShoppingCart, Users} from 'lucide-re
 import {Badge} from '@/components/ui/badge';
 import {SheetContent} from '@/components/ui/sheet';
 import useOrderStore from '@/store/useOrderStore';
+import useAuthStore from "@/store/useAuthStore.ts";
 
 const CollapsedSidebar = () => {
+    const userRole = useAuthStore(s => s.user.role)
+
     const orders = useOrderStore(s => s.orders);
 
     const links = [
@@ -28,7 +31,7 @@ const CollapsedSidebar = () => {
                     className="flex items-center gap-2 text-lg font-semibold"
                 >
                     <Package2 className="h-6 w-6"/>
-                    <span className="sr-only">Acme Inc</span>
+                    <span className="sr-only">{userRole || "Admin"}</span>
                 </Link>
                 {links.map((link, index) => {
                     const Icon = link.icon;
