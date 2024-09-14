@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Button} from "@/components/ui/button";
 import {
     Dialog,
@@ -9,28 +9,21 @@ import {
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog";
-import * as z from "zod";
-import useInventoryStore from "@/store/useInventoryStore.tsx";
-import CategoryDataTable from '@/components/Dashboard/category/CategoryDataTable.tsx';
-import {useLocation} from "react-router-dom";
-
-// Define the schema using zod
-const createCategorySchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    description: z.string().min(1, "Description is required")
-});
+import UserAccountTable from "@/components/Dashboard/users/UserAccountsTable.tsx";
+import useUserAccounts from "@/hooks/userAccount/useUserAccounts.ts";
+import useUserAccountsStore from "@/store/useUserAccountsStore.ts";
 
 
-const InventoryContainer = () => {
-    const path = useLocation().pathname.split("/")[0]
-    const categories = useInventoryStore((state) => state.categories);
+const UserAccountInfoContainer = () => {
+    const {data: userAccounts} = useUserAccounts();
+    const setUserAccounts = useUserAccountsStore(s => s.setUserAccounts)
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    // useEffect(() => {
-    //     if (categoryData) {
-    //         setCategories(categoryData);
-    //     }
-    // }, [categoryData, setCategories]);
+    useEffect(() => {
+        if (userAccounts) {
+            setUserAccounts(userAccounts);
+        }
+    }, [userAccounts, setUserAccounts]);
 
     const onSubmit = () => {
         setIsDialogOpen(false);
@@ -50,10 +43,10 @@ const InventoryContainer = () => {
                 <h1 className="text-lg font-semibold md:text-3xl">User Accounts</h1>
             </div>
             <div
-                className={`flex flex-1 items-center justify-center rounded-lg ${categories && categories.length > 0 ? '' : 'border border-dashed shadow-sm'}`}
+                className={`flex flex-1 items-center justify-center rounded-lg ${userAccounts && userAccounts.length > 0 ? '' : 'border border-dashed shadow-sm'}`}
                 x-chunk="dashboard-02-chunk-1"
             >
-                {categories.length === 0 ? (
+                {userAccounts && userAccounts.length === 0 ? (
                     <div className="flex flex-col items-center gap-1 text-center">
                         <h3 className="text-2xl font-bold tracking-tight">You have no user accounts</h3>
                         <p className="text-sm text-muted-foreground">
@@ -78,11 +71,11 @@ const InventoryContainer = () => {
                         </Dialog>
                     </div>
                 ) : (
-                    <CategoryDataTable/>
+                    <UserAccountTable/>
                 )}
             </div>
         </>
     );
 };
 
-export default InventoryContainer;
+export default UserAccountInfoContainer;

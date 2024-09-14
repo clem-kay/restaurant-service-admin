@@ -9,7 +9,7 @@ export enum EndPoints {
     PAYMENT_STATUS = 'orders/update-payment',
     LOGOUT = 'auth/logout',
     REFRESH = 'auth/refresh',
-    USERACCOUNT = "useraccount"
+    USER_ACCOUNT = "useraccount"
 }
 
 export type ROLE =  "SUPERADMIN" | "ADMIN" | "USER" | "SALES"

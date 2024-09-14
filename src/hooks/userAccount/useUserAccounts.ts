@@ -5,14 +5,13 @@ import {EndPoints, ROLE} from "@/constants/constants.ts";
 export interface UserAccountResponse {
     username: string
     role: ROLE,
-    createdAt: string;
-    updatedAt: string;
+    isActive: true
 }
 
-const apiClient = new APIClient<UserAccountResponse[], null>(EndPoints.USERACCOUNT)
+const apiClient = new APIClient<UserAccountResponse[], null>(EndPoints.USER_ACCOUNT)
 
 const UseUserAccounts = () => {
-    return useQuery({
+    return useQuery<UserAccountResponse[]>({
         queryKey: ['user'],
         queryFn: apiClient.getAll,
         staleTime: 0,

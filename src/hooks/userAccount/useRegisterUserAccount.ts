@@ -17,7 +17,7 @@ export interface RegisterUserAccountResponse {
     role: ROLE;
 }
 
-const apiClient = new APIClient<RegisterUserAccountData, RegisterUserAccountResponse>(EndPoints.USERACCOUNT);
+const apiClient = new APIClient<RegisterUserAccountData, RegisterUserAccountResponse>(EndPoints.USER_ACCOUNT);
 
 const registerUserAccountFn = (registerData: RegisterUserAccountData) => {
     return apiClient.post(registerData);

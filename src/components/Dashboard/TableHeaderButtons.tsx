@@ -20,28 +20,37 @@ interface TableHeaderButtonsProps {
 
 const TableHeaderButtons: React.FC<TableHeaderButtonsProps> = ({setIsDialogOpen, onFilterChange, onExport}) => {
 
-    const path = useLocation().pathname.split("/")[-1]
+    const path = useLocation().pathname.split("/")[3]
+    console.log(path)
 
     return (
         <>
             <div className="flex justify-end gap-2 p-4">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm" className="h-8 gap-1">
-                            <ListFilter className="h-3.5 w-3.5"/>
-                            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Filter</span>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuRadioGroup onValueChange={onFilterChange}>
-                            <DropdownMenuRadioItem value="latest">Latest</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="oldest">Oldest</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="name">Name</DropdownMenuRadioItem>
-                        </DropdownMenuRadioGroup>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                {path !== "users" ?
+                    (
+
+                        <DropdownMenu>
+
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm" className="h-8 gap-1">
+                                    <ListFilter className="h-3.5 w-3.5"/>
+                                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Filter</span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                                <DropdownMenuSeparator/>
+                                <DropdownMenuRadioGroup onValueChange={onFilterChange}>
+                                    <DropdownMenuRadioItem value="latest">Latest</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="oldest">Oldest</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="name">Name</DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                    ) : null
+                }
+
                 <Button variant="outline" size="sm" className="h-8 gap-1" onClick={onExport}>
                     <File className="h-3.5 w-3.5"/>
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Export</span>
