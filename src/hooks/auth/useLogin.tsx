@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 import {handleError} from '@/utils/utils.ts';
-import {EndPoints} from "@/constants/constants.ts";
+import {EndPoints, ROLE} from "@/constants/constants.ts";
 
 interface LoginData {
     username: string;
@@ -48,7 +48,7 @@ const useLogin = () => {
         onSuccess: (data: LoginResponse) => {
             const {access_token, refresh_token, username, id, role} = data;
             toast.success("Login Successful");
-            setUser({userId: id, username, role});
+            setUser({userId: id, username, role: role as ROLE});
             setToken(access_token);
             setRefreshToken(refresh_token);
             setIsLoggedIn(true);

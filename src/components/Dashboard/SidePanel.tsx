@@ -1,6 +1,6 @@
 import {ForwardRefExoticComponent, RefAttributes, useState} from 'react';
 import {NavLink, useLocation} from "react-router-dom";
-import {Bell, Home, LineChart, LucideProps, Package, Package2, ShoppingCart, Users} from "lucide-react";
+import {Bell, Home, LineChart, LucideProps, Package, Package2, ShoppingCart, Users, UserSquare} from "lucide-react";
 import {Button} from "@/components/ui/button.tsx";
 import {Badge} from "@/components/ui/badge.tsx";
 import useOrderStore from "@/store/useOrderStore.tsx";
@@ -29,6 +29,7 @@ const SidePanel = () => {
             badge: orders.filter(o => o.food_status === "PENDING").length || 0
         },
         {to: "categories", icon: Package, label: "Categories"},
+        {to: "users", icon: UserSquare, label: "Users"},
         {to: "#", icon: Users, label: "Customers"},
         {to: "#", icon: LineChart, label: "Analytics"},
     ];
@@ -54,7 +55,7 @@ const SidePanel = () => {
             <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                 <NavLink to="/admin/dashboard" className="flex items-center gap-2 font-semibold">
                     <Package2 className="h-6 w-6"/>
-                    <span>{roleOptions[userRole] || "Admin"}</span>
+                    <span>{roleOptions[userRole]}</span>
                 </NavLink>
                 <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
                     <Bell className="h-4 w-4"/>
@@ -74,7 +75,7 @@ const SidePanel = () => {
                                 className={`flex items-center gap-3 rounded-lg px-3 py-2 ${shouldSetDefault &&
                                 link.label === 'Dashboard' ? 'text-primary' : ''} transition-all ${isActive ? 'text-primary' : 'text-muted-foreground'} hover:text-primary`}
                             >
-                                <Icon className="h-4 w-4"/>
+                                <Icon className="h-5 w-5"/>
                                 {link.label} {" "}
                                 {link.badge && (
                                     <Badge
