@@ -1,132 +1,240 @@
-import {useEffect} from 'react';
-import {MoreHorizontal} from "lucide-react";
+import React, {useState} from 'react';
+import {useNavigate} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Table, TableBody, TableCell, TableRow} from "@/components/ui/table";
-import {TableHeaderContainer} from "@/components/Dashboard/category/TableHeaderContainer";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
+    DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import TableHeaderButtons from "@/components/Dashboard/TableHeaderButtons";
-import useUserAccounts from "@/hooks/userAccount/useUserAccounts.ts";
-import useUserAccountsStore from "@/store/useUserAccountsStore.ts";
+import {Button} from '@/components/ui/button';
+import {UserAccountResponse} from "@/hooks/userAccount/useUserAccounts.ts";
+import {MoreHorizontal} from "lucide-react";
+import UserTableHeaderBtns from "@/components/Dashboard/users/UserTableHeaderBtns.tsx";
+import CustomDialog from "@/components/Dashboard/category/CustomDialog.tsx";
+import useAuthStore from "@/store/useAuthStore.ts";
 
-export default function UserAccountTable() {
-    const {data: userAccounts} = useUserAccounts();
-    const setUserAccounts = useUserAccountsStore(s => s.setUserAccounts)
-    const userAccountsFromStore = useUserAccountsStore(s => s.userAccounts)
+interface UserAccountsTableProps {
+    userAccounts: UserAccountResponse[] | undefined;
+}
 
-    useEffect(() => {
-        if (userAccounts) {
-            setUserAccounts(userAccounts);
-        }
-    }, [userAccounts, setUserAccounts]);
+interface Role {
+    SUPERADMIN: 'default';
+    ADMIN: 'outline';
+    USER: 'orange';
+    SALES: 'success';
+}
 
+const role: Role = {
+    SUPERADMIN: 'default',
+    ADMIN: 'outline',
+    USER: 'orange',
+    SALES: 'success',
+};
 
-    const exportToCSV = () => {
-        const headers = ["Username", "Created At", "Updated At"];
-        const rows = userAccountsFromStore.map(user => [
-            user.username,
-            user.role,
-            user.isActive
-        ]);
+const getRole = (status: keyof Role): 'default' | 'success' | 'outline' | 'destructive' | 'gray' | 'orange' => {
+    return role[status];
+};
 
-        const csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].map(e => e.join(",")).join("\n");
+const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const setIsRegisterUser = useAuthStore((state) => state.setIsRegisterUser);
+    const role = useAuthStore((state) => state.user.role);
+    const navigate = useNavigate();
 
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "categories.csv");
-        document.body.appendChild(link);
+    const userAccountsPerPage = 10;
 
-        link.click();
-    };
+    // Pagination
+    const indexOfLastUserAccount = currentPage * userAccountsPerPage;
+    const indexOfFirstUserAccount = indexOfLastUserAccount - userAccountsPerPage;
+    const currentUserAccounts = userAccounts?.slice(indexOfFirstUserAccount, indexOfLastUserAccount);
+
+    let userAccountLength = 0
+    if (userAccounts) {
+        userAccountLength = userAccounts.length
+
+    }
+    const handleRegister = () => {
+        setIsDialogOpen(false);
+        setIsRegisterUser(true)
+        navigate('/auth/register')
+    }
+    const totalPages = Math.ceil(userAccountLength / userAccountsPerPage);
+
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
 
     return (
-        <Card className='w-full'>
-            <TableHeaderButtons setIsDialogOpen={() => {
-            }} onFilterChange={() => {
-            }}
-                                onExport={exportToCSV}/>
-            <CardHeader>
-                <CardTitle>User Accounts</CardTitle>
-                <CardDescription>
-                    Manage your Users Accounts.
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeaderContainer/>
-                    <TableBody>
-                        {userAccounts && userAccounts.map(({username, role, isActive}, index) => (
-                            <TableRow key={index} className='cursor-pointer'>
-                                <TableCell className="font-medium">{username}</TableCell>
-                                <TableCell className="font-medium">{role}</TableCell>
-                                <TableCell><Badge variant="outline">{isActive}</Badge></TableCell>
-                                <TableCell onClick={(e) => e.stopPropagation()}>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                <MoreHorizontal className="h-4 w-4"/>
-                                                <span className="sr-only">Toggle menu</span>
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem
-                                                className='focus:bg-accent'
-                                            >
-                                                View menu
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem className='focus:bg-accent' onClick={() => {
-                                            }}>Add menu
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem className='focus:bg-accent' onClick={() => {
-                                            }}>Edit
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem className='hover:bg-destructive'
-                                                              onClick={() => {
-                                                              }}>Delete</DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </CardContent>
-
-            {/*<CreateCategoryDialog*/}
-            {/*    isOpen={isDialogOpen}*/}
-            {/*    onOpenChange={() => setIsDialogOpen(false)}*/}
-            {/*    onSubmit={handleAddCategory}*/}
-            {/*/>*/}
+        <>
 
 
-            {/*<CustomDialog*/}
-            {/*    isOpen={isDeleteDialogOpen}*/}
-            {/*    onClose={() => setIsDeleteDialogOpen(false)}*/}
-            {/*    onConfirm={confirmDelete}*/}
-            {/*    title={'Are you absolutely sure?'}*/}
-            {/*    message={'This action cannot be undone. This will permanently delete your category and remove its data from our servers.'}*/}
-            {/*    triggerBtnLabel='Delete'*/}
-            {/*/>*/}
+            <CustomDialog
+                title='Register a new User Account?'
+                message='You will be redirected to the register page'
+                isOpen={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+                onConfirm={handleRegister}
+                triggerBtnLabel={'Confirm'}
+            />
+            <Card className='flex-grow'>
+                <CardHeader className="px-7">
+                    <CardTitle>User Accounts</CardTitle>
+                    <CardDescription>Check out all your user accounts.</CardDescription>
+                    {role === "SUPERADMIN" && <UserTableHeaderBtns setIsDialogOpen={setIsDialogOpen}/>}
+                </CardHeader>
+                <CardContent>
+                    {userAccounts && userAccounts.length > 0 ? (
+                        <>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow className=''>
+                                        <TableHead>Username</TableHead>
+                                        <TableHead className="hidden sm:table-cell">Active</TableHead>
+                                        <TableHead className="hidden sm:table-cell">Role</TableHead>
+                                        <TableHead className="hidden md:table-cell">Actions</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {currentUserAccounts && currentUserAccounts.map((user, index) => (
+                                        <TableRow
+                                            className={`cursor-pointer`}
+                                            key={index}
+                                        >
+                                            <TableCell>
+                                                <div className="font-medium">{user.username}</div>
+                                            </TableCell>
+                                            <TableCell className="hidden sm:table-cell">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <div className='inline-flex'>
+                                                            <Badge className="text-xs"
+                                                                   variant={user.isActive ? 'success' : 'outline'}>
+                                                                {user.isActive ? 'Yes' : 'No'}
+                                                            </Badge>
+                                                        </div>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <DropdownMenuLabel>Assign Status</DropdownMenuLabel>
+                                                        <DropdownMenuSeparator/>
+                                                        <DropdownMenuItem className='hover:bg-accent'
+                                                                          onClick={() => {
+                                                                          }}>Yes</DropdownMenuItem>
+                                                        <DropdownMenuItem className='hover:bg-accent'
+                                                                          onClick={() => {
+                                                                          }}>No</DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </TableCell>
+                                            <TableCell className="hidden sm:table-cell"
+                                                       onClick={(e) => e.stopPropagation()}>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <div className='inline-flex'>
+                                                            <Badge className="text-xs "
+                                                                   variant={getRole(user.role as keyof Role)}>
+                                                                {user.role}
+                                                            </Badge>
+                                                        </div>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="center">
+                                                        <DropdownMenuLabel>Assign Role</DropdownMenuLabel>
+                                                        <DropdownMenuSeparator/>
+                                                        {Object.keys(role).map(role => (
+                                                            <DropdownMenuItem
+                                                                key={role}
+                                                                className={`hover:bg-accent ${role === 'SUPERADMIN' ? 'hover:bg-destructive' : ''}`}
+                                                                onClick={() => {
+                                                                }}
+                                                            >
+                                                                {role}
+                                                            </DropdownMenuItem>
+                                                        ))}
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </TableCell>
 
-            {/*<CustomDialog*/}
-            {/*    isOpen={isDeleteMenuDialogOpen}*/}
-            {/*    onClose={() => setIsDeleteMenuDialogOpen(false)}*/}
-            {/*    onConfirm={confirmDeleteMenu}*/}
-            {/*    title={'Are you absolutely sure?'}*/}
-            {/*    message={'This action cannot be undone. This will permanently delete your menu and remove its data from our servers.'}*/}
-            {/*    triggerBtnLabel='Delete'*/}
-            {/*/>*/}
 
-        </Card>
+                                            <TableCell className="hidden md:table-cell">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button aria-haspopup="true" size="icon" variant="ghost">
+                                                            <MoreHorizontal className="h-4 w-4"/>
+                                                            <span className="sr-only">Toggle menu</span>
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className='z-[10000000]'>
+                                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                        <DropdownMenuSeparator/>
+                                                        <DropdownMenuItem className='hover:bg-accent' onClick={() => {
+                                                        }}>Activate</DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            className='hover:bg-destructive/90'
+                                                            onClick={() => {
+                                                            }}
+                                                        >Deactivate
+                                                        </DropdownMenuItem>
+
+                                                        <DropdownMenuItem
+                                                            className='hover:bg-destructive/90'
+                                                            onClick={() => {
+                                                            }}
+                                                        >Delete
+                                                        </DropdownMenuItem>
+
+
+                                                        <DropdownMenuItem
+                                                            className='hover:bg-destructive/90'
+                                                            onClick={() =>{}}>
+                                                            Reset Password
+                                                        </DropdownMenuItem>
+
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </TableCell>
+
+
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                            <div className="flex items-center justify-between space-x-2 py-4">
+                                <div>
+                                    Page {currentPage} of {totalPages}
+                                </div>
+                                <div className="flex space-x-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => paginate(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                    >
+                                        Previous
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => paginate(currentPage + 1)}
+                                        disabled={indexOfLastUserAccount >= userAccounts.length}
+                                    >
+                                        Next
+                                    </Button>
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center py-8">
+                            <p className="text-muted-foreground">You have no user accounts 😓.</p>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+        </>
     );
-}
+};
+
+export default UserAccountsTable;

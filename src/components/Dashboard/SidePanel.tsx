@@ -8,7 +8,7 @@ import useAuthStore from "@/store/useAuthStore.ts";
 
 const SidePanel = () => {
     const location = useLocation();
-    const userRole = useAuthStore(s => s.user.role)
+    const userRole = useAuthStore(s => s.user.role);
     const [selectedNavLink, setSelectedLink] = useState(location.pathname);
     const [shouldSetDefault, setShouldSetDefault] = useState<boolean>(true);
     const orders = useOrderStore(s => s.orders);
@@ -20,19 +20,27 @@ const SidePanel = () => {
         "SALES": "Sales"
     };
 
-    const links = [
-        {to: "", icon: Home, label: "Dashboard"},
+    // Define the base links that everyone can access
+    const baseLinks = [
         {
             to: "orders",
             icon: ShoppingCart,
             label: "Orders",
             badge: orders.filter(o => o.food_status === "PENDING").length || 0
-        },
-        {to: "categories", icon: Package, label: "Categories"},
-        {to: "users", icon: UserSquare, label: "Users"},
+        }
+    ];
+
+    // Define the additional links for "ADMIN" and "SUPERADMIN" roles
+    const adminLinks = [
+        {to: "", icon: Home, label: "Dashboard", badge: undefined},
+        {to: "categories", icon: Package, label: "Categories", badge: undefined},
+        {to: "users", icon: UserSquare, label: "Users", badge: undefined},
         {to: "#", icon: Users, label: "Customers"},
         {to: "#", icon: LineChart, label: "Analytics"},
     ];
+
+    // Combine the links based on the role
+    const links = userRole === "SALES" ? baseLinks : [...adminLinks, ...baseLinks];
 
     const handleNavLinkClick = (link: {
         to: string;
@@ -80,7 +88,7 @@ const SidePanel = () => {
                                 {link.badge && (
                                     <Badge
                                         className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                                        {link.badge}
+                                        {link?.badge}
                                     </Badge>
                                 )}
                             </NavLink>

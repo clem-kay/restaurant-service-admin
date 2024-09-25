@@ -11,14 +11,14 @@ import {CircleUser} from "lucide-react";
 import CustomDialog from "@/components/Dashboard/category/CustomDialog.tsx";
 import {useState} from "react";
 import useAuthStore from "@/store/useAuthStore.ts";
-import {useNavigate} from "react-router-dom";
+// import {useNavigate} from "react-router-dom";
 import {ModeToggle} from "@/components/Theme/mode-toggle.tsx";
 
 const AccountAvatar = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const clearAuth = useAuthStore((state) => state.clearAuth);
-    const setIsRegisterUser = useAuthStore((state) => state.setIsRegisterUser);
+    // const setIsRegisterUser = useAuthStore((state) => state.setIsRegisterUser);
     const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
     const username = useAuthStore((state) => state.user.username);
     const handleLogout = () => {
@@ -56,11 +56,11 @@ const AccountAvatar = () => {
                     <DropdownMenuItem className='focus:bg-accent'>Settings</DropdownMenuItem>
                     <DropdownMenuItem className='focus:bg-accent'>Support</DropdownMenuItem>
                     <DropdownMenuSeparator/>
-                    <DropdownMenuItem onClick={() => {
-                        setIsRegisterUser(true)
-                        navigate('/auth/register')
-                    }} className='focus:bg-accent'>Add
-                        User</DropdownMenuItem>
+                    {/*<DropdownMenuItem onClick={() => {*/}
+                    {/*    setIsRegisterUser(true)*/}
+                    {/*    navigate('/auth/register')*/}
+                    {/*}} className='focus:bg-accent'>Add*/}
+                    {/*    User</DropdownMenuItem>*/}
                     <DropdownMenuItem className='focus:bg-destructive' onClick={() => setIsDialogOpen(true)}
                     >
                         Logout

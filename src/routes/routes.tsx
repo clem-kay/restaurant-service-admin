@@ -7,6 +7,7 @@ import InventoryContainer from "@/components/Dashboard/InventoryContainer.tsx";
 import OrderView from "@/components/Dashboard/orders/OrderView.tsx";
 import Overview from "@/components/Dashboard/overview/Overview.tsx";
 import UserAccounts from "@/components/Dashboard/users/UserAccounts.tsx";
+import UserView from "@/components/Dashboard/users/UserView.tsx";
 
 
 const router = createBrowserRouter([
@@ -18,7 +19,7 @@ const router = createBrowserRouter([
         element: <ProtectedRoute element={<AdminPage/>}/>,
         children: [
             {path: 'categories', element: <InventoryContainer/>},
-            {path: 'users', element: <UserAccounts/>},
+            {path: 'users', element: <UserView/>},
             {path: 'orders', element: <OrderView/>},
             {index: true, element: <Overview/>},
         ]
