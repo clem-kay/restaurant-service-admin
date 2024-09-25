@@ -44,7 +44,7 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
     const [currentPage, setCurrentPage] = useState(1);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const setIsRegisterUser = useAuthStore((state) => state.setIsRegisterUser);
-    const role = useAuthStore((state) => state.user.role);
+    const userRole = useAuthStore((state) => state.user.role);
     const navigate = useNavigate();
 
     const userAccountsPerPage = 10;
