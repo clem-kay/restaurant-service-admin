@@ -7,10 +7,28 @@ export enum EndPoints {
     DASHBOARD = 'dashboard',
     ORDER_STATUS = `${ORDER}/update-status`,
     PAYMENT_STATUS = `${ORDER}/update-payment`,
-    USER_ACCOUNT = "useraccount",
-    ACTIVATE_USER_ACCOUNT = `${USER_ACCOUNT}/activate`,
-    CHANGE_PASSWORD = `${USER_ACCOUNT}/change-password`
+    USER_ACCOUNTS = "useraccount",
+    ACTIVATE_USER_ACCOUNT = `${USER_ACCOUNTS}/activate`,
+    CHANGE_PASSWORD = `${USER_ACCOUNTS}/change-password`
 }
+
+export enum QueryKeys {
+    CATEGORY = 'category',
+    MENU = 'menu',
+    LOGIN = 'login',
+    REGISTER = 'register',
+    UPLOAD = 'upload',
+    ORDER = 'orders',
+    DASHBOARD = 'dashboard',
+    ORDER_STATUS = 'order-status',
+    PAYMENT_STATUS = 'payment-status',
+    USER_ACCOUNTS = "userAccounts",
+    ACTIVATE_USER_ACCOUNT = 'activate',
+    DELETE_USER_ACCOUNT = 'activate',
+    CHANGE_PASSWORD = 'reset-password'
+}
+
+
 
 export type ROLE = "SUPERADMIN" | "ADMIN" | "USER" | "SALES"
 

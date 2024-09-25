@@ -2,7 +2,7 @@ import {useMutation} from '@tanstack/react-query';
 
 import APIClient from '../../services/api-client.ts';
 import {MenuResponse} from "@/hooks/menu/useMenu.ts";
-import {EndPoints} from "@/constants/constants.ts";
+import {EndPoints } from "@/constants/constants.ts";
 
 export interface MenuData {
     name: string;

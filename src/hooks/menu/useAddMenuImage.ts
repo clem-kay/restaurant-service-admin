@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import APIClient from '../../services/api-client.ts';
 import { handleError } from '@/utils/utils.ts';
-import { EndPoints } from '@/constants/constants.ts';
+import {EndPoints } from '@/constants/constants.ts';
 
 const apiClient = new APIClient<FormData, ImageResponse>(EndPoints.UPLOAD);
 export interface ImageResponse {

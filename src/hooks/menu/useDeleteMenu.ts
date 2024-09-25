@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import APIClient from '../../services/api-client';
 import { handleError } from '@/utils/utils';
-import { EndPoints } from "@/constants/constants";
+import {EndPoints} from "@/constants/constants";
 import useInventoryStore from "@/store/useInventoryStore";
 import toast from "react-hot-toast";
 import { MenuResponse } from "@/hooks/menu/useMenu.ts";
@@ -28,7 +28,7 @@ const useDeleteMenu = () => {
             const previousMenuData = queryClient.getQueryData<MenuResponse[]>(['categories']);
 
             queryClient.setQueryData<MenuResponse[]>(['menu'], (old) =>
-                old ? old.filter(category => category.id !== deletedMenuId) : []
+                old ? old.filter(menu => menu.id !== deletedMenuId) : []
             );
 
             setMenu(menuData.filter(menu => menu.id !== deletedMenuId));

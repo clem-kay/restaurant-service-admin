@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 import {handleError} from '@/utils/utils.ts';
-import {EndPoints, ROLE} from "@/constants/constants.ts";
+import {EndPoints , ROLE} from "@/constants/constants.ts";
 
 interface LoginData {
     username: string;

@@ -1,6 +1,6 @@
 import {useMutation} from '@tanstack/react-query';
 import APIClient from '../../services/api-client';
-import {EndPoints} from "@/constants/constants";
+import {EndPoints } from "@/constants/constants";
 import useOrderStore from "@/store/useOrderStore";
 
 export interface StatusData {

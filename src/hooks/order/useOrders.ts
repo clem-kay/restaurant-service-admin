@@ -1,5 +1,5 @@
 import APIClient from "@/services/api-client.ts";
-import {EndPoints} from "@/constants/constants";
+import {EndPoints } from "@/constants/constants";
 import {useQuery} from "@tanstack/react-query";
 
 const orderApiClient = new APIClient<OrderResponseMany[], null>(EndPoints.ORDER);

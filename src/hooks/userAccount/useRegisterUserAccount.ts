@@ -3,7 +3,7 @@ import APIClient from '../../services/api-client.ts';
 import useAuthStore from "@/store/useAuthStore.ts";
 import toast from "react-hot-toast";
 import {handleError} from '@/utils/utils.ts';
-import {EndPoints, ROLE} from "@/constants/constants.ts";
+import {EndPoints, QueryKeys, ROLE} from "@/constants/constants.ts";
 
 export interface RegisterUserAccountData {
     username: string;
@@ -17,7 +17,7 @@ export interface RegisterUserAccountResponse {
     role: ROLE;
 }
 
-const apiClient = new APIClient<RegisterUserAccountData, RegisterUserAccountResponse>(EndPoints.USER_ACCOUNT);
+const apiClient = new APIClient<RegisterUserAccountData, RegisterUserAccountResponse>(EndPoints.USER_ACCOUNTS);
 
 const registerUserAccountFn = (registerData: RegisterUserAccountData) => {
     return apiClient.post(registerData);
@@ -29,7 +29,7 @@ const UseRegisterUserAccount = () => {
 
     return useMutation({
         mutationFn: registerUserAccountFn,
-        mutationKey: ['register'],
+        mutationKey: [QueryKeys.REGISTER],
         onSuccess: () => {
             setIsRegisterUser(false)
             toast.success("User Account Creation Successful");

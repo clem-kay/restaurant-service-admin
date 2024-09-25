@@ -2,7 +2,7 @@ import {useMutation, useQueryClient} from '@tanstack/react-query';
 import APIClient from '../../services/api-client';
 import {CategoryResponse} from "@/hooks/category/useCategory.ts";
 import {handleError} from '@/utils/utils';
-import {EndPoints} from "@/constants/constants";
+import {EndPoints } from "@/constants/constants";
 import useInventoryStore from "@/store/useInventoryStore";
 import toast from "react-hot-toast";
 

@@ -1,6 +1,6 @@
 import {useQuery} from "@tanstack/react-query";
 import APIClient from "@/services/api-client.ts";
-import {EndPoints} from "@/constants/constants.ts";
+import {EndPoints, QueryKeys} from "@/constants/constants.ts";
 
 export interface MenuResponse {
     id: number;
@@ -19,7 +19,7 @@ export interface MenuResponse {
 const apiClient = new APIClient<MenuResponse[], null>(EndPoints.MENU);
 const UseMenu = () => {
     return useQuery<MenuResponse[]>({
-        queryKey: ['foodmenu'],
+        queryKey: [QueryKeys.MENU],
         queryFn: apiClient.getAll,
         staleTime: 0,
         retry: 2

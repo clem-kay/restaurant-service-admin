@@ -1,5 +1,5 @@
 import APIClient from "@/services/api-client";
-import { EndPoints } from "@/constants/constants";
+import {EndPoints } from "@/constants/constants";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useOrderStore from "@/store/useOrderStore";
 import { OrderResponseMany } from "@/hooks/order/useOrders";

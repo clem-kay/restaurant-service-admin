@@ -1,6 +1,6 @@
 import {useQuery} from "@tanstack/react-query";
 import APIClient from "@/services/api-client.ts";
-import {EndPoints} from "@/constants/constants";
+import {EndPoints } from "@/constants/constants";
 
 
 export interface CategoryResponse {
