@@ -17,6 +17,9 @@ import {MoreHorizontal} from "lucide-react";
 import UserTableHeaderBtns from "@/components/Dashboard/users/UserTableHeaderBtns.tsx";
 import CustomDialog from "@/components/Dashboard/category/CustomDialog.tsx";
 import useAuthStore from "@/store/useAuthStore.ts";
+import useActivateUserAccount from "@/hooks/userAccount/useActivateUserAccount.ts";
+import useDeleteUserAccount from "@/hooks/userAccount/useDeleteUserAccount.ts";
+import useResetUserPassword from "@/hooks/userAccount/useResetUserPassword.ts";
 
 interface UserAccountsTableProps {
     userAccounts: UserAccountResponse[] | undefined;
@@ -43,9 +46,13 @@ const getRole = (status: keyof Role): 'default' | 'success' | 'outline' | 'destr
 const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [accountId, setAccountId] = useState<number | null>(null)
     const setIsRegisterUser = useAuthStore((state) => state.setIsRegisterUser);
     const userRole = useAuthStore((state) => state.user.role);
     const navigate = useNavigate();
+    const {mutate: updateUserAccount} = useActivateUserAccount();
+    const {mutate: deleteUserAccount} = useDeleteUserAccount();
+    // const {mutate: resetPassword} = useResetUserPassword();
 
     const userAccountsPerPage = 10;
 
@@ -64,6 +71,19 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
         setIsRegisterUser(true)
         navigate('/auth/register')
     }
+
+    const handleDeleteUser = (id: number) => {
+        deleteUserAccount(id)
+    }
+
+    const handleResetPassword = (id: number) => {
+
+    }
+
+    const handleisActive = (id: number, data: boolean) => {
+        updateUserAccount({id, data})
+
+    }
     const totalPages = Math.ceil(userAccountLength / userAccountsPerPage);
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -71,6 +91,15 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
 
     return (
         <>
+
+            <CustomDialog
+                title='Delete User Account?'
+                message='Are you sure? This operation cannot be undone'
+                isOpen={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+                onConfirm={handleRegister}
+                triggerBtnLabel={'Confirm'}
+            />
 
 
             <CustomDialog
@@ -109,53 +138,21 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                                                 <div className="font-medium">{user.username}</div>
                                             </TableCell>
                                             <TableCell className="hidden sm:table-cell">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <div className='inline-flex'>
-                                                            <Badge className="text-xs"
-                                                                   variant={user.isActive ? 'success' : 'outline'}>
-                                                                {user.isActive ? 'Yes' : 'No'}
-                                                            </Badge>
-                                                        </div>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuLabel>Assign Status</DropdownMenuLabel>
-                                                        <DropdownMenuSeparator/>
-                                                        <DropdownMenuItem className='hover:bg-accent'
-                                                                          onClick={() => {
-                                                                          }}>Yes</DropdownMenuItem>
-                                                        <DropdownMenuItem className='hover:bg-accent'
-                                                                          onClick={() => {
-                                                                          }}>No</DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
+                                                <div className='inline-flex'>
+                                                    <Badge className="text-xs"
+                                                           variant={user.isActive ? 'success' : 'outline'}>
+                                                        {user.isActive ? 'Yes' : 'No'}
+                                                    </Badge>
+                                                </div>
                                             </TableCell>
                                             <TableCell className="hidden sm:table-cell"
                                                        onClick={(e) => e.stopPropagation()}>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <div className='inline-flex'>
-                                                            <Badge className="text-xs "
-                                                                   variant={getRole(user.role as keyof Role)}>
-                                                                {user.role}
-                                                            </Badge>
-                                                        </div>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="center">
-                                                        <DropdownMenuLabel>Assign Role</DropdownMenuLabel>
-                                                        <DropdownMenuSeparator/>
-                                                        {Object.keys(role).map(role => (
-                                                            <DropdownMenuItem
-                                                                key={role}
-                                                                className={`hover:bg-accent ${role === 'SUPERADMIN' ? 'hover:bg-destructive' : ''}`}
-                                                                onClick={() => {
-                                                                }}
-                                                            >
-                                                                {role}
-                                                            </DropdownMenuItem>
-                                                        ))}
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
+                                                <div className='inline-flex'>
+                                                    <Badge className="text-xs "
+                                                           variant={getRole(user.role as keyof Role)}>
+                                                        {user.role}
+                                                    </Badge>
+                                                </div>
                                             </TableCell>
 
 
@@ -171,10 +168,14 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                                         <DropdownMenuSeparator/>
                                                         <DropdownMenuItem className='hover:bg-accent' onClick={() => {
+                                                            setIsDialogOpen(true)
+                                                            // updateUserAccount({id: user.id, isActive: true})
                                                         }}>Activate</DropdownMenuItem>
                                                         <DropdownMenuItem
                                                             className='hover:bg-destructive/90'
                                                             onClick={() => {
+                                                                setIsDialogOpen(true)
+                                                                // updateUserAccount({id: user.id, isActive: false})
                                                             }}
                                                         >Deactivate
                                                         </DropdownMenuItem>
@@ -182,6 +183,8 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                                                         <DropdownMenuItem
                                                             className='hover:bg-destructive/90'
                                                             onClick={() => {
+                                                                setIsDialogOpen(true)
+                                                                // deleteUserAccount(user.id)
                                                             }}
                                                         >Delete
                                                         </DropdownMenuItem>
@@ -189,7 +192,8 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
 
                                                         <DropdownMenuItem
                                                             className='hover:bg-destructive/90'
-                                                            onClick={() =>{}}>
+                                                            onClick={() => {
+                                                            }}>
                                                             Reset Password
                                                         </DropdownMenuItem>
 

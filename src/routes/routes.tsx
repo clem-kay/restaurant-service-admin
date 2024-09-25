@@ -13,6 +13,7 @@ import UserView from "@/components/Dashboard/users/UserView.tsx";
 const router = createBrowserRouter([
     {index: true, path: 'auth/login', element: <AuthPage/>},
     {path: 'auth/register', element: <AuthPage/>},
+    {path: 'auth/reset-password', element: <AuthPage/>},
     {path: '/', element: <ProtectedRoute element={<App/>}/>,},
     {
         path: 'admin/dashboard',
