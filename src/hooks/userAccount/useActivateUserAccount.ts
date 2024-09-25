@@ -2,24 +2,30 @@ import {useMutation} from '@tanstack/react-query';
 import APIClient from '../../services/api-client';
 import {EndPoints, QueryKeys} from "@/constants/constants";
 import useUserAccountsStore from "@/store/useUserAccountsStore.ts";
+import toast from "react-hot-toast";
 
 
-const apiClient = new APIClient<boolean, boolean>(EndPoints.ACTIVATE_USER_ACCOUNT);
+const apiClient = new APIClient<UpdateUserActiveStatusData, boolean>(EndPoints.ACTIVATE_USER_ACCOUNT);
 
-const updateUserAccountActiveStatusFn = (id: number, isActive: boolean) => {
-    return apiClient.put(id, isActive);
+export interface UpdateUserActiveStatusData {
+    isActive: boolean
+}
+
+const updateUserAccountActiveStatusFn = (id: number, isActiveData: UpdateUserActiveStatusData) => {
+    return apiClient.put(id, isActiveData);
 };
 
 const useUpdateUserAccountActiveStatus = () => {
     const updateUserAccountIsActive = useUserAccountsStore(s => s.updateUserAccountIsActive)
 
     return useMutation({
-        mutationFn: ({id, isActive}: {
+        mutationFn: ({id, isActiveData}: {
             id: number;
-            isActive: boolean
-        }) => updateUserAccountActiveStatusFn(id, isActive),
+            isActiveData: UpdateUserActiveStatusData
+        }) => updateUserAccountActiveStatusFn(id, isActiveData),
         mutationKey: [QueryKeys.ACTIVATE_USER_ACCOUNT],
         onSuccess: (isActive, variables) => {
+            toast.success(isActive ? 'Account activated' : 'Account deactivated')
             updateUserAccountIsActive(variables.id, isActive);
         }
     });

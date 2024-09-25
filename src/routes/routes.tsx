@@ -6,7 +6,6 @@ import ProtectedRoute from "@/routes/ProtectedRoute.tsx";
 import InventoryContainer from "@/components/Dashboard/InventoryContainer.tsx";
 import OrderView from "@/components/Dashboard/orders/OrderView.tsx";
 import Overview from "@/components/Dashboard/overview/Overview.tsx";
-import UserAccounts from "@/components/Dashboard/users/UserAccounts.tsx";
 import UserView from "@/components/Dashboard/users/UserView.tsx";
 
 

@@ -5,11 +5,11 @@ export enum EndPoints {
     UPLOAD = 'upload',
     ORDER = 'orders',
     DASHBOARD = 'dashboard',
-    ORDER_STATUS = `${ORDER}/update-status`,
-    PAYMENT_STATUS = `${ORDER}/update-payment`,
+    ORDER_STATUS = 'orders/update-status',
+    PAYMENT_STATUS = 'orders/update-payment',
     USER_ACCOUNTS = "useraccount",
-    ACTIVATE_USER_ACCOUNT = `${USER_ACCOUNTS}/activate`,
-    CHANGE_PASSWORD = `${USER_ACCOUNTS}/change-password`
+    ACTIVATE_USER_ACCOUNT = 'useraccount/activate',
+    CHANGE_PASSWORD = 'useraccount/change-password'
 }
 
 export enum QueryKeys {

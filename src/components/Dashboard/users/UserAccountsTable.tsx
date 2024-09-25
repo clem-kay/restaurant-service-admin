@@ -19,7 +19,6 @@ import CustomDialog from "@/components/Dashboard/category/CustomDialog.tsx";
 import useAuthStore from "@/store/useAuthStore.ts";
 import useActivateUserAccount from "@/hooks/userAccount/useActivateUserAccount.ts";
 import useDeleteUserAccount from "@/hooks/userAccount/useDeleteUserAccount.ts";
-import useResetUserPassword from "@/hooks/userAccount/useResetUserPassword.ts";
 
 interface UserAccountsTableProps {
     userAccounts: UserAccountResponse[] | undefined;
@@ -46,75 +45,73 @@ const getRole = (status: keyof Role): 'default' | 'success' | 'outline' | 'destr
 const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [accountId, setAccountId] = useState<number | null>(null)
+    const [dialogAction, setDialogAction] = useState<null | 'activate' | 'deactivate' | 'delete' | 'resetPassword' | 'register'>(null);
+    const [accountId, setAccountId] = useState<number | null>(null);
     const setIsRegisterUser = useAuthStore((state) => state.setIsRegisterUser);
     const userRole = useAuthStore((state) => state.user.role);
     const navigate = useNavigate();
     const {mutate: updateUserAccount} = useActivateUserAccount();
     const {mutate: deleteUserAccount} = useDeleteUserAccount();
-    // const {mutate: resetPassword} = useResetUserPassword();
 
     const userAccountsPerPage = 10;
-
-    // Pagination
     const indexOfLastUserAccount = currentPage * userAccountsPerPage;
     const indexOfFirstUserAccount = indexOfLastUserAccount - userAccountsPerPage;
     const currentUserAccounts = userAccounts?.slice(indexOfFirstUserAccount, indexOfLastUserAccount);
 
-    let userAccountLength = 0
+    let userAccountLength = 0;
     if (userAccounts) {
-        userAccountLength = userAccounts.length
-
+        userAccountLength = userAccounts.length;
     }
-    const handleRegister = () => {
+
+    const handleDialogConfirm = () => {
+        if (dialogAction === 'delete' && accountId) {
+            deleteUserAccount(accountId);
+        } else if (dialogAction === 'activate' && accountId) {
+            updateUserAccount({id: accountId, isActiveData: {isActive: true}});
+        } else if (dialogAction === 'deactivate' && accountId) {
+            updateUserAccount({id: accountId, isActiveData: {isActive: false}});
+        } else if (dialogAction === 'resetPassword') {
+            navigate('/auth/reset-password')
+        } else if (dialogAction === 'register') {
+            setIsRegisterUser(true)
+            navigate('/auth/register')
+        }
         setIsDialogOpen(false);
-        setIsRegisterUser(true)
-        navigate('/auth/register')
-    }
+        setDialogAction(null);
+        setAccountId(null);
+    };
 
-    const handleDeleteUser = (id: number) => {
-        deleteUserAccount(id)
-    }
 
-    const handleResetPassword = (id: number) => {
-
-    }
-
-    const handleisActive = (id: number, data: boolean) => {
-        updateUserAccount({id, data})
-
-    }
     const totalPages = Math.ceil(userAccountLength / userAccountsPerPage);
-
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
 
     return (
         <>
-
             <CustomDialog
-                title='Delete User Account?'
-                message='Are you sure? This operation cannot be undone'
+                title={dialogAction === 'delete' ? 'Delete User Account?' :
+                    dialogAction === 'activate' ? 'Activate User Account?' :
+                        dialogAction === 'deactivate' ? 'Deactivate User Account?' : dialogAction === "resetPassword" ? 'Reset User Password?' : 'Register a new User Account?'}
+                message={
+                    dialogAction === 'delete' ? 'Are you sure you want to delete this account? This cannot be undone.' :
+                        dialogAction === 'activate' ? 'Are you sure you want to activate this account?' :
+                            dialogAction === 'deactivate' ? 'Are you sure you want to deactivate this account?' : dialogAction === "resetPassword" ?
+                                'Are you sure you want to reset the password for this account?' : 'You will be redirected to the register page'
+                }
                 isOpen={isDialogOpen}
                 onClose={() => setIsDialogOpen(false)}
-                onConfirm={handleRegister}
+                onConfirm={handleDialogConfirm}
                 triggerBtnLabel={'Confirm'}
             />
 
 
-            <CustomDialog
-                title='Register a new User Account?'
-                message='You will be redirected to the register page'
-                isOpen={isDialogOpen}
-                onClose={() => setIsDialogOpen(false)}
-                onConfirm={handleRegister}
-                triggerBtnLabel={'Confirm'}
-            />
             <Card className='flex-grow'>
                 <CardHeader className="px-7">
                     <CardTitle>User Accounts</CardTitle>
                     <CardDescription>Check out all your user accounts.</CardDescription>
-                    {userRole === "SUPERADMIN" && <UserTableHeaderBtns setIsDialogOpen={setIsDialogOpen}/>}
+                    {userRole === "SUPERADMIN" && <UserTableHeaderBtns setIsDialogOpen={() => {
+                        setDialogAction('register');
+                        setIsDialogOpen(true);
+                    }}/>}
                 </CardHeader>
                 <CardContent>
                     {userAccounts && userAccounts.length > 0 ? (
@@ -130,10 +127,7 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                                 </TableHeader>
                                 <TableBody>
                                     {currentUserAccounts && currentUserAccounts.map((user, index) => (
-                                        <TableRow
-                                            className={`cursor-pointer`}
-                                            key={index}
-                                        >
+                                        <TableRow className="cursor-pointer" key={index}>
                                             <TableCell>
                                                 <div className="font-medium">{user.username}</div>
                                             </TableCell>
@@ -145,16 +139,14 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                                                     </Badge>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="hidden sm:table-cell"
-                                                       onClick={(e) => e.stopPropagation()}>
+                                            <TableCell className="hidden sm:table-cell">
                                                 <div className='inline-flex'>
-                                                    <Badge className="text-xs "
+                                                    <Badge className="text-xs"
                                                            variant={getRole(user.role as keyof Role)}>
                                                         {user.role}
                                                     </Badge>
                                                 </div>
                                             </TableCell>
-
 
                                             <TableCell className="hidden md:table-cell">
                                                 <DropdownMenu>
@@ -167,41 +159,45 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                                                     <DropdownMenuContent align="end" className='z-[10000000]'>
                                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                                         <DropdownMenuSeparator/>
-                                                        <DropdownMenuItem className='hover:bg-accent' onClick={() => {
-                                                            setIsDialogOpen(true)
-                                                            // updateUserAccount({id: user.id, isActive: true})
-                                                        }}>Activate</DropdownMenuItem>
                                                         <DropdownMenuItem
-                                                            className='hover:bg-destructive/90'
+                                                            className='hover:bg-accent'
                                                             onClick={() => {
-                                                                setIsDialogOpen(true)
-                                                                // updateUserAccount({id: user.id, isActive: false})
-                                                            }}
-                                                        >Deactivate
+                                                                setDialogAction('activate');
+                                                                setAccountId(user.id);
+                                                                setIsDialogOpen(true);
+                                                            }}>
+                                                            Activate
                                                         </DropdownMenuItem>
-
                                                         <DropdownMenuItem
                                                             className='hover:bg-destructive/90'
                                                             onClick={() => {
-                                                                setIsDialogOpen(true)
-                                                                // deleteUserAccount(user.id)
-                                                            }}
-                                                        >Delete
+                                                                setDialogAction('deactivate');
+                                                                setAccountId(user.id);
+                                                                setIsDialogOpen(true);
+                                                            }}>
+                                                            Deactivate
                                                         </DropdownMenuItem>
-
-
                                                         <DropdownMenuItem
                                                             className='hover:bg-destructive/90'
                                                             onClick={() => {
+                                                                setDialogAction('delete');
+                                                                setAccountId(user.id);
+                                                                setIsDialogOpen(true);
+                                                            }}>
+                                                            Delete
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            className='hover:bg-destructive/90'
+                                                            onClick={() => {
+                                                                setDialogAction('resetPassword');
+                                                                setAccountId(user.id);
+                                                                setIsDialogOpen(true);
                                                             }}>
                                                             Reset Password
                                                         </DropdownMenuItem>
-
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </TableCell>
-
-
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -215,16 +211,14 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                                         variant="outline"
                                         size="sm"
                                         onClick={() => paginate(currentPage - 1)}
-                                        disabled={currentPage === 1}
-                                    >
+                                        disabled={currentPage === 1}>
                                         Previous
                                     </Button>
                                     <Button
                                         variant="outline"
                                         size="sm"
                                         onClick={() => paginate(currentPage + 1)}
-                                        disabled={indexOfLastUserAccount >= userAccounts.length}
-                                    >
+                                        disabled={indexOfLastUserAccount >= userAccounts.length}>
                                         Next
                                     </Button>
                                 </div>
