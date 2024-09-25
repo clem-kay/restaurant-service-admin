@@ -2,13 +2,10 @@ import React, { useEffect   } from 'react';
 import useUserAccounts from "@/hooks/userAccount/useUserAccounts.ts";
 import useUserAccountsStore from "@/store/useUserAccountsStore.ts";
 import UserAccountsTable from "@/components/Dashboard/users/UserAccountsTable.tsx";
-// import UserDetails from "@/components/Dashboard/users/UserDetails.tsx";
 
 const UserView: React.FC = () => {
     const { data: userAccounts, isFetched } = useUserAccounts();
-    // const [isDialogOpen, setIsDialogOpen] = useState(false);
     const setUserAccounts = useUserAccountsStore(s => s.setUserAccounts);
-    // const orderDetailsRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (isFetched && userAccounts && userAccounts.length > 0) {

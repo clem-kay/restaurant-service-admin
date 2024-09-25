@@ -5,13 +5,13 @@ export enum EndPoints {
     UPLOAD = 'upload',
     ORDER = 'orders',
     DASHBOARD = 'dashboard',
-    ORDER_STATUS = 'orders/update-status',
-    PAYMENT_STATUS = 'orders/update-payment',
-    LOGOUT = 'auth/logout',
-    REFRESH = 'auth/refresh',
-    USER_ACCOUNT = "useraccount"
+    ORDER_STATUS = `${ORDER}/update-status`,
+    PAYMENT_STATUS = `${ORDER}/update-payment`,
+    USER_ACCOUNT = "useraccount",
+    ACTIVATE_USER_ACCOUNT = `${USER_ACCOUNT}/activate`,
+    CHANGE_PASSWORD = `${USER_ACCOUNT}/change-password`
 }
 
-export type ROLE =  "SUPERADMIN" | "ADMIN" | "USER" | "SALES"
+export type ROLE = "SUPERADMIN" | "ADMIN" | "USER" | "SALES"
 
 export const CURRENCY = '£'
