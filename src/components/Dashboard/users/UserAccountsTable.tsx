@@ -85,7 +85,7 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                 <CardHeader className="px-7">
                     <CardTitle>User Accounts</CardTitle>
                     <CardDescription>Check out all your user accounts.</CardDescription>
-                    {role === "SUPERADMIN" && <UserTableHeaderBtns setIsDialogOpen={setIsDialogOpen}/>}
+                    {userRole === "SUPERADMIN" && <UserTableHeaderBtns setIsDialogOpen={setIsDialogOpen}/>}
                 </CardHeader>
                 <CardContent>
                     {userAccounts && userAccounts.length > 0 ? (
