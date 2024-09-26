@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
@@ -19,9 +19,11 @@ import CustomDialog from "@/components/Dashboard/category/CustomDialog.tsx";
 import useAuthStore from "@/store/useAuthStore.ts";
 import useActivateUserAccount from "@/hooks/userAccount/useActivateUserAccount.ts";
 import useDeleteUserAccount from "@/hooks/userAccount/useDeleteUserAccount.ts";
+import useUserAccountsStore from "@/store/useUserAccountsStore.ts";
+import toast from "react-hot-toast";
 
 interface UserAccountsTableProps {
-    userAccounts: UserAccountResponse[] | undefined;
+    userAccounts: UserAccountResponse[] ;
 }
 
 interface Role {
@@ -50,6 +52,8 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
     const setIsRegisterUser = useAuthStore((state) => state.setIsRegisterUser);
     const userRole = useAuthStore((state) => state.user.role);
     const navigate = useNavigate();
+    const updateUserAccountIsActive = useUserAccountsStore(s => s.updateUserAccountIsActive)
+
     const {mutate: updateUserAccount} = useActivateUserAccount();
     const {mutate: deleteUserAccount} = useDeleteUserAccount();
 
@@ -58,18 +62,33 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
     const indexOfFirstUserAccount = indexOfLastUserAccount - userAccountsPerPage;
     const currentUserAccounts = userAccounts?.slice(indexOfFirstUserAccount, indexOfLastUserAccount);
 
+
     let userAccountLength = 0;
     if (userAccounts) {
         userAccountLength = userAccounts.length;
     }
 
+
     const handleDialogConfirm = () => {
         if (dialogAction === 'delete' && accountId) {
             deleteUserAccount(accountId);
         } else if (dialogAction === 'activate' && accountId) {
-            updateUserAccount({id: accountId, isActiveData: {isActive: true}});
+            updateUserAccount({id: accountId, isActiveData: {isActive: true}}, {
+
+                onSuccess: (isActive, variables) => {
+                    toast.success('Account activated')
+                    console.log("data", isActive)
+                    updateUserAccountIsActive(variables.id,  isActive.isActive);
+                }
+            });
         } else if (dialogAction === 'deactivate' && accountId) {
-            updateUserAccount({id: accountId, isActiveData: {isActive: false}});
+            updateUserAccount({id: accountId, isActiveData: {isActive: false}}, {
+                onSuccess: (isActive, variables) => {
+                    console.log("data", isActive)
+                    toast.success('Account deactivated')
+                    updateUserAccountIsActive(variables.id,  isActive.isActive);
+                }
+            });
         } else if (dialogAction === 'resetPassword') {
             navigate('/auth/reset-password')
         } else if (dialogAction === 'register') {

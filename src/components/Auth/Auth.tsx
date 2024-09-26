@@ -144,14 +144,6 @@ export const Auth = () => {
                             <p className="text-destructive">{form.formState.errors.password.message}</p>}
                     </LabelInputContainer>
 
-                    {/*{path === "register" && (*/}
-                    {/*    <LabelInputContainer className="mb-4">*/}
-                    {/*        <Label htmlFor="confirmPassword">Confirm Password</Label>*/}
-                    {/*        <Input id="confirmPassword" placeholder="••••••••••" type="password" {...form.register("password")} />*/}
-                    {/*        {form.formState.errors.password && <p className="text-destructive">{form.formState.errors.password.message}</p>}*/}
-                    {/*    </LabelInputContainer>*/}
-                    {/*)}*/}
-
                     <button
                         className="bg-gradient-to-br relative group/btn bg-primary block w-full text-white rounded-md h-10 font-medium shadow"
                         type="submit">

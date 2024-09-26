@@ -5,9 +5,13 @@ import useUserAccountsStore from "@/store/useUserAccountsStore.ts";
 import toast from "react-hot-toast";
 
 
-const apiClient = new APIClient<UpdateUserActiveStatusData, boolean>(EndPoints.ACTIVATE_USER_ACCOUNT);
+const apiClient = new APIClient<UpdateUserActiveStatusData, UpdateUserActiveResponse>(EndPoints.ACTIVATE_USER_ACCOUNT);
 
 export interface UpdateUserActiveStatusData {
+    isActive: boolean
+}
+
+export interface UpdateUserActiveResponse {
     isActive: boolean
 }
 
@@ -25,8 +29,10 @@ const useUpdateUserAccountActiveStatus = () => {
         }) => updateUserAccountActiveStatusFn(id, isActiveData),
         mutationKey: [QueryKeys.ACTIVATE_USER_ACCOUNT],
         onSuccess: (isActive, variables) => {
-            toast.success(isActive ? 'Account activated' : 'Account deactivated')
-            updateUserAccountIsActive(variables.id, isActive);
+            updateUserAccountIsActive(variables.id, isActive.isActive);
+        },
+        onError:  (e) => {
+            toast.error(`Could not complete action [${e}, try again.`)
         }
     });
 };

@@ -3,10 +3,12 @@ import APIClient from "@/services/api-client.ts";
 import {EndPoints, QueryKeys, ROLE} from "@/constants/constants.ts";
 
 export interface UserAccountResponse {
-    id: number
-    username: string
-    role: ROLE,
-    isActive: boolean
+    id: number;
+    username: string;
+    role: ROLE;
+    isActive: boolean;
+    createAt: string;
+    updatedAt: string;
 }
 
 const apiClient = new APIClient<UserAccountResponse[], null>(EndPoints.USER_ACCOUNTS)
