@@ -7,8 +7,7 @@ export interface UserAccountResponse {
     username: string;
     role: ROLE;
     isActive: boolean;
-    createAt: string;
-    updatedAt: string;
+    createdAt: string;
 }
 
 const apiClient = new APIClient<UserAccountResponse[], null>(EndPoints.USER_ACCOUNTS)

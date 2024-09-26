@@ -21,6 +21,7 @@ import useActivateUserAccount from "@/hooks/userAccount/useActivateUserAccount.t
 import useDeleteUserAccount from "@/hooks/userAccount/useDeleteUserAccount.ts";
 import useUserAccountsStore from "@/store/useUserAccountsStore.ts";
 import toast from "react-hot-toast";
+import {formatDate} from "@/utils/utils.ts";
 
 interface UserAccountsTableProps {
     userAccounts: UserAccountResponse[];
@@ -45,6 +46,7 @@ const getRole = (status: keyof Role): 'default' | 'success' | 'outline' | 'destr
 };
 
 const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => {
+    console.log(userAccounts)
     const [currentPage, setCurrentPage] = useState(1);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [dialogAction, setDialogAction] = useState<null | 'activate' | 'deactivate' | 'delete' | 'resetPassword' | 'register'>(null);
@@ -141,6 +143,7 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                                         <TableHead>Username</TableHead>
                                         <TableHead className="hidden sm:table-cell">Active</TableHead>
                                         <TableHead className="hidden sm:table-cell">Role</TableHead>
+                                        <TableHead className="hidden sm:table-cell">Last Updated</TableHead>
                                         <TableHead className="hidden md:table-cell">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -165,6 +168,9 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                                                         {user.role}
                                                     </Badge>
                                                 </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                {formatDate(user.createdAt || '')}
                                             </TableCell>
 
                                             <TableCell className="hidden md:table-cell">
