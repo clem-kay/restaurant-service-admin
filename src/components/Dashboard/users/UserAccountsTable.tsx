@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
@@ -23,7 +23,7 @@ import useUserAccountsStore from "@/store/useUserAccountsStore.ts";
 import toast from "react-hot-toast";
 
 interface UserAccountsTableProps {
-    userAccounts: UserAccountResponse[] ;
+    userAccounts: UserAccountResponse[];
 }
 
 interface Role {
@@ -78,7 +78,7 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                 onSuccess: (isActive, variables) => {
                     toast.success('Account activated')
                     console.log("data", isActive)
-                    updateUserAccountIsActive(variables.id,  isActive.isActive);
+                    updateUserAccountIsActive(variables.id, isActive.isActive);
                 }
             });
         } else if (dialogAction === 'deactivate' && accountId) {
@@ -86,11 +86,11 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                 onSuccess: (isActive, variables) => {
                     console.log("data", isActive)
                     toast.success('Account deactivated')
-                    updateUserAccountIsActive(variables.id,  isActive.isActive);
+                    updateUserAccountIsActive(variables.id, isActive.isActive);
                 }
             });
         } else if (dialogAction === 'resetPassword') {
-            navigate('/auth/reset-password')
+            navigate('/auth/reset-password', {state: {username: userAccounts.find(u => u.id === accountId)?.username}})
         } else if (dialogAction === 'register') {
             setIsRegisterUser(true)
             navigate('/auth/register')
@@ -114,7 +114,7 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                     dialogAction === 'delete' ? 'Are you sure you want to delete this account? This cannot be undone.' :
                         dialogAction === 'activate' ? 'Are you sure you want to activate this account?' :
                             dialogAction === 'deactivate' ? 'Are you sure you want to deactivate this account?' : dialogAction === "resetPassword" ?
-                                'Are you sure you want to reset the password for this account?' : 'You will be redirected to the register page'
+                                'Are you sure you want to reset the password for this account? You will be redirected to the reset password page.' : 'You will be redirected to the register page'
                 }
                 isOpen={isDialogOpen}
                 onClose={() => setIsDialogOpen(false)}

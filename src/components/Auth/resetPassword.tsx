@@ -7,7 +7,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {Triangle} from "react-loader-spinner";
-import { useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import useResetUserPassword, {UserAccountPasswordResetData} from "@/hooks/userAccount/useResetUserPassword.ts";
 import toast from "react-hot-toast";
 import {handleError} from "@/utils/utils.ts";
@@ -28,11 +28,13 @@ const formSchema = z.object({
 
 export const ResetPassword = () => {
     const {mutate: resetPassword, isPending} = useResetUserPassword();
+    const location = useLocation();
+    const { username } = location.state || {}
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            username: "",
+            username: username,
             oldPassword: "",
             newPassword: "",
         },
