@@ -114,7 +114,7 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                     dialogAction === 'delete' ? 'Are you sure you want to delete this account? This cannot be undone.' :
                         dialogAction === 'activate' ? 'Are you sure you want to activate this account?' :
                             dialogAction === 'deactivate' ? 'Are you sure you want to deactivate this account?' : dialogAction === "resetPassword" ?
-                                'Are you sure you want to reset the password for this account? You will be redirected to the reset password page.' : 'You will be redirected to the register page'
+                                'Are you sure you want to reset the password for this account? \nYou will be redirected to the reset password page.' : 'You will be redirected to the register page'
                 }
                 isOpen={isDialogOpen}
                 onClose={() => setIsDialogOpen(false)}
