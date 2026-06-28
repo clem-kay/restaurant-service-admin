@@ -1,34 +1,32 @@
 "use client";
-import {useState} from "react";
-import {HoveredLink, Menu, MenuItem, ProductItem} from "./navbar-menu.tsx";
-import {cn} from "@/lib/utils";
+import { useState } from "react";
+import { HoveredLink, Menu, MenuItem, ProductItem } from "./navbar-menu.tsx";
+import { cn } from "@/lib/utils";
 
 
 export default function NavbarFloat() {
     return (
         <div className="relative w-full flex items-center justify-center">
-            <Navbar className="top-2"/>
+            <Navbar className="top-2" />
         </div>
     );
 }
 
-function Navbar({className}: { className?: string }) {
+function Navbar({ className }: { className?: string }) {
     const [active, setActive] = useState<string | null>(null);
     return (
-        <div
-            className={cn("fixed top-10 inset-x-0  max-w-xl  mx-auto z-50", className)}
-        >
+        <div className={cn("fixed top-10 inset-x-0 max-w-xl mx-auto z-50", className)}>
             <Menu setActive={setActive}>
                 <MenuItem setActive={setActive} active={active} item="Services">
                     <div className="flex flex-col space-y-4 text-sm">
-                        <HoveredLink href="#">Web Development</HoveredLink>
-                        <HoveredLink href="#">Interface Design</HoveredLink>
-                        <HoveredLink href="#">Search Engine Optimization</HoveredLink>
-                        <HoveredLink href="#">Branding</HoveredLink>
+                        <HoveredLink to="#">Web Development</HoveredLink>
+                        <HoveredLink to="#">Interface Design</HoveredLink>
+                        <HoveredLink to="#">Search Engine Optimization</HoveredLink>
+                        <HoveredLink to="#">Branding</HoveredLink>
                     </div>
                 </MenuItem>
                 <MenuItem setActive={setActive} active={active} item="Products">
-                    <div className="  text-sm grid grid-cols-2 gap-10 p-4">
+                    <div className="text-sm grid grid-cols-2 gap-10 p-4">
                         <ProductItem
                             title="Algochurn"
                             href="https://algochurn.com"
@@ -57,10 +55,10 @@ function Navbar({className}: { className?: string }) {
                 </MenuItem>
                 <MenuItem setActive={setActive} active={active} item="Pricing">
                     <div className="flex flex-col space-y-4 text-sm">
-                        <HoveredLink href="#">Hobby</HoveredLink>
-                        <HoveredLink href="#">Individual</HoveredLink>
-                        <HoveredLink href="#">Team</HoveredLink>
-                        <HoveredLink href="#">Enterprise</HoveredLink>
+                        <HoveredLink to="#">Hobby</HoveredLink>
+                        <HoveredLink to="#">Individual</HoveredLink>
+                        <HoveredLink to="#">Team</HoveredLink>
+                        <HoveredLink to="#">Enterprise</HoveredLink>
                     </div>
                 </MenuItem>
             </Menu>

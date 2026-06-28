@@ -1,29 +1,34 @@
-import {createBrowserRouter} from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import AdminPage from "@/pages/AdminPage.tsx";
 import AuthPage from "@/pages/AuthPage.tsx";
 import App from "../App.tsx";
 import ProtectedRoute from "@/routes/ProtectedRoute.tsx";
-import InventoryContainer from "@/components/Dashboard/InventoryContainer.tsx";
-import OrderView from "@/components/Dashboard/orders/OrderView.tsx";
-import Overview from "@/components/Dashboard/overview/Overview.tsx";
-import UserView from "@/components/Dashboard/users/UserView.tsx";
-
+import DashboardStatsPage from "@/pages/DashboardStatsPage.tsx";
+import InventoryPage from "@/pages/InventoryPage.tsx";
+import OrdersPage from "@/pages/OrdersPage.tsx";
+import CustomersPage from "@/pages/CustomersPage.tsx";
+import RidersPage from "@/pages/RidersPage.tsx";
+import RestaurantsPage from "@/pages/RestaurantsPage.tsx";
 
 const router = createBrowserRouter([
-    {index: true, path: 'auth/login', element: <AuthPage/>},
-    {path: 'auth/register', element: <AuthPage/>},
-    {path: 'auth/reset-password', element: <AuthPage/>},
-    {path: '/', element: <ProtectedRoute element={<App/>}/>,},
+    { index: true, path: "auth/login", element: <AuthPage /> },
     {
-        path: 'admin/dashboard',
-        element: <ProtectedRoute element={<AdminPage/>}/>,
+        path: "/",
+        element: <ProtectedRoute element={<App />} />,
+    },
+    {
+        path: "admin",
+        element: <ProtectedRoute element={<AdminPage />} />,
         children: [
-            {path: 'categories', element: <InventoryContainer/>},
-            {path: 'users', element: <UserView/>},
-            {path: 'orders', element: <OrderView/>},
-            {index: true, element: <Overview/>},
-        ]
-
-    }
+            { index: true, element: <Navigate to="dashboard" replace /> },
+            { path: "dashboard", element: <DashboardStatsPage /> },
+            { path: "inventory", element: <InventoryPage /> },
+            { path: "orders", element: <OrdersPage /> },
+            { path: "customers", element: <CustomersPage /> },
+            { path: "riders", element: <RidersPage /> },
+            { path: "restaurants", element: <RestaurantsPage /> },
+        ],
+    },
 ]);
+
 export default router;

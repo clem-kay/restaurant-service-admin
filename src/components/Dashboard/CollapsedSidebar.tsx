@@ -1,58 +1,43 @@
-import {Link} from 'react-router-dom';
-import {Home, LineChart, Package, Package2, ShoppingCart, Users} from 'lucide-react';
-import {Badge} from '@/components/ui/badge';
-import {SheetContent} from '@/components/ui/sheet';
-import useOrderStore from '@/store/useOrderStore';
-import useAuthStore from "@/store/useAuthStore.ts";
+import { SheetContent } from "../ui/sheet";
+import { NavLink } from "react-router-dom";
+import { Home, Package, Package2, ShoppingCart, Users, Truck, Store } from "lucide-react";
+
+const navItems = [
+    { to: "/admin/dashboard",   label: "Dashboard",   Icon: Home },
+    { to: "/admin/orders",      label: "Orders",      Icon: ShoppingCart },
+    { to: "/admin/inventory",   label: "Inventory",   Icon: Package },
+    { to: "/admin/customers",   label: "Customers",   Icon: Users },
+    { to: "/admin/riders",      label: "Riders",      Icon: Truck },
+    { to: "/admin/restaurants", label: "Restaurants", Icon: Store },
+];
 
 const CollapsedSidebar = () => {
-    const userRole = useAuthStore(s => s.user.role)
-
-    const orders = useOrderStore(s => s.orders);
-
-    const links = [
-        {to: "", icon: Home, label: "Dashboard"},
-        {
-            to: "orders",
-            icon: ShoppingCart,
-            label: "Orders",
-            badge: orders.filter(o => o.food_status === "PENDING").length || 0
-        },
-        {to: "categories", icon: Package, label: "Categories"},
-        {to: "#", icon: Users, label: "Customers"},
-        {to: "#", icon: LineChart, label: "Analytics"},
-    ];
-
     return (
         <SheetContent side="left" className="flex flex-col">
             <nav className="grid gap-2 text-lg font-medium">
-                <Link
+                <NavLink
                     to="/admin/dashboard"
-                    className="flex items-center gap-2 text-lg font-semibold"
+                    className="flex items-center gap-2 text-lg font-semibold mb-2"
                 >
-                    <Package2 className="h-6 w-6"/>
-                    <span className="sr-only">{userRole || "Admin"}</span>
-                </Link>
-                {links.map((link, index) => {
-                    const Icon = link.icon;
-                    return (
-                        <Link
-                            key={index}
-                            to={link.to}
-                            className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground ${link.badge ? 'bg-muted text-foreground' : ''}`}
-                        >
-                            <Icon className="h-5 w-5"/>
-                            {link.label}
-                            {link.badge && (
-                                <Badge
-                                    className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
-                                >
-                                    {link.badge}
-                                </Badge>
-                            )}
-                        </Link>
-                    );
-                })}
+                    <Package2 className="h-6 w-6" />
+                    <span>Admin</span>
+                </NavLink>
+                {navItems.map(({ to, label, Icon }) => (
+                    <NavLink
+                        key={to}
+                        to={to}
+                        className={({ isActive }) =>
+                            `mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 transition-all ${
+                                isActive
+                                    ? "bg-muted text-foreground"
+                                    : "text-muted-foreground hover:text-foreground"
+                            }`
+                        }
+                    >
+                        <Icon className="h-5 w-5" />
+                        {label}
+                    </NavLink>
+                ))}
             </nav>
         </SheetContent>
     );

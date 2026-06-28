@@ -15,4 +15,14 @@ module.exports = {
       { allowConstantExport: true },
     ],
   },
+  overrides: [
+    {
+      // shadcn/ui generated files export both components and variant helpers — suppress the
+      // react-refresh warning that fires when a file mixes component and non-component exports.
+      files: ['src/components/ui/**/*.tsx', 'src/components/Theme/theme-provider.tsx'],
+      rules: {
+        'react-refresh/only-export-components': 'off',
+      },
+    },
+  ],
 }

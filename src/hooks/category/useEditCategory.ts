@@ -12,7 +12,7 @@ export interface CategoryData {
 
 const apiClient = new APIClient<CategoryData, CategoryResponse>(EndPoints.CATEGORY);
 
-const editCategoryFn = (id: number | null, categoryData: Partial<CategoryData>) => {
+const editCategoryFn = (id: number, categoryData: Partial<CategoryData>) => {
     return apiClient.patch(id, categoryData);
 };
 
@@ -21,7 +21,7 @@ const UseEditCategory = () => {
     const categories = useInventoryStore((state) => state.categories);
 
     return useMutation({
-        mutationFn: ({ id, categoryData }: { id: number | null; categoryData: Partial<CategoryData> }) => editCategoryFn(id, categoryData),
+        mutationFn: ({ id, categoryData }: { id: number; categoryData: Partial<CategoryData> }) => editCategoryFn(id, categoryData),
         mutationKey: ['edit-category'],
         onSuccess: (data: CategoryResponse) => {
             const updatedCategories = categories.map((category) =>

@@ -26,7 +26,7 @@ const formSchema = z.object({
     password: z.string().min(4, {
         message: "Password must be at least 4 characters.",
     }),
-    role: z.enum(["SUPERADMIN", "ADMIN", "USER", "SALES"]).optional(),
+    role: z.enum(["PLATFORM_ADMIN", "RESTAURANT_ADMIN", "CUSTOMER", "RIDER", "SUPERADMIN", "ADMIN", "USER", "SALES"]).optional(),
 });
 
 // Role options

@@ -35,18 +35,18 @@ import CustomEditCategoryDialog from "@/components/Dashboard/category/EditCatego
 
 export default function TableBodyContainer() {
     const { data: categoryData } = UseCategory();
-    const categories = useInventoryStore((state) => state.categories);
     const { data: menuData } = UseMenu();
     const userAccountId = useAuthStore(s => s.user.userId);
     const setMenu = useInventoryStore(s => s.setMenu);
     const menu = useInventoryStore((state) => state.menu);
     const { mutate: addCategory } = useAddCategory();
     const { mutate: deleteCategory } = useDeleteCategory();
+    const { mutate: deleteMenu } = useDeleteMenu();
     const { mutate: addMenuUrl } = useAddMenuImage();
     const { mutate: addMenu } = useAddMenu();
-    const { mutate: deleteMenu } = useDeleteMenu();
     const { mutate: editCategory } = UseEditCategory();
     const { mutate: editMenu } = UseEditMenu();
+    const categories = useInventoryStore((state) => state.categories);
     const setCategories = useInventoryStore((state) => state.setCategories);
     const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -62,9 +62,7 @@ export default function TableBodyContainer() {
     const [filter, setFilter] = useState<string>('latest'); // Add state for filter
 
     useEffect(() => {
-        if (categoryData) {
-            setCategories(categoryData);
-        }
+        if (categoryData) setCategories(categoryData);
     }, [categoryData, setCategories]);
 
     useEffect(() => {
@@ -75,20 +73,14 @@ export default function TableBodyContainer() {
 
     useEffect(() => {
         if (selectedCategory !== null) {
-            const findMenuByCategoryId = menu.filter(menu => menu.categoryId === selectedCategory);
-            setSelectedMenu(findMenuByCategoryId);
+            setSelectedMenu(menu.filter((m) => m.categoryId === selectedCategory));
         }
     }, [selectedCategory, menu]);
 
     const handleAddCategory = useCallback((data: CategoryData) => {
         setIsDialogOpen(false);
         addCategory(data, {
-            onSuccess: () => {
-                toast.success("Category created successfully");
-            },
-            onError: () => {
-                toast.error("Failed to create category");
-            }
+            onError: () => toast.error("Failed to create category"),
         });
     }, [addCategory]);
 
@@ -232,7 +224,7 @@ export default function TableBodyContainer() {
             description,
             quantity,
             userAccountId,
-            categoryId: selectedCategory // Ensure selectedCategory is used
+            categoryId: selectedCategory,
         };
 
         if (imageUrl && imageUrl[0]) {
@@ -268,20 +260,18 @@ export default function TableBodyContainer() {
             addMenu(menuData, {
                 onSuccess: (newMenu) => {
                     toast.success("Menu created successfully");
-                    const updatedMenu = [...menu, newMenu];
-                    setMenu(updatedMenu);
-                    setCategories(categories.map(category =>
-                        category.id === selectedCategory ? { ...category, menuCount: category.menuCount + 1 } : category
+                    const updated = [...menu, newMenu];
+                    setMenu(updated);
+                    setCategories(categories.map((c) =>
+                        c.id === selectedCategory ? { ...c, menuCount: c.menuCount + 1 } : c
                     ));
-                    setIsCreateMenuDialogOpen(false); // Close the dialog
-                    // Update the selected menu list
-                    setSelectedMenu(updatedMenu.filter(menu => menu.categoryId === selectedCategory));
+                    setSelectedMenu(updated.filter((m) => m.categoryId === selectedCategory));
+                    setIsCreateMenuDialogOpen(false);
                 },
-                onError: (e) => {
-                    handleError(e);
-                }
+                onError: handleError,
             });
-        }
+        };
+
     }, [addMenu, addMenuUrl, categories, menu, selectedCategory, setCategories, setMenu, userAccountId]);
 
     const handleRowClick = useCallback((id: number | null) => {
@@ -423,9 +413,7 @@ export default function TableBodyContainer() {
             <TableHeaderButtons setIsDialogOpen={setIsDialogOpen} onFilterChange={handleFilterChange} onExport={exportToCSV} />
             <CardHeader>
                 <CardTitle>Categories</CardTitle>
-                <CardDescription>
-                    Manage your Categories and view their sales performance.
-                </CardDescription>
+                <CardDescription>Manage your categories and their menu items.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Table>
@@ -434,7 +422,7 @@ export default function TableBodyContainer() {
                         {getFilteredCategories().map(({ id, name, menuCount, createdAt, updatedAt }) => (
                             <TableRow key={id} onClick={() => handleRowClick(id)} className='cursor-pointer'>
                                 <TableCell className="font-medium">{name}</TableCell>
-                                <TableCell><Badge variant="outline">Draft</Badge></TableCell>
+                                <TableCell><Badge variant="outline">Active</Badge></TableCell>
                                 <TableCell className="hidden md:table-cell">{menuCount || 0}</TableCell>
                                 <TableCell className="hidden md:table-cell">
                                     {updatedAt ? formatDate(updatedAt) : formatDate(createdAt as string)}
@@ -507,8 +495,8 @@ export default function TableBodyContainer() {
                 isOpen={isDeleteDialogOpen}
                 onClose={() => setIsDeleteDialogOpen(false)}
                 onConfirm={confirmDelete}
-                title={'Are you absolutely sure?'}
-                message={'This action cannot be undone. This will permanently delete your category and remove its data from our servers.'}
+                title='Are you absolutely sure?'
+                message='This will permanently delete this category and all its menu items.'
                 triggerBtnLabel='Delete'
             />
 
@@ -516,8 +504,8 @@ export default function TableBodyContainer() {
                 isOpen={isDeleteMenuDialogOpen}
                 onClose={() => setIsDeleteMenuDialogOpen(false)}
                 onConfirm={confirmDeleteMenu}
-                title={'Are you absolutely sure?'}
-                message={'This action cannot be undone. This will permanently delete your menu and remove its data from our servers.'}
+                title='Delete menu item?'
+                message='This will permanently remove this item from the menu.'
                 triggerBtnLabel='Delete'
             />
 

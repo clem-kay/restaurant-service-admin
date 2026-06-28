@@ -1,99 +1,45 @@
-import {ForwardRefExoticComponent, RefAttributes, useState} from 'react';
-import {NavLink, useLocation} from "react-router-dom";
-import {Bell, Home, LineChart, LucideProps, Package, Package2, ShoppingCart, Users, UserSquare} from "lucide-react";
-import {Button} from "@/components/ui/button.tsx";
-import {Badge} from "@/components/ui/badge.tsx";
-import useOrderStore from "@/store/useOrderStore.tsx";
-import useAuthStore from "@/store/useAuthStore.ts";
+import { NavLink } from "react-router-dom";
+import { Bell, Home, Package, Package2, ShoppingCart, Users, Truck, Store } from "lucide-react";
+import { Button } from "@/components/ui/button.tsx";
+
+const navItems = [
+    { to: "/admin/dashboard", label: "Dashboard", Icon: Home },
+    { to: "/admin/orders",    label: "Orders",     Icon: ShoppingCart },
+    { to: "/admin/inventory", label: "Inventory",  Icon: Package },
+    { to: "/admin/customers", label: "Customers",  Icon: Users },
+    { to: "/admin/riders",    label: "Riders",     Icon: Truck },
+    { to: "/admin/restaurants", label: "Restaurants", Icon: Store },
+];
 
 const SidePanel = () => {
-    const location = useLocation();
-    const userRole = useAuthStore(s => s.user.role);
-    const [selectedNavLink, setSelectedLink] = useState(location.pathname);
-    const [shouldSetDefault, setShouldSetDefault] = useState<boolean>(true);
-    const orders = useOrderStore(s => s.orders);
-
-    const roleOptions = {
-        "SUPERADMIN": "Super Admin",
-        "ADMIN": "Admin",
-        "USER": "User",
-        "SALES": "Sales"
-    };
-
-    // Define the base links that everyone can access
-    const baseLinks = [
-        {
-            to: "orders",
-            icon: ShoppingCart,
-            label: "Orders",
-            badge: orders.filter(o => o.food_status === "PENDING").length || 0
-        }
-    ];
-
-    // Define the additional links for "ADMIN" and "SUPERADMIN" roles
-    const adminLinks = [
-        {to: "", icon: Home, label: "Dashboard", badge: undefined},
-        {to: "categories", icon: Package, label: "Categories", badge: undefined},
-        {to: "users", icon: UserSquare, label: "Users", badge: undefined},
-        {to: "#", icon: Users, label: "Customers"},
-        {to: "#", icon: LineChart, label: "Analytics"},
-    ];
-
-    // Combine the links based on the role
-    const links = userRole === "SALES" ? baseLinks : [...adminLinks, ...baseLinks];
-
-    const handleNavLinkClick = (link: {
-        to: string;
-        icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
-        label: string;
-        badge?: undefined;
-    } | {
-        to: string;
-        icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
-        label: string;
-        badge: number;
-    }) => {
-        setShouldSetDefault(false);
-        setSelectedLink(link.to);
-    };
-
     return (
-        <div
-            className="fixed inset-y-0 left-0 flex flex-col w-72 h-full max-h-screen bg-background shadow-lg border-muted/80 border">
+        <div className="fixed inset-y-0 left-0 flex flex-col w-72 h-full max-h-screen bg-background shadow-lg border-muted/80 border">
             <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                 <NavLink to="/admin/dashboard" className="flex items-center gap-2 font-semibold">
-                    <Package2 className="h-6 w-6"/>
-                    <span>{roleOptions[userRole]}</span>
+                    <Package2 className="h-6 w-6" />
+                    <span>Admin</span>
                 </NavLink>
                 <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-                    <Bell className="h-4 w-4"/>
+                    <Bell className="h-4 w-4" />
                     <span className="sr-only">Toggle notifications</span>
                 </Button>
             </div>
             <div className="flex-1 overflow-y-auto">
                 <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-                    {links.map((link, index) => {
-                        const Icon = link.icon;
-                        const isActive = selectedNavLink === link.to;
-                        return (
-                            <NavLink
-                                key={index}
-                                to={link.to}
-                                onClick={() => handleNavLinkClick(link)}
-                                className={`flex items-center gap-3 rounded-lg px-3 py-2 ${shouldSetDefault &&
-                                link.label === 'Dashboard' ? 'text-primary' : ''} transition-all ${isActive ? 'text-primary' : 'text-muted-foreground'} hover:text-primary`}
-                            >
-                                <Icon className="h-5 w-5"/>
-                                {link.label} {" "}
-                                {link.badge && (
-                                    <Badge
-                                        className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                                        {link?.badge}
-                                    </Badge>
-                                )}
-                            </NavLink>
-                        );
-                    })}
+                    {navItems.map(({ to, label, Icon }) => (
+                        <NavLink
+                            key={to}
+                            to={to}
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+                                    isActive ? "bg-muted text-primary" : "text-muted-foreground"
+                                }`
+                            }
+                        >
+                            <Icon className="h-4 w-4" />
+                            {label}
+                        </NavLink>
+                    ))}
                 </nav>
             </div>
         </div>

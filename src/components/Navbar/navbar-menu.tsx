@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, type LinkProps } from "react-router-dom";
 
 const transition = {
     type: "spring",
@@ -108,7 +108,7 @@ export const ProductItem = ({
     );
 };
 
-export const HoveredLink = ({ children, ...rest }: any) => {
+export const HoveredLink = ({ children, ...rest }: LinkProps) => {
     return (
         <Link
             {...rest}

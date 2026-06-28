@@ -1,16 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import APIClient from '../../services/api-client';
 import { handleError } from '@/utils/utils';
-import {EndPoints} from "@/constants/constants";
+import { EndPoints } from "@/constants/constants";
 import useInventoryStore from "@/store/useInventoryStore";
 import toast from "react-hot-toast";
-import { MenuResponse } from "@/hooks/menu/useMenu.ts";
+import { MenuResponse } from "@/hooks/menu/useMenu.tsx";
 
 const apiClient = new APIClient<null, MenuResponse>(EndPoints.MENU);
-
-const deleteMenuFn = (id: number | null) => {
-    return apiClient.delete(id);
-};
 
 const useDeleteMenu = () => {
     const queryClient = useQueryClient();
@@ -18,31 +14,31 @@ const useDeleteMenu = () => {
     const menuData = useInventoryStore((state) => state.menu);
 
     return useMutation({
-        mutationFn: deleteMenuFn,
+        mutationFn: (id: number | null) => apiClient.delete(id),
         onSuccess: () => {
-            toast.success("Menu deleted successfully");
+            toast.success("Menu item deleted successfully");
         },
         onMutate: async (deletedMenuId: number | null) => {
-            await queryClient.cancelQueries({ queryKey: ['menu'] });
+            await queryClient.cancelQueries({ queryKey: ['foodmenu'] });
 
-            const previousMenuData = queryClient.getQueryData<MenuResponse[]>(['categories']);
+            const previousMenuData = queryClient.getQueryData<MenuResponse[]>(['foodmenu']);
 
-            queryClient.setQueryData<MenuResponse[]>(['menu'], (old) =>
-                old ? old.filter(menu => menu.id !== deletedMenuId) : []
+            queryClient.setQueryData<MenuResponse[]>(['foodmenu'], (old) =>
+                old ? old.filter((item) => item.id !== deletedMenuId) : []
             );
 
-            setMenu(menuData.filter(menu => menu.id !== deletedMenuId));
+            setMenu(menuData.filter((menu) => menu.id !== deletedMenuId));
 
             return { previousMenuData };
         },
         onError: (error, _deletedMenuId, context) => {
             if (context?.previousMenuData) {
-                queryClient.setQueryData(['menu'], context.previousMenuData);
+                queryClient.setQueryData(['foodmenu'], context.previousMenuData);
             }
             handleError(error);
         },
         onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['menu'] });
+            queryClient.invalidateQueries({ queryKey: ['foodmenu'] });
         },
     });
 };
