@@ -29,6 +29,7 @@ const formSchema = z.object({
 export const ResetPassword = () => {
     const {mutate: resetPassword, isPending} = useResetUserPassword();
     const location = useLocation();
+    const navigate = useNavigate();
     const { username } = location.state || {}
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -41,7 +42,6 @@ export const ResetPassword = () => {
     });
 
     const onSubmit = (values: z.infer<typeof formSchema>) => {
-        const navigate = useNavigate();
         resetPassword({resetPasswordData: values as UserAccountPasswordResetData},
             {
                 onSuccess: () => {

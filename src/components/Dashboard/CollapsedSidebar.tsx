@@ -1,17 +1,22 @@
 import { SheetContent } from "../ui/sheet";
 import { NavLink } from "react-router-dom";
-import { Home, Package, Package2, ShoppingCart, Users, Truck, Store } from "lucide-react";
+import { Home, Package, Package2, ShoppingCart, Users, Truck, Store, UserCog } from "lucide-react";
+import useAuthStore from "@/store/useAuthStore.ts";
 
 const navItems = [
-    { to: "/admin/dashboard",   label: "Dashboard",   Icon: Home },
-    { to: "/admin/orders",      label: "Orders",      Icon: ShoppingCart },
-    { to: "/admin/inventory",   label: "Inventory",   Icon: Package },
-    { to: "/admin/customers",   label: "Customers",   Icon: Users },
-    { to: "/admin/riders",      label: "Riders",      Icon: Truck },
-    { to: "/admin/restaurants", label: "Restaurants", Icon: Store },
+    { to: "/admin/dashboard",   label: "Dashboard",   Icon: Home,         roles: null },
+    { to: "/admin/orders",      label: "Orders",       Icon: ShoppingCart, roles: null },
+    { to: "/admin/inventory",   label: "Inventory",    Icon: Package,      roles: null },
+    { to: "/admin/customers",   label: "Customers",    Icon: Users,        roles: ['PLATFORM_ADMIN', 'RESTAURANT_ADMIN', 'RESTAURANT_STAFF'] },
+    { to: "/admin/riders",      label: "Riders",       Icon: Truck,        roles: ['PLATFORM_ADMIN', 'RESTAURANT_ADMIN'] },
+    { to: "/admin/users",       label: "Team",         Icon: UserCog,      roles: ['RESTAURANT_ADMIN', 'RESTAURANT_STAFF'] },
+    { to: "/admin/restaurants", label: "Restaurants",  Icon: Store,        roles: ['PLATFORM_ADMIN'] },
 ];
 
 const CollapsedSidebar = () => {
+    const role = useAuthStore((state) => state.user?.role);
+    const visibleItems = navItems.filter(item => !item.roles || item.roles.includes(role as string));
+
     return (
         <SheetContent side="left" className="flex flex-col">
             <nav className="grid gap-2 text-lg font-medium">
@@ -22,7 +27,7 @@ const CollapsedSidebar = () => {
                     <Package2 className="h-6 w-6" />
                     <span>Admin</span>
                 </NavLink>
-                {navItems.map(({ to, label, Icon }) => (
+                {visibleItems.map(({ to, label, Icon }) => (
                     <NavLink
                         key={to}
                         to={to}

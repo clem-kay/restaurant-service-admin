@@ -12,7 +12,6 @@ import CustomDialog from "@/components/Dashboard/category/CustomDialog.tsx";
 import { useState } from "react";
 import useAuthStore from "@/store/useAuthStore.ts";
 import { useNavigate } from "react-router-dom";
-import { ModeToggle } from "@/components/Theme/mode-toggle.tsx";
 
 const AccountAvatar = () => {
     const navigate = useNavigate();
@@ -40,7 +39,6 @@ const AccountAvatar = () => {
             />
             <DropdownMenu>
                 <div className='flex flex-row space-x-8 items-center justify-center'>
-                    <ModeToggle className='z-[10000]' />
                     <h3>{username}</h3>
                     <DropdownMenuTrigger asChild>
                         <Button variant="secondary" size="icon" className="rounded-full">

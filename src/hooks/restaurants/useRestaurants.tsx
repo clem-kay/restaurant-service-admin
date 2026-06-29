@@ -18,6 +18,21 @@ export interface RestaurantResponse {
     owner?: { profile?: { firstname?: string; lastname?: string; email?: string } };
 }
 
+export interface CreateRestaurantDto {
+    name: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    phone?: string;
+    email?: string;
+    deliveryFee?: number;
+    estimatedMinutes?: number;
+    description?: string;
+    commissionRate?: number;
+    adminUsername: string;
+    adminPassword: string;
+}
+
 export const useRestaurants = (filters: { isApproved?: boolean; isOpen?: boolean } = {}) => {
     return useQuery<RestaurantResponse[]>({
         queryKey: ["restaurants", filters],
@@ -56,6 +71,19 @@ export const useApproveRestaurant = () => {
             toast.success("Restaurant status updated");
         },
         onError: () => toast.error("Failed to update restaurant status"),
+    });
+};
+
+export const useCreateRestaurant = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (dto: CreateRestaurantDto) =>
+            axiosInstance.post("restaurant/admin/create", dto).then((res) => res.data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["restaurants"] });
+            toast.success("Restaurant created successfully");
+        },
+        onError: () => toast.error("Failed to create restaurant"),
     });
 };
 

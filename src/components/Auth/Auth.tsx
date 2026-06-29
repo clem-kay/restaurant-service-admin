@@ -26,7 +26,7 @@ const formSchema = z.object({
     password: z.string().min(4, {
         message: "Password must be at least 4 characters.",
     }),
-    role: z.enum(["PLATFORM_ADMIN", "RESTAURANT_ADMIN", "CUSTOMER", "RIDER", "SUPERADMIN", "ADMIN", "USER", "SALES"]).optional(),
+    role: z.enum(["PLATFORM_ADMIN", "RESTAURANT_ADMIN", "RESTAURANT_STAFF", "CUSTOMER", "RIDER", "SUPERADMIN", "ADMIN", "USER", "SALES"]).optional(),
 });
 
 // Role options
@@ -45,8 +45,7 @@ export const Auth = () => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             username: "",
-            password: "",
-            role: "USER", // Default value
+            password: ""
         },
     });
 

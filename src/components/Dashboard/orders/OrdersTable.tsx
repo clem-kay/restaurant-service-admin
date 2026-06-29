@@ -114,6 +114,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ orders, onClickRow }) => {
             <CardContent>
                 {orders && orders.length > 0 ? (
                     <>
+                        <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -194,6 +195,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ orders, onClickRow }) => {
                                 ))}
                             </TableBody>
                         </Table>
+                        </div>
                         <div className="flex items-center justify-between space-x-2 py-4">
                             <div>
                                 Page {currentPage} of {totalPages}

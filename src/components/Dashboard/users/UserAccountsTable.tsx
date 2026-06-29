@@ -51,6 +51,7 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [dialogAction, setDialogAction] = useState<null | 'activate' | 'deactivate' | 'delete' | 'resetPassword' | 'register'>(null);
     const [accountId, setAccountId] = useState<number | null>(null);
+    const [onboardRole, setOnboardRole] = useState<'RESTAURANT_STAFF' | 'RESTAURANT_ADMIN' | undefined>(undefined);
     const setIsRegisterUser = useAuthStore((state) => state.setIsRegisterUser);
     const userRole = useAuthStore((state) => state.user.role);
     const navigate = useNavigate();
@@ -95,11 +96,12 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
             navigate('/auth/reset-password', {state: {username: userAccounts.find(u => u.id === accountId)?.username}})
         } else if (dialogAction === 'register') {
             setIsRegisterUser(true)
-            navigate('/auth/register')
+            navigate('/auth/register', { state: { onboardRole } })
         }
         setIsDialogOpen(false);
         setDialogAction(null);
         setAccountId(null);
+        setOnboardRole(undefined);
     };
 
 
@@ -129,14 +131,18 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                 <CardHeader className="px-7">
                     <CardTitle>User Accounts</CardTitle>
                     <CardDescription>Check out all your user accounts.</CardDescription>
-                    {userRole === "SUPERADMIN" && <UserTableHeaderBtns setIsDialogOpen={() => {
-                        setDialogAction('register');
-                        setIsDialogOpen(true);
-                    }}/>}
+                    {(userRole === "PLATFORM_ADMIN" || userRole === "RESTAURANT_ADMIN") && (
+                        <UserTableHeaderBtns setIsDialogOpen={(role) => {
+                            setOnboardRole(role);
+                            setDialogAction('register');
+                            setIsDialogOpen(true);
+                        }} />
+                    )}
                 </CardHeader>
                 <CardContent>
                     {userAccounts && userAccounts.length > 0 ? (
                         <>
+                            <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader>
                                     <TableRow className=''>
@@ -227,6 +233,7 @@ const UserAccountsTable: React.FC<UserAccountsTableProps> = ({userAccounts}) => 
                                     ))}
                                 </TableBody>
                             </Table>
+                            </div>
                             <div className="flex items-center justify-between space-x-2 py-4">
                                 <div>
                                     Page {currentPage} of {totalPages}

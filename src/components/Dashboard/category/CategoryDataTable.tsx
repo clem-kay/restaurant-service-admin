@@ -270,7 +270,7 @@ export default function TableBodyContainer() {
                 },
                 onError: handleError,
             });
-        };
+        }
 
     }, [addMenu, addMenuUrl, categories, menu, selectedCategory, setCategories, setMenu, userAccountId]);
 
@@ -416,6 +416,7 @@ export default function TableBodyContainer() {
                 <CardDescription>Manage your categories and their menu items.</CardDescription>
             </CardHeader>
             <CardContent>
+                <div className="overflow-x-auto">
                 <Table>
                     <TableHeaderContainer />
                     <TableBody>
@@ -465,6 +466,7 @@ export default function TableBodyContainer() {
                         ))}
                     </TableBody>
                 </Table>
+                </div>
             </CardContent>
 
             <CreateCategoryDialog
